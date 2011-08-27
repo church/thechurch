@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>thechur.ch</title>
+		<title>thechur.ch branch 1.x</title>
 		<style type="text/css">
 			@import url('css/style.css');
 		</style>
