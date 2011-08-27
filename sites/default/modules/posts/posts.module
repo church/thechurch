@@ -1,0 +1,41 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * A module that creates the ability to add a 'post'.
+ */
+
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function posts_form_post_node_form_alter(&$form, &$form_state, $form_id) {
+	
+	$tid = null;
+	$path = explode('/', current_path());
+	if (isset($path[0]) && $path[0] == 'taxonomy') {
+		if (isset($path[1]) &&  $path[1] == 'term') {
+			$tid = $path[2];
+		}
+	}
+
+	
+	if (is_null($tid)) {
+		global $user;
+		$user = user_load($user->uid);
+		if (isset($user->field_city['und'][0]['tid'])) {
+			$tid = $user->field_city['und'][0]['tid'];
+		}
+	}
+	
+	$form['field_city']['und']['#default_value'][0] = $tid;
+	
+	$form['#access'] = user_access('create post content');
+	$form['field_city']['#access'] = user_access('edit post content');
+	unset($form['body']['und'][0]['#title']);
+	$form['body']['und'][0]['#resizable'] = 0;
+	$form['actions']['submit']['#value'] = 'Share';
+	
+}
+

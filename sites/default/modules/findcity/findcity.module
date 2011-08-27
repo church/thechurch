@@ -1,0 +1,183 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * A module that finds a user's longitude/latitude and their city
+ *
+ * This module finds a user's longitutude and latitude using the Yahoo! Maps API.
+ * If a user's city does not yet exist, the city is created as a node.
+ */
+
+global $yuser;
+global $yapi;
+$yapi = 'OCv2Wq7V34EtmB2wdyfCsQZ5WqGDUaLgTfTajzwZfbFnRuB.a8TTK7FIwz.TgmgnJhVWE7YF';
+
+function findcity_getYUSER($address) {
+  global $yapi;
+  // Find the Users's Yahoo! WOEID, Latitude, and Longitude
+  $yquery = urlencode($address);
+  $yurl = 'http://where.yahooapis.com/geocode?q='.$yquery.'&flags=J&appid='.$yapi;
+  $session = curl_init($yurl);
+  curl_setopt($session, CURLOPT_RETURNTRANSFER,true); 
+  $json = curl_exec($session);
+  $yuser = json_decode($json);
+  return $yuser;
+}
+
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function findcity_form_alter(&$form, $form_state, $form_id)  {
+	if ($form_id == 'user_profile_form' || $form_id == 'user_register_form') {
+		$form['#validate'][] = 'findcity_validate';
+	}
+}
+
+/**
+ * Validate profile form
+ *
+ */
+function findcity_validate($form, $form_state)  {
+
+  // Get the User's Address
+  $address = $form['field_address']['und'][0]['value']['#value'];
+  
+  global $yuser;
+  $yuser = findcity_getYUSER($address);
+  if (isset($yuser->ResultSet->Found) && $yuser->ResultSet->Found == 0) {
+    form_set_error('field_address', t('We\'re Sorry, a city could not be found for your address. Please check your address and try again. If the problem persists, please contact our support team.'));
+  }
+  
+}
+
+
+/**
+ * Implements hook_user_presave().
+ */
+function findcity_user_presave(&$edit, $account, $category) {
+
+  global $yuser;
+  global $yapi;
+ 	$aliasexists = false;
+ 	$alias = null;
+
+  if (isset($yuser->ResultSet->Results[0])) {
+    
+    // Clear the Existing Fields
+    $edit['field_woeid']['und'][0]['value'] = null;
+    $edit['field_latitude']['und'][0]['value'] = null;
+    $edit['field_longitude']['und'][0]['value'] = null;
+    $edit['field_city']['und'][0]['tid'] = null;
+    
+    // Put the Yahoo! data in the proper place
+  	$edit['field_woeid']['und'][0]['value'] = $yuser->ResultSet->Results[0]->woeid;
+		$edit['field_latitude']['und'][0]['value'] = $yuser->ResultSet->Results[0]->latitude;
+		$edit['field_longitude']['und'][0]['value'] = $yuser->ResultSet->Results[0]->longitude;
+	
+		// Get the City WOEID from Yahoo!
+		$yquery = urlencode($yuser->ResultSet->Results[0]->city.' '.$yuser->ResultSet->Results[0]->state.' '.$yuser->ResultSet->Results[0]->country);
+		$yurl = 'http://where.yahooapis.com/v1/places.q('.$yquery.')?format=json&appid='.$yapi;
+    $session = curl_init($yurl);
+    curl_setopt($session, CURLOPT_RETURNTRANSFER,true); 
+    $json = curl_exec($session);  
+    $ycity = json_decode($json);
+    
+    if (isset($ycity->places->place[0])) {
+    
+      $woeid = $ycity->places->place[0]->woeid;
+      
+      $cityid = findcityindb($woeid);
+      
+      if ($cityid != false) {
+      
+        $edit['field_city']['und'][0]['tid'] = $cityid;
+        
+    	} else {
+      	
+      	// If the City cannot be found in the database, create one
+
+      	// Find/Create a proper alias for the City
+      	$aliasexists = false;
+      	$alias = strtolower(str_replace(' ', '', $ycity->places->place[0]->name));
+        $query = db_select('url_alias', 'u');
+        $query->fields('u', array('alias'));
+        $query->condition('alias', $alias);
+        $query->range(0, 1);
+        $result = $query->execute();
+        foreach ($result as $row) {
+           $aliasexists = true;
+         }
+         
+         if ($aliasexists == true) {
+         	// Try again (with the state or country)
+          if ($ycity->places->place[0]->admin1) {
+          	$alias .= '-'.strtolower(str_replace(' ', '', $ycity->places->place[0]->admin1));
+          } else {
+            $alias .= '-'.strtolower(str_replace(' ', '', $ycity->places->place[0]->country));
+          }
+          $aliasexists = false;
+          $query = db_select('url_alias', 'u');
+          $query->fields('u', array('alias'));
+          $query->condition('alias', $alias);
+          $query->range(0, 1);
+          $result = $query->execute();
+          foreach ($result as $row) {
+              $aliasexists = true;
+          }
+         }
+        
+	      if ($aliasexists == false) {
+	      	 	 	
+					// Create the Node
+					$term = new stdClass();
+					$term->vid = 3;
+					$term->name = $ycity->places->place[0]->name;
+					$term->language = LANGUAGE_NONE;
+					$term->field_woeid[$term->language][0]['value'] = $ycity->places->place[0]->woeid;
+					$term->field_state[$term->language][0]['value'] = $ycity->places->place[0]->admin1;
+					$term->field_country[$term->language][0]['value'] = $ycity->places->place[0]->country;
+					$term->field_latitude[$term->language][0]['value'] = $ycity->places->place[0]->centroid->latitude;
+					$term->field_longitude[$term->language][0]['value'] = $ycity->places->place[0]->centroid->longitude;
+					$term->status = 1;
+					$term->path = array('alias' => $alias);
+					taxonomy_term_save($term);
+					
+					$cityid = findcityindb($woeid);
+      
+		      if ($cityid != false) {
+		        $edit['field_city']['und'][0]['tid'] = $cityid;
+		      } else {
+		         drupal_set_message($message = t('We\'re Sorry, something went horribly wrong. Please try again later. If the problem persists, please contact our support team. ERROR CODE: 2.'), $type = 'error', $repeat = TRUE);
+		      }
+				  	
+				} else {
+			  		drupal_set_message($message = t('We\'re Sorry, something went horribly wrong. Please try again later. If the problem persists, please contact our support team. ERROR CODE: 3.'), $type = 'error', $repeat = TRUE);
+			  }
+			  
+			}
+			
+    } else {
+      drupal_set_message($message = t('We\'re Sorry, something went horribly wrong. Please try again later. If the problem persists, please contact our support team. ERROR CODE: 1.'), $type = 'error', $repeat = TRUE);
+    }
+    
+  }
+  
+}
+
+function findcityindb($woeid) {
+  // See if that City's WOEID is already in the database
+  $query = db_select('field_data_field_woeid', 'n');
+  $query->fields('n', array('entity_id'));
+  $query->condition('bundle', 'city', '=');
+  $query->condition('entity_type', 'taxonomy_term', '=');
+  $query->condition('field_woeid_value', $woeid, '=');
+  $query->range(0, 1);
+  $result = $query->execute();
+  $return = false;
+  foreach ($result as $row) {
+  	$return = $row->entity_id;
+  }
+  return $return;
+}

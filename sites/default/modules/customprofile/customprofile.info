@@ -1,0 +1,7 @@
+;$Id$
+name = Custom User Profiles
+description = Customizes the User's Profile for a Specific Purpose
+core = 7.x
+package = thechur.ch
+files[] = customprofile.module
+version = 0.1
