@@ -9,9 +9,8 @@
 }
  
 .clearfix {
-	display: inline-block;	
+	display: inline-block;
 }
-
  
 html[xmlns] .clearfix {
 	display: block;
@@ -38,14 +37,13 @@ div {
 }
 
 img {
-	margin: 0;
+	margiN: 0;
 	padding: 0;
 	border: none;
 }
 
 input {
 	margin: 0;
-	width: 320px;
 }
 
 a {
@@ -84,7 +82,7 @@ textarea {
 	width: 100%;
 	background-color: #eee;
 	margin-bottom: 5px;
-	padding-bottom: 0px;
+	padding-bottom: 3px;
 }
 
 #header .section {
@@ -100,7 +98,7 @@ textarea {
 
 #main-wrapper {
 	width: 503px;
-	margin: -8px auto;
+	margin: 0 auto;
 }
 
 #term-header, #node-header {
@@ -216,7 +214,6 @@ input[type='submit'] {
 	font-weight: bold;
 	cursor: pointer;
 	font-size: 12px;
-	width:auto;
 }
 
 input[type='submit']:hover {
@@ -275,7 +272,7 @@ input[type='submit']:hover {
 
 .node-content-wrapper {
 	width: 443px;
-	float: center;
+	float: right;
 }
 
 
@@ -314,6 +311,7 @@ input[type='submit']:hover {
 	font-size: 12px;
 	margin: 0 58px 0 0;
 }
+
 
 /* Comment Form */
 #comments .form-type-textarea {
@@ -415,19 +413,14 @@ input[type='submit']:hover {
 
 /* Tabs */
 div.tabs {
-	width: 530px;
+	width: 503px;
 	margin: 0 auto;	
-	position: center;
-	border: 3px solid transparent;
-	border-top: none;
-	border-left: none;
-	border-right: none;
 }
 
 ul.primary {
 	border-bottom: none;
 	margin: -2px 0 0 0;
-	padding-top: -5px;
+	padding: 0;
 }
 
 ul.primary li {
@@ -440,7 +433,7 @@ ul.primary li {
 
 ul.primary li a {
 	border: none;
-	border-top: 1px solid #eee;
+	border-top: 1px solid #ddd;
 	padding-top: 3px;
 	padding-bottom: 3px;
 	background-color: #eee;
@@ -450,43 +443,23 @@ ul.primary li a {
 
 ul.primary li a:hover {
 	border: none;
-	border-top: 1px solid #eee;
+	border-top: 1px solid #fff;
 	background-color: #fff;
 }
 
 ul.primary li a.active {
 	border: none;
-	border-top: 1px solid #eee;
+	border-top: 1px solid #fff;
 }
 
 ul.primary li a.active:hover {
 	border: none;
 	background-color: #fff;
-	border-top: 1px solid #eee;
+	border-top: 1px solid #fff;
 }
 
 /* Messages */
 .messages.status, div.error {
-	width: 450px;
-	margin: auto;
-	position: relative;
-	top: 0px;
-	right: 22px;
-}
-
-/*New WILL styles*/
-
-#content .description {
-	font-size: .75em;
-	color: #787878;
-}
-
-#content {
-	width: 330px;
-}
-
-.content #section #date{
-	margin: 0px;
-	padding: 0px;
-	font-size: 20px;
+	width: 443px;
+	margin: 0 auto;
 }
