@@ -1,7 +1,8 @@
 # Deny Access to test site by IP address
-order deny,allow
-deny from all
-allow from 71.43.128.249
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REMOTE_HOST} !^71\.43\.128\.249
+RewriteRule .* http://thechur.ch/$1 [R=302,L]
 
 #
 # Apache/PHP/Drupal settings:
