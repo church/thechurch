@@ -1,7 +1,8 @@
 # Deny Access to test site by IP address
 RewriteEngine On
 RewriteBase /
-RewriteCond %{REMOTE_HOST} !^71\.43\.128\.249
+RewriteCond %{HTTP_HOST} !^localhost
+RewriteCond %{REMOTE_HOST} !^71.43.128.249
 RewriteRule .* http://thechur.ch/$1 [R=302,L]
 
 #
