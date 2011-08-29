@@ -1,3 +1,8 @@
+# Deny Access to test site by IP address
+order deny, allow
+deny from all
+allow from 71.43.128.249
+
 #
 # Apache/PHP/Drupal settings:
 #
