@@ -1,5 +1,5 @@
 # Deny Access to test site by IP address
-order allow,deny
+order deny,allow
 deny from all
 allow from 71.43.128.249
 
