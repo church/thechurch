@@ -3,6 +3,7 @@ RewriteEngine On
 RewriteBase /
 RewriteCond %{HTTP_HOST} !^localhost
 RewriteCond %{REMOTE_HOST} !^71.43.128.249
+RewriteCond %{REMOTE_HOST} !^97.102.226.128
 RewriteRule .* http://thechur.ch/$1 [R=302,L]
 
 #
