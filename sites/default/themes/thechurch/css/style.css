@@ -144,29 +144,36 @@ textarea {
 
 #showusers {
 	display: block;
-	float: left;
-	margin: 2px 0 0 0;
-}
-
-.webkit #showusers {
-	margin: 5px 0 0 0;
-}
-
-.front #showusers, #showusers.full {
 	height: 35px;
 	width: 100%;
 	margin: 0 0 8px 0;
 }
 
-#showusers a img {
+.webkit #showusers.notfull {
+	margin-top: 6px;
+}
+
+.webkit #showusers.full {
+	margin-top: 3px;
+}
+
+#showusers img {
+	margin-left: 4px;
+	width: 35px;
+	height: 35px;
+}
+
+#showusers.notfull {
+	width: auto;
+	height: auto;
+	float: left;
+	margin: 2px 0 0 0;
+}
+
+#showusers.notfull a img {
 	margin-left: 4px;
 	width: 23px;
 	height: 23px;
-}
-
-.front #showusers img, #showusers.full img {
-	width: 35px;
-	height: 35px;
 }
 
 
@@ -266,13 +273,30 @@ input[type='submit']:hover {
 }
 
 /* Post Styles */
-.author-picture {
+.page-node.node-type-post .user-picture {
+	margin: 3px 0 0 0;
+}
+
+.page-node.node-type-post .node-content-wrapper {
+	width: 443px;
+	float: right;
+}
+
+.page-node.node-type-post .node-post {
 	float: left;
 }
 
-.node-content-wrapper {
-	width: 443px;
-	float: right;
+.page-node.node-type-post .author-info {
+	font-weight: bold;
+}
+
+.page-node.node-type-post .field-name-body {
+	color: #333;
+}
+
+.page-node.node-type-post .field-name-body p {
+	margin: 0;
+	padding: 0;
 }
 
 

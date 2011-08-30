@@ -40,7 +40,7 @@
   <?php print render($content['comments']); ?>
     <?php if ($content['comment_form']): ?>
   	<div id="commentform-wrapper" class="clearfix">
-  		<?php if ($user->picture) : ?>
+  		<?php if (isset($user->picture)) : ?>
 	  		<?php $user = user_load($user->uid); ?>
 	  		<?php
 	   			$img = theme('image_style', array('style_name' => 'square', 'path' => $user->picture->uri, 'alt' => $user->name));

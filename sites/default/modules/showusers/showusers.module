@@ -109,7 +109,7 @@ function showusers_preprocess_taxonomy_term(&$variables) {
 			if ($member_count > 13) {
 				$class = ' class="full"';
 			} else {
-				$class = null;
+				$class = ' class="notfull"';
 			}
 			
 			$showusers = array(
