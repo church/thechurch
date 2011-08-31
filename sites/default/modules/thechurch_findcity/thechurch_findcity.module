@@ -13,7 +13,7 @@ global $yuser;
 global $yapi;
 $yapi = 'OCv2Wq7V34EtmB2wdyfCsQZ5WqGDUaLgTfTajzwZfbFnRuB.a8TTK7FIwz.TgmgnJhVWE7YF';
 
-function findcity_getYUSER($address) {
+function thechurch_findcity_getYUSER($address) {
   global $yapi;
   // Find the Users's Yahoo! WOEID, Latitude, and Longitude
   $yquery = urlencode($address);
@@ -29,9 +29,9 @@ function findcity_getYUSER($address) {
 /**
  * Implementation of hook_form_alter().
  */
-function findcity_form_alter(&$form, $form_state, $form_id)  {
+function thechurch_findcity_form_alter(&$form, $form_state, $form_id)  {
 	if ($form_id == 'user_profile_form' || $form_id == 'user_register_form') {
-		$form['#validate'][] = 'findcity_validate';
+		$form['#validate'][] = 'thechurch_findcity_validate';
 	}
 }
 
@@ -39,13 +39,13 @@ function findcity_form_alter(&$form, $form_state, $form_id)  {
  * Validate profile form
  *
  */
-function findcity_validate($form, $form_state)  {
+function thechurch_findcity_validate($form, $form_state)  {
 
   // Get the User's Address
   $address = $form['field_address']['und'][0]['value']['#value'];
   
   global $yuser;
-  $yuser = findcity_getYUSER($address);
+  $yuser = thechurch_findcity_getYUSER($address);
   if (isset($yuser->ResultSet->Found) && $yuser->ResultSet->Found == 0) {
     form_set_error('field_address', t('We\'re Sorry, a city could not be found for your address. Please check your address and try again. If the problem persists, please contact our support team.'));
   }
@@ -56,7 +56,7 @@ function findcity_validate($form, $form_state)  {
 /**
  * Implements hook_user_presave().
  */
-function findcity_user_presave(&$edit, $account, $category) {
+function thechurch_findcity_user_presave(&$edit, $account, $category) {
 
   global $yuser;
   global $yapi;
@@ -88,7 +88,7 @@ function findcity_user_presave(&$edit, $account, $category) {
     
       $woeid = $ycity->places->place[0]->woeid;
       
-      $cityid = findcityindb($woeid);
+      $cityid = thechurch_findcity_findcityindb($woeid);
       
       if ($cityid != false) {
       
@@ -144,7 +144,7 @@ function findcity_user_presave(&$edit, $account, $category) {
 					$term->path = array('alias' => $alias);
 					taxonomy_term_save($term);
 					
-					$cityid = findcityindb($woeid);
+					$cityid = thechurch_findcity_findcityindb($woeid);
       
 		      if ($cityid != false) {
 		        $edit['field_city']['und'][0]['tid'] = $cityid;
@@ -166,7 +166,7 @@ function findcity_user_presave(&$edit, $account, $category) {
   
 }
 
-function findcityindb($woeid) {
+function thechurch_findcity_findcityindb($woeid) {
   // See if that City's WOEID is already in the database
   $query = db_select('field_data_field_woeid', 'n');
   $query->fields('n', array('entity_id'));

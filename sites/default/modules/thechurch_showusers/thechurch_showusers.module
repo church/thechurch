@@ -11,17 +11,17 @@
 /**
  * Implements hook_menu().
  */
-function showusers_menu() {
+function thechurch_showusers_menu() {
   $items['showusers'] = array(
   	'title' => 'showusers', 
-    'page callback' => 'showusers_findusers',
+    'page callback' => 'thechurch_showusers_findusers',
     'type' => MENU_CALLBACK,
     'access arguments' => array('access content'),
   );
   return $items;
 }
 
-function showusers_findusers($tid = null) {
+function thechurch_showusers_findusers($tid = null) {
 	  
   global $user;
   
@@ -68,7 +68,7 @@ function showusers_findusers($tid = null) {
 /**
  * Implements hook_entity_view().
  */
-function showusers_entity_view($entity, $type, $view_mode, $langcode) {
+function thechurch_showusers_entity_view($entity, $type, $view_mode, $langcode) {
 
 	if ($type == 'node') {
 	
@@ -92,7 +92,7 @@ function showusers_entity_view($entity, $type, $view_mode, $langcode) {
 /**
  * Implements template_preprocess_taxonomy_term()
  */
-function showusers_preprocess_taxonomy_term(&$variables) {
+function thechurch_showusers_preprocess_taxonomy_term(&$variables) {
 	if ($variables['vocabulary_machine_name'] == 'city') {
 			// Get the Number of Members for a Node
 		  $query = db_select('field_data_field_city' , 'c');
@@ -123,7 +123,7 @@ function showusers_preprocess_taxonomy_term(&$variables) {
 	}
 }
 
-function showusers_addcityid() {
+function thechurch_showusers_addcityid() {
 	$path = drupal_lookup_path('source', current_path());
 	$path = explode('/', $path);
 	if (isset($path[0]) && $path[0] == 'taxonomy') {
@@ -133,5 +133,5 @@ function showusers_addcityid() {
 	}
 }
 
-showusers_addcityid();
+thechurch_showusers_addcityid();
  

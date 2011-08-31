@@ -11,7 +11,7 @@
 /**
  * Implements hook_form_alter().
  */
-function customprofile_form_alter(&$form, &$form_state, $form_id) {
+function thechurch_userprofile_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'user_profile_form') {
     $form['field_woeid']['#access'] = user_access('administer users');
     $form['field_city']['#access'] = user_access('administer users');

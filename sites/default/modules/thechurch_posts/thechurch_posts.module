@@ -10,7 +10,7 @@
 /**
  * Implementation of hook_form_FORM_ID_alter().
  */
-function posts_form_post_node_form_alter(&$form, &$form_state, $form_id) {
+function thechurch_posts_form_post_node_form_alter(&$form, &$form_state, $form_id) {
 	
 	$tid = null;
 	$path = explode('/', current_path());
