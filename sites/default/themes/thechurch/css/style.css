@@ -37,7 +37,7 @@ div {
 }
 
 img {
-	margiN: 0;
+	margin: 0;
 	padding: 0;
 	border: none;
 }
@@ -167,7 +167,7 @@ textarea {
 	width: auto;
 	height: auto;
 	float: left;
-	margin: 2px 0 0 0;
+	margin: 4px 0 0 0;
 }
 
 #showusers.notfull a img {
@@ -296,9 +296,28 @@ input[type='submit']:hover {
 
 .page-node.node-type-post .field-name-body p {
 	margin: 0;
+	padding: 1em 0 0 0;
+}
+
+.page-node.node-type-post .field-name-body p:first-child {
 	padding: 0;
 }
 
+.page-node.node-type-post .date  {
+	height: 0.8em;
+	margin-top: -0.3em;
+}
+
+.page-node.node-type-post .date a {
+	font-size: 0.8em;
+	line-height: 0.8em;
+	color: #bbb;
+}
+
+.page-node.node-type-post .comment-wrapper {
+	margin: 0;
+	padding: 0.7em 0 0 0;
+}
 
 /* Login Form */
 #user-login-form {
