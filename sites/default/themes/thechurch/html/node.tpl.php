@@ -79,7 +79,6 @@
  */
 ?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>
-  
 	<?php if ($type != 'post' && !$is_front) : ?>
 		<div id="node-header" class="clearfix">
 		  <?php print render($title_prefix); ?>

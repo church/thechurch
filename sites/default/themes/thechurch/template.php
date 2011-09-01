@@ -15,15 +15,13 @@ drupal_add_html_head(array('#tag' => 'meta', '#attributes' => array('name' => 'v
  }
  
  /**
- * Implements template_preprocess_node()
+ * Implements template_preprocess_username()
  */
- function thechurch_preprocess_node(&$variables) {
- 	
- 	print '<!--';
- 	print_r($variables);
- 	print '-->';
-		
- }
+function thechurch_preprocess_username(&$variables) {
+	
+	// TODO
+	
+}
 
 /**
  * Implements template_preprocess_taxonomy_term()
