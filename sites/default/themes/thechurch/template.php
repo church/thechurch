@@ -38,4 +38,54 @@ function thechurch_preprocess_taxonomy_term(&$variables) {
 		unset($variables['content']['post_form']['body']['und'][0]['format']);
 	}
 	
+	// Fix the Title
+	if (isset($variables['name'])) {
+		drupal_set_title(' '.strtolower($variables['name']));
+	}
+	
+}
+
+/**
+ * Implements template_preprocess_node()
+ */
+function thechurch_preprocess_node(&$variables) {
+
+	// Fix the Title
+	if ($variables['page'] && isset($variables['title'])) {
+		if ($variables['is_front']) {
+			drupal_set_title('');
+		} else {
+			drupal_set_title(' | '.$variables['title']);
+		}
+	}
+	
+}
+
+/**
+ * Implements template_preprocess_html()
+ */
+function thechurch_preprocess_html(&$variables) {
+
+	if (isset($variables['head_title_array'])) {
+		if (isset($variables['head_title_array']['title'])) {
+			$variables['head_title'] = $variables['head_title_array']['name'].$variables['head_title_array']['title'];
+		} else {
+			$variables['head_title'] = $variables['head_title_array']['name'];
+		}
+	}
+	
+}
+
+/**
+ * Implements template_preprocess_user_profile()
+ */
+function thechurch_preprocess_user_profile(&$variables) {
+	
+	$account = isset($variables['elements']['#account']) ? $variables['elements']['#account'] : null;
+
+	// Fix the Title
+	if (isset($account->field_fullname['und'][0]['safe_value'])) {
+		drupal_set_title(' | '.$account->field_fullname['und'][0]['value']);
+	}
+	
 }
