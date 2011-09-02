@@ -19,7 +19,11 @@ drupal_add_html_head(array('#tag' => 'meta', '#attributes' => array('name' => 'v
  */
 function thechurch_preprocess_username(&$variables) {
 	
-	// TODO
+	$user = user_load($variables['uid']);
+	
+	$fullname = isset($user->field_fullname['und'][0]['safe_value']) ? $user->field_fullname['und'][0]['safe_value'] : null;
+	
+	$variables['name'] = $fullname ? $fullname : $variables['name'];
 	
 }
 
