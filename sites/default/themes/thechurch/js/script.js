@@ -28,10 +28,11 @@ jQuery(document).ready(function() {
 		var current = new Date();
 		var fullcurrent = String(current.getFullYear())+String(current.getMonth())+String(current.getDate());
 		var today = (fulldate == fullcurrent) ? true : false;
+		var month = month+1;
 		if (today) {
 			jQuery(this).text(hours+':'+minutes+period);
 		} else {
-			jQuery(this).text(day+'/'+month+'/'+year+' '+hours+':'+minutes+period);
+			jQuery(this).text(month+'/'+day+'/'+year+' '+hours+':'+minutes+period);
 		}
 	});
   

@@ -273,6 +273,10 @@ input[type='submit']:hover {
 }
 
 /* Post Styles */
+.page-node.node-type-post #main-wrapper {
+	margin-top: 0.3em;
+}
+
 .page-node.node-type-post .user-picture {
 	margin: 3px 0 0 0;
 }
@@ -303,19 +307,23 @@ input[type='submit']:hover {
 	padding: 0;
 }
 
-.page-node.node-type-post .date  {
-	height: 0.8em;
-	margin-top: -0.3em;
-}
-
-.page-node.node-type-post .date a {
+.page-node.node-type-post .date {
+	margin-top: 0.5em;
+	float: right;
 	font-size: 0.8em;
 	line-height: 0.8em;
 	color: #bbb;
 }
 
+/* Post Comment Styles */
 .page-node.node-type-post .comment-wrapper {
 	margin: 0;
+	padding: 0.7em 0 0 0;
+}
+
+.page-node.node-type-post .comment {
+	border-top: 1px solid #eee;
+	margin: 0.7em 0 0 0;
 	padding: 0.7em 0 0 0;
 }
 
@@ -326,6 +334,7 @@ input[type='submit']:hover {
 	position: relative;
 	width: 385px;
 }
+
 #user-login-form #edit-name, #user-login-form #edit-pass {
 	font-size: 14px;
 	line-height: 20px;
@@ -333,22 +342,27 @@ input[type='submit']:hover {
 	border: 1px solid #999;
 	width: 10em;
 }
+
 #user-login-form .form-item-name {
 	float: left;
 	margin: 0 15px 0 0;
 }
+
 #user-login-form .form-item-pass {
 	float: left;
 	margin: 0;
 }
+
 #user-login-form .item-list {
 	clear: left;
 	margin: 0;
 }
+
 #user-login-form .item-list ul {
 	list-style-type: none;
 	padding: 3px 0 0 0;
 }
+
 #user-login-form .item-list ul li {
 	float: left;
 	font-size: 12px;

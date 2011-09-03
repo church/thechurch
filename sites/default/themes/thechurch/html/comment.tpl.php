@@ -62,6 +62,7 @@
   <?php print $picture ?>
 	<div class="author">
 		<?php print $author; ?>
+		<a href="<?php print url($comment->uri['path'], $comment->uri['options']); ?>" class="date" ><?php print $created; ?></a>
 	</div>
 
   <div class="content"<?php print $content_attributes; ?>>
@@ -75,10 +76,6 @@
       <?php print $signature ?>
     </div>
     <?php endif; ?>
-    
-    <div class="submitted">
-    	<a href="<?php print url($comment->uri['path'], $comment->uri['options']); ?>" ><?php print $created; ?></a>
-  	</div>
     
   </div>
 

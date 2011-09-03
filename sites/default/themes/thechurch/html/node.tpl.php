@@ -84,21 +84,24 @@
 		  <?php print render($title_prefix); ?>
 	  	<h1 class="citytitle first" id="page-title"><?php print $title; ?></h1>
 	  	<?php print render($title_suffix); ?>
-		</div>
+	  </div>
 	<?php endif; ?>
-	<?php if ($type == 'post') : ?>
-		<div class="author-picture">
-			<?php print $user_picture ?>
-		</div>
 		<div class="node-content-wrapper">
+			<div class="author-picture">
+				<?php print $user_picture; ?>
+			</div>
 			<div class="author-info">
-				<?php if ($page) : ?>
+				<?php if ($page && $type == 'post') : ?>
 					<?php print $name; ?> &raquo; <?php print render($content['field_city']); ?>
 				<?php else : ?>
 					<?php print $name; ?>
 				<?php endif; ?>
+				<?php if ($type == 'post') : ?>
+					<a href="<?php print $node_url; ?>" class="date">
+						<?php print $date; ?>
+					</a>
+				<?php endif; ?>
 			</div>
-	  <?php endif; ?>
 		
 	  <div class="content"<?php print $content_attributes; ?>>
 	    <?php
@@ -108,11 +111,6 @@
 	      print render($content);
 	    ?>
 	  </div>
-	  <div class="date">
-			<?php if ($type == 'post') : ?>
-				<a href="<?php print $node_url; ?>"><?php print $date; ?></a>
-			<?php endif; ?>
-		</div>
 		
 	  <?php print render($content['comments']); ?>
 	 
