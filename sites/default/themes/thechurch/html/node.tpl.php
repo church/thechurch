@@ -78,7 +78,7 @@
  * @see template_process()
  */
 ?>
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>
+<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
 	<?php if ($type != 'post' && !$is_front) : ?>
 		<div id="node-header" class="clearfix">
 		  <?php print render($title_prefix); ?>
@@ -112,8 +112,8 @@
 	    ?>
 	  </div>
 		
+	</div>
+		
 	  <?php print render($content['comments']); ?>
-	 
-	 </div>
 
 </div>

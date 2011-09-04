@@ -59,8 +59,10 @@
  */
 ?>
 <div class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
-  <?php print $picture ?>
-	<div class="author">
+	<div class="author-picture">
+  	<?php print $picture ?>
+  </div>
+	<div class="author-info">
 		<?php print $author; ?>
 		<a href="<?php print url($comment->uri['path'], $comment->uri['options']); ?>" class="date" ><?php print $created; ?></a>
 	</div>
