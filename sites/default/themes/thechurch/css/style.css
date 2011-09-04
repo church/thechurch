@@ -69,6 +69,15 @@ textarea {
 	display: block;
 }
 
+/* Status Messages */
+.messages.status {
+	padding-top: 0.3em;
+}
+
+.element-invisible {
+	display: none;
+}
+
 /* Advanced Styles */
 #page-wrapper {
 	width: 100%;
@@ -247,7 +256,8 @@ input[type='submit']:hover {
 }
 
 #post-node-form #edit-actions {
-	clear: both;
+	margin: 0.2em 0 0 0;
+	clear: right;
 	float: right;
 }
 
@@ -257,7 +267,6 @@ input[type='submit']:hover {
 }
 
 #post-node-form #edit-body-und-0-value {
-
 	width: 443px;
 	font-size: 14px;
 	line-height: 18px;
@@ -313,6 +322,7 @@ input[type='submit']:hover {
 .node-post #comments {
 	float: right;
 	width: 443px;
+	font-size: 0.9em;
 }
 
 .node-post .comment {
@@ -373,6 +383,12 @@ input[type='submit']:hover {
 }
 
 /* Comment Form */
+#commentform-wrapper {
+	border-top: 1px solid #eee;
+	margin: 0;
+	padding: 0.5em 0 0.5em 0;
+}
+
 #comments .form-type-textarea {
 	margin-top: 0;
 }
@@ -390,6 +406,8 @@ input[type='submit']:hover {
 }
 
 #comment-form #edit-actions {
+	margin: 0.2em 0 0 0;
+	clear: right;
 	float: right;
 }
 

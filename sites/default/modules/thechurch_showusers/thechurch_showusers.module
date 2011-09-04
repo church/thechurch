@@ -94,9 +94,11 @@ function thechurch_showusers_entity_view($entity, $type, $view_mode, $langcode) 
  */
 function thechurch_showusers_preprocess_taxonomy_term(&$variables) {
 	if ($variables['vocabulary_machine_name'] == 'city') {
+	
 			// Get the Number of Members for a Node
 		  $query = db_select('field_data_field_city' , 'c');
 		  $query->condition('c.field_city_tid', $variables['tid'], '=');
+		  $query->condition('c.entity_type', 'user', '=');
 			$count = $query->countQuery();
 			$result = $count->execute();
 			

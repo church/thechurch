@@ -21,7 +21,7 @@ function thechurch_posts_form_post_node_form_alter(&$form, &$form_state, $form_i
 	}
 
 	
-	if (is_null($tid)) {
+	if ($tid == null) {
 		global $user;
 		$user = user_load($user->uid);
 		if (isset($user->field_city['und'][0]['tid'])) {
@@ -38,4 +38,3 @@ function thechurch_posts_form_post_node_form_alter(&$form, &$form_state, $form_i
 	$form['actions']['submit']['#value'] = 'Share';
 	
 }
-

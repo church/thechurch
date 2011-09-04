@@ -13,6 +13,10 @@ jQuery(document).ready(function() {
     extraSpace : 13,
     animate : false
 	});
+	jQuery('#edit-comment-body-und-0-value').autoResize({
+    extraSpace : 13,
+    animate : false
+	});
 	
 	// Modify the date based on the local of user.
 	jQuery('.date span').each(function() {
@@ -22,13 +26,14 @@ jQuery(document).ready(function() {
 		var day = date.getDate();
 		var hours = date.getHours();
 		var period = (hours < 13) ? 'am' : 'pm';
-		hours = (hours+1 < 13) ? hours : hours-12;
 		var minutes = date.getMinutes();
 		var fulldate = String(year)+String(month)+String(day);
 		var current = new Date();
 		var fullcurrent = String(current.getFullYear())+String(current.getMonth())+String(current.getDate());
 		var today = (fulldate == fullcurrent) ? true : false;
-		var month = month+1;
+		month = month+1;
+		hours = (hours+1 < 13) ? hours : hours-12;
+		minutes = (minutes < 10) ? '0'+minutes : minutes;
 		if (today) {
 			jQuery(this).text(hours+':'+minutes+period);
 		} else {

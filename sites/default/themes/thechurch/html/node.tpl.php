@@ -87,16 +87,18 @@
 	  </div>
 	<?php endif; ?>
 		<div class="node-content-wrapper">
-			<div class="author-picture">
-				<?php print $user_picture; ?>
-			</div>
+			<?php if ($type != 'page') : ?>
+				<div class="author-picture">
+					<?php print $user_picture; ?>
+				</div>
+			<?php endif; ?>
 			<div class="author-info">
-				<?php if ($page && $type == 'post') : ?>
+				<?php if ($page && $type != 'page' && isset($content['field_city'])) : ?>
 					<?php print $name; ?> &raquo; <?php print render($content['field_city']); ?>
-				<?php else : ?>
+				<?php elseif ($type != 'page') : ?>
 					<?php print $name; ?>
 				<?php endif; ?>
-				<?php if ($type == 'post') : ?>
+				<?php if ($type != 'page') : ?>
 					<a href="<?php print $node_url; ?>" class="date">
 						<?php print $date; ?>
 					</a>
