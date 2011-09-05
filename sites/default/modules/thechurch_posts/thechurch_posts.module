@@ -12,7 +12,10 @@
  */
 function thechurch_posts_form_post_node_form_alter(&$form, &$form_state, $form_id) {
 	
+	// Define the Variables
 	$tid = null;
+	
+	// Get the Current path, if it's a taxonomy, set that to as the taxonomy id
 	$path = explode('/', current_path());
 	if (isset($path[0]) && $path[0] == 'taxonomy') {
 		if (isset($path[1]) &&  $path[1] == 'term') {
@@ -20,7 +23,7 @@ function thechurch_posts_form_post_node_form_alter(&$form, &$form_state, $form_i
 		}
 	}
 
-	
+	// if the taxonomy is null, set it to the user's city.
 	if ($tid == null) {
 		global $user;
 		$user = user_load($user->uid);
@@ -29,12 +32,31 @@ function thechurch_posts_form_post_node_form_alter(&$form, &$form_state, $form_i
 		}
 	}
 	
+	// Set the Field City to the Current Term id.
 	$form['field_city']['und']['#default_value'][0] = $tid;
 	
+	// Make sure the form can only be accessed by people who have the right to create posts
 	$form['#access'] = user_access('create post content');
-	$form['field_city']['#access'] = user_access('edit post content');
+	
+	// No one should have access to the city field
+	$form['field_city']['#access'] = false;
+	
+	// The title should be unset since it will be set later.
 	unset($form['body']['und'][0]['#title']);
+	
+	// The form's body field should not include the default 'resizable' javascript.
 	$form['body']['und'][0]['#resizable'] = 0;
+	
+	// Rename the 'Submit' button to 'Share'
 	$form['actions']['submit']['#value'] = 'Share';
+	
+	// No one should have access to the additional options
+	$form['additional_settings']['#access'] = false;
+	
+	/*
+	print '<pre>';
+	print_r($form);
+	print '</pre>';
+	*/
 	
 }

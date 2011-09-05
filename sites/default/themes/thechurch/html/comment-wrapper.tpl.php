@@ -37,8 +37,10 @@
  */
 ?>
 <div id="comments" class="<?php print $classes; ?>"<?php print $attributes; ?>>
-  <?php print render($content['comments']); ?>
-    <?php if ($content['comment_form']): ?>
+	<div class="comment-list">
+  	<?php print render($content['comments']); ?>
+  </div>
+  <?php if ($content['comment_form']): ?>
   	<div id="commentform-wrapper" class="clearfix">
   		<?php if (isset($user->picture)) : ?>
 	  		<?php $user = user_load($user->uid); ?>
@@ -49,6 +51,6 @@
   		<?php endif; ?>
     	<?php print render($content['comment_form']); ?>
     </div>
-  <?php endif; ?>
+	<?php endif; ?>
   
 </div>
