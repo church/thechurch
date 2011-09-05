@@ -1,0 +1,57 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * A module that modifies the default 'comments' function
+ */
+
+
+/**
+ * Implementation of hook_form_BASE_FORM_ID_alter().
+ */
+function thechurch_comments_form_comment_form_alter(&$form, &$form_state, $form_id) {
+	
+	// Add the Ajax Submit Function
+	$form['actions']['submit']['#ajax'] = array(
+		'callback' => 'thechurch_comments_ajax_callback',
+		'progress' => false,
+	);
+
+}
+
+/**
+ * Comments Ajax Callback.
+ */
+function thechurch_comments_ajax_callback($form, $form_state) {
+
+	// Get rid of all of the messages that have been set
+	drupal_get_messages();
+
+	// Get the comment & node objects
+	$comment = $form_state['comment'];
+	$comment = comment_load($comment->cid);
+	$node = $form['#node'];
+	$node = node_load($node->nid);
+	
+	// Generate the Array for Drupal Render
+	$comment_build = comment_view($comment, $node);
+	
+	// Render the Array
+	$html = drupal_render($comment_build);
+	
+	// Put all of the Ajax Commands into an array
+	$commands = array();
+	
+	// Place the comment above the form
+	$commands[] = ajax_command_append('#comments .comment-list', $html);
+	
+	// Remove the text in the text field
+	$commands[] = ajax_command_invoke('#comment-form textarea', 'val', array(''));
+	
+	// Reset the text area back to it's original height
+	$commands[] = ajax_command_css('#comment-form textarea', array('height' => '32px'));
+
+	// Return the Ajax Commands Array
+	return array('#type' => 'ajax', '#commands' => $commands);
+}

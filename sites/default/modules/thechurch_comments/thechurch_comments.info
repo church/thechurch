@@ -1,0 +1,6 @@
+;$Id$
+name = Comments
+description = Modifies the Comment Functions
+core = 7.x
+package = thechur.ch
+version = 0.1
