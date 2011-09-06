@@ -69,6 +69,11 @@ textarea {
 	display: block;
 }
 
+/* Browser Specific Styles */
+input[type="submit"]::-moz-focus-inner {
+  border: none;
+}
+
 /* Status Messages */
 .messages.status {
 	padding-top: 0.3em;
@@ -232,7 +237,7 @@ input[type='submit'] {
 	font-size: 12px;
 }
 
-input[type='submit']:hover {
+input[type='submit']:hover, input[type='submit']:focus {
 	background-color:#CC3333!important;
 	color: #ffffff;
 }
@@ -539,4 +544,15 @@ ul.primary li a.active:hover {
 .messages.status, div.error {
 	width: 443px;
 	margin: 0 auto;
+}
+
+/* Ajax Progress Styles */
+form.progress textarea {
+	background-color: #ccc;
+}
+
+form.progress input[type='submit'] {
+	border: 1px solid #ccc;
+	background-color:#ccc!important;
+	color: #999;
 }

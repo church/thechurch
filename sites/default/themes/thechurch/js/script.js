@@ -41,6 +41,11 @@ Drupal.behaviors.thechurch = {
 				jQuery(this).text(month+'/'+day+'/'+year+' '+hours+':'+minutes+period);
 			}
 		});
+		
+		// When an ajax form is submited, give the user some indication of this by adding a class to the form
+		jQuery('#comment-form .form-submit.ajax-processed').mousedown(function() {
+			jQuery('#comment-form').addClass('progress');
+		});
   
   }
 }
