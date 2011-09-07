@@ -60,3 +60,29 @@ function thechurch_posts_form_post_node_form_alter(&$form, &$form_state, $form_i
 	*/
 	
 }
+
+/**
+ * Implementation of hook_filter_info().
+ */
+function thechurch_posts_filter_info() {
+	
+	// Set up the Trim Link Filter
+	$filters['filter_trimlink'] = array(
+    'title' => t('Trim Well-Formed Links'), 
+    'description' => t("Trims the 'http' and 'www' from well-formed links."), 
+    'process callback' => 'thechurch_posts_filter_trimlink_process', 
+  );
+  return $filters;
+}
+
+/**
+ * Implementation of hook_filter_FILTER_process().
+ */
+function thechurch_posts_filter_trimlink_process($text, $filter, $format, $langcode, $cache, $cache_id) {
+	
+	// Process the Trim Link Filter
+	$text = preg_replace("/(>http:\/\/www\\.|>https:\/\/www\\.)|(>http:\/\/|>https:\/\/)/us", ">", $text);
+  return $text;
+  
+}
+
