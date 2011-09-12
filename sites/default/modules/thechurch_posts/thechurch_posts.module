@@ -82,6 +82,7 @@ function thechurch_posts_filter_trimlink_process($text, $filter, $format, $langc
 	
 	// Process the Trim Link Filter
 	$text = preg_replace("/(>http:\/\/www\\.|>https:\/\/www\\.)|(>http:\/\/|>https:\/\/)/us", ">", $text);
+	$text = preg_replace("/\/</us", "<", $text);
   return $text;
   
 }
