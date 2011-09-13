@@ -79,6 +79,8 @@
     </div>
     <?php endif; ?>
     
+    <?php print render($content['links']); ?>
+    
   </div>
 
 </div>

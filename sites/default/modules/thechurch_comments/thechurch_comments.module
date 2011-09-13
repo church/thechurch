@@ -64,3 +64,12 @@ function thechurch_comments_ajax_callback($form, $form_state) {
 	return array('#type' => 'ajax', '#commands' => $commands);
 	
 }
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function thechurch_comments_menu_alter(&$items) {
+
+    $items['comment/reply/%node']['access callback'] = false;
+
+}
