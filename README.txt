@@ -1,4 +1,4 @@
-/* just to test twitter x2 */
+/* Update using Supertweet.net */
 
 CONTENTS OF THIS FILE
 ---------------------
