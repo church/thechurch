@@ -4,7 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>thechur.ch</title>
 		<style type="text/css">
-			@import url('css/style.css');
+			@import url('css/style.css'); 
 		</style>
 		<meta name="viewport" content="width=785" />
 		<script type="text/javascript">
