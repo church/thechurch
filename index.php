@@ -26,7 +26,7 @@
 			<article>
 				<img src="/img/logo2.png" alt="thechur.ch" />
 				<a href="http://www.facebook.com/thechur.ch">facebook.com/thechur.ch</a>
-				<a href="http://twitter.com/thechur_ch">twitter.com/thechur_ch</a>
+				<a href="http://twitter.com/thechurch">twitter.com/thechurch</a>
 			</article>
 		</section>
 	</body>
