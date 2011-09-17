@@ -26,19 +26,21 @@ Drupal.behaviors.thechurch = {
 			var month = date.getMonth();
 			var day = date.getDate();
 			var hours = date.getHours();
-			var period = (hours < 13) ? 'am' : 'pm';
-			var minutes = date.getMinutes();
-			var fulldate = String(year)+String(month)+String(day);
-			var current = new Date();
-			var fullcurrent = String(current.getFullYear())+String(current.getMonth())+String(current.getDate());
-			var today = (fulldate == fullcurrent) ? true : false;
-			month = month+1;
-			hours = (hours+1 < 13) ? hours : hours-12;
-			minutes = (minutes < 10) ? '0'+minutes : minutes;
-			if (today) {
-				jQuery(this).text(hours+':'+minutes+period);
-			} else {
-				jQuery(this).text(month+'/'+day+'/'+year+' '+hours+':'+minutes+period);
+			if (!isNaN(year)) {
+				var period = (hours < 13) ? 'am' : 'pm';
+				var minutes = date.getMinutes();
+				var fulldate = String(year)+String(month)+String(day);
+				var current = new Date();
+				var fullcurrent = String(current.getFullYear())+String(current.getMonth())+String(current.getDate());
+				var today = (fulldate == fullcurrent) ? true : false;
+				month = month+1;
+				hours = (hours+1 < 13) ? hours : hours-12;
+				minutes = (minutes < 10) ? '0'+minutes : minutes;
+				if (today) {
+					jQuery(this).text(hours+':'+minutes+period);
+				} else {
+					jQuery(this).text(month+'/'+day+'/'+year+' '+hours+':'+minutes+period);
+				}
 			}
 		});
 		

@@ -64,13 +64,13 @@
   </div>
 	<div class="author-info">
 		<?php print $author; ?>
-		<a href="<?php print url($comment->uri['path'], $comment->uri['options']); ?>" class="date" ><?php print $created; ?></a>
+		<span class="date" ><?php print $created; ?></span>
 	</div>
 
   <div class="content"<?php print $content_attributes; ?>>
     <?php
       // We hide the comments and links now so that we can render them later.
-      // hide($content['links']);
+      hide($content['links']);
       print render($content);
     ?>
     <?php if ($signature): ?>

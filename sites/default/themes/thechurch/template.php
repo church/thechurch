@@ -1,6 +1,15 @@
 <?php
 
-drupal_add_html_head(array('#tag' => 'meta', '#attributes' => array('name' => 'viewport', 'content' => 'width=520')), 'meta-viewpoint');
+drupal_add_html_head(
+	array(
+		'#tag' => 'meta',
+		'#attributes' => array(
+			'name' => 'viewport',
+			'content' => 'width=device-width, initial-scale=1.0'
+			),
+		),
+		'meta-viewpoint'
+);
 
 /**
  * Implements template_preprocess_comment_wrapper()
@@ -88,4 +97,13 @@ function thechurch_preprocess_user_profile(&$variables) {
 		drupal_set_title(' | '.$account->field_fullname['und'][0]['value']);
 	}
 	
+}
+
+/**
+ * Implements template_preprocess_comment()
+ */
+function thechurch_preprocess_comment(&$variables) {
+
+	unset($variables['content']['links']['comment']['#links']['comment-reply']);
+
 }

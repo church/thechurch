@@ -71,5 +71,7 @@ function thechurch_comments_ajax_callback($form, $form_state) {
 function thechurch_comments_menu_alter(&$items) {
 
     $items['comment/reply/%node']['access callback'] = false;
+    $items['comment/%/view']['access callback'] = false;
+    $items['comment/%']['access callback'] = false;
 
 }
