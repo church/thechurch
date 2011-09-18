@@ -103,7 +103,12 @@ function thechurch_preprocess_user_profile(&$variables) {
  * Implements template_preprocess_comment()
  */
 function thechurch_preprocess_comment(&$variables) {
-
+	
+	// Remove the Reply link
 	unset($variables['content']['links']['comment']['#links']['comment-reply']);
+	
+	// Remove the Comment Forbidden link
+	unset($variables['content']['links']['comment']['#links']['comment_forbidden']);
+
 
 }
