@@ -87,32 +87,40 @@
 	  </div>
 	<?php endif; ?>
 		<div class="node-content-wrapper">
-			<?php if ($type != 'page') : ?>
-				<div class="author-picture">
-					<?php print $user_picture; ?>
-				</div>
-			<?php endif; ?>
-			<div class="author-info">
-				<?php if ($page && $type != 'page' && isset($content['field_city'])) : ?>
-					<?php print $name; ?> &raquo; <?php print render($content['field_city']); ?>
-				<?php elseif ($type != 'page') : ?>
-					<?php print $name; ?>
-				<?php endif; ?>
+			
+			<div class="content-left">
 				<?php if ($type != 'page') : ?>
-					<a href="<?php print $node_url; ?>" class="date">
-						<?php print $date; ?>
-					</a>
+					<div class="author-picture">
+						<?php print $user_picture; ?>
+					</div>
 				<?php endif; ?>
 			</div>
-		
-	  <div class="content"<?php print $content_attributes; ?>>
-	    <?php
-	      // We hide the comments and links now so that we can render them later.
-	      hide($content['comments']);
-	      hide($content['links']);
-	      print render($content);
-	    ?>
-	  </div>
+			
+			
+			<div class="content-right">
+				<div class="author-info">
+					<?php if ($page && $type != 'page' && isset($content['field_city'])) : ?>
+						<?php print $name; ?> &raquo; <?php print render($content['field_city']); ?>
+					<?php elseif ($type != 'page') : ?>
+						<?php print $name; ?>
+					<?php endif; ?>
+					<?php if ($type != 'page') : ?>
+						<a href="<?php print $node_url; ?>" class="date">
+							<?php print $date; ?>
+						</a>
+					<?php endif; ?>
+				</div>
+			
+			  <div class="content"<?php print $content_attributes; ?>>
+			    <?php
+			      // We hide the comments and links now so that we can render them later.
+			      hide($content['comments']);
+			      hide($content['links']);
+			      print render($content);
+			    ?>
+			  </div>
+			
+			</div>
 		
 	</div>
 		

@@ -258,6 +258,13 @@ input[type='submit']:hover, input[type='submit']:focus {
 /* Post Form Styles */
 #post-form {
 	margin-top: 4px;
+	display: table;
+}
+
+#post-node-form {
+	display: table-cell;
+	width: 100%;
+	vertical-align: top;
 }
 
 #post-node-form #edit-actions {
@@ -272,30 +279,39 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 #post-node-form #edit-body-und-0-value {
-	width: 443px;
 	font-size: 14px;
 	line-height: 18px;
 	padding: 5px;
 	height: 50px;
 	resize: none;
 	border: 1px solid #999;
-	float: right;
 	font-family: 'Helvetica', 'Arial', sans-serif;
 }
 
 #post-form a.avatar {
+	width: 50px;
 	float: left;
+	display: table-cell;
+	vertical-align: top;
+	margin-right: 6px;
 }
 
 /* Post Styles */
-.node-post .author-picture {
-	float: left;
-	margin: 3px 0 0 0;
+.node-post .node-content-wrapper {
+	display: table;
+	width: 100%;
 }
 
-.node-post .author-info, .node-post .content {
-	width: 443px;
-	float: right;
+.node-post .content-left {
+	padding: 2px 6px 0 0;
+	display: table-cell;
+	width: 35px;
+	vertical-align: top;
+}
+
+.node-post .content-right {
+	display: table-cell;
+	vertical-align: top;
 }
 
 .node-post .author-info {
@@ -325,20 +341,16 @@ input[type='submit']:hover, input[type='submit']:focus {
 
 /* Post Comment Styles */
 .node-post #comments {
-	float: right;
-	width: 443px;
+	padding-left: 56px;
 	font-size: 0.9em;
 }
 
 .node-post .comment {
 	border-top: 1px solid #eee;
-	margin: 0;
-	padding: 0.5em 0 0.5em 0;
+	margin: 0.5em 0 0 0;
+	padding: 0.5em 0 0 0;
 }
 
-.node-post .comment .author-info, .node-post .comment .content {
-	width: 405px;
-}
 
 /* Single Post Styles */
 .page-node.node-type-post #main-wrapper {
@@ -350,7 +362,7 @@ input[type='submit']:hover, input[type='submit']:focus {
 	clear: both;
 	padding: 10px 0 0 0;
 	position: relative;
-	width: 385px;
+	width: 76%;
 }
 
 #user-login-form #edit-name, #user-login-form #edit-pass {
@@ -390,8 +402,8 @@ input[type='submit']:hover, input[type='submit']:focus {
 /* Comment Form */
 #commentform-wrapper {
 	border-top: 1px solid #eee;
-	margin: 0;
-	padding: 0.5em 0 0.5em 0;
+	margin: 0.5em 0 0 0;
+	padding: 0.5em 0 0 0;
 }
 
 #comments .form-type-textarea {
@@ -399,7 +411,7 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 #comments #edit-comment-body-und-0-value {
-	width: 405px;
+	width: 80%;
 	font-size: 14px;
 	line-height: 18px;
 	padding: 5px;
@@ -426,19 +438,25 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 /* Single Comment */
-.comment .user-picture {
-	float: left;
-}
-
-.comment .author {
-	float: right;
-	width: 443px;
-}
 
 .comment .content {
-	clear: right;
+	display: table;
+}
+
+.comment .content-left {
+	display: table-cell;
+	vertical-align: top;
+	width: 32px;
+}
+
+.comment .content-right {
+	display: table-cell;
+	vertical-align: top;
+	width: 100%;
+}
+
+.comment .date {
 	float: right;
-	width: 443px;
 }
 
 .comment .content p {
@@ -450,9 +468,8 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 .comment ul.links {
-	clear: right;
-	float: right;
-	width: 443px;
+	float: left;
+	width: 88%;
 	margin: 0;
 	padding: 0;
 	font-size: 0.7em;
@@ -467,26 +484,6 @@ input[type='submit']:hover, input[type='submit']:focus {
 	color: #999;
 }
 
-.indented {
-	margin-left: 60px;
-	font-size: 0.8em;
-}
-
-.indented .comment .author {
-	width: 401px;
-}
-
-.indented .comment .content {
-	width: 401px;
-}
-
-.indented .comment ul.links {
-	width: 401px;
-}
-
-.indented .user-picture {
-	float: left;
-}
 
 .comment .user-picture img {
 	height: 32px;
@@ -542,7 +539,7 @@ ul.primary li a.active:hover {
 
 /* Messages */
 .messages.status, div.error {
-	width: 443px;
+	width: 88%;
 	margin: 0 auto;
 }
 

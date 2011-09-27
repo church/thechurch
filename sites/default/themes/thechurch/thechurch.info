@@ -5,6 +5,7 @@ package = Custom
 version = 0.1
 core = 7.x
 stylesheets[all][] = css/style.css
+stylesheets[screen and (max-width: 523px)][] = css/fluid.css
 scripts[] = js/jquery.browser.min.js
 scripts[] = js/autoresize.jquery.min.js
 scripts[] = js/script.js

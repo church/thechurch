@@ -40,7 +40,7 @@
 	<div class="comment-list">
   	<?php print render($content['comments']); ?>
   </div>
-  <?php if ($content['comment_form']): ?>
+  <?php if (!empty($content['comment_form'])): ?>
   	<div id="commentform-wrapper" class="clearfix">
   		<?php if (isset($user->picture)) : ?>
 	  		<?php $user = user_load($user->uid); ?>

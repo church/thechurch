@@ -5,7 +5,7 @@ drupal_add_html_head(
 		'#tag' => 'meta',
 		'#attributes' => array(
 			'name' => 'viewport',
-			'content' => 'width=device-width, initial-scale=1.0'
+			'content' => 'width=device-width, initial-scale=1.0, maximum-scale=1.0'
 			),
 		),
 		'meta-viewpoint'
@@ -15,11 +15,14 @@ drupal_add_html_head(
  * Implements template_preprocess_comment_wrapper()
  */
  function thechurch_preprocess_comment_wrapper(&$variables) {
- 	$variables['content']['comment_form']['actions']['submit']['#value'] = 'Share';
- 	$variables['content']['comment_form']['comment_body']['und'][0]['value']['#title'] = null;
- 	$variables['content']['comment_form']['comment_body']['und'][0]['value']['#resizable'] = 0;
- 	unset($variables['content']['comment_form']['author']['_author']);
- 	unset($variables['content']['comment_form']['comment_body']['und'][0]['format']);
+ 	
+ 	if (!empty($variables['content']['comment_form'])) {
+	 	$variables['content']['comment_form']['actions']['submit']['#value'] = 'Share';
+	 	$variables['content']['comment_form']['comment_body']['und'][0]['value']['#title'] = null;
+	 	$variables['content']['comment_form']['comment_body']['und'][0]['value']['#resizable'] = 0;
+	 	unset($variables['content']['comment_form']['author']['_author']);
+	 	unset($variables['content']['comment_form']['comment_body']['und'][0]['format']);
+	}
 		
  }
  
