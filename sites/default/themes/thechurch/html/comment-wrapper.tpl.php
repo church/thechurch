@@ -41,15 +41,19 @@
   	<?php print render($content['comments']); ?>
   </div>
   <?php if (!empty($content['comment_form'])): ?>
-  	<div id="commentform-wrapper" class="clearfix">
+  	<div class="comment-form" class="clearfix">
   		<?php if (isset($user->picture)) : ?>
-	  		<?php $user = user_load($user->uid); ?>
-	  		<?php
-	   			$img = theme('image_style', array('style_name' => 'square', 'path' => $user->picture->uri, 'alt' => $user->name));
-	  			print l($img, 'user/'.$user->uid, array('attributes' => array('class' => 'avatar'),'html' => true));
-	  		?>
+  			<div class="form-left">
+		  		<?php $user = user_load($user->uid); ?>
+		  		<?php
+		   			$img = theme('image_style', array('style_name' => 'square', 'path' => $user->picture->uri, 'alt' => $user->name));
+		  			print l($img, 'user/'.$user->uid, array('attributes' => array('class' => 'avatar'),'html' => true));
+		  		?>
+		  	</div>
   		<?php endif; ?>
-    	<?php print render($content['comment_form']); ?>
+  		<div class="form-right">
+    		<?php print render($content['comment_form']); ?>
+    	</div>
     </div>
 	<?php endif; ?>
   

@@ -225,6 +225,16 @@ ul.links.inline {
 	padding: 0;
 }
 
+input {
+	border-radius: 0px;
+	-webkit-appearance: none;
+}
+
+textarea {
+	border-radius: 0px;
+	-webkit-appearance: none;
+}
+
 input[type='submit'] {
 	clear: left;
 	float: left;
@@ -235,6 +245,7 @@ input[type='submit'] {
 	font-weight: bold;
 	cursor: pointer;
 	font-size: 12px;
+	padding: 3px 5px;
 }
 
 input[type='submit']:hover, input[type='submit']:focus {
@@ -400,10 +411,12 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 /* Comment Form */
-#commentform-wrapper {
+div.comment-form {
 	border-top: 1px solid #eee;
 	margin: 0.5em 0 0 0;
 	padding: 0.5em 0 0 0;
+	display: table;
+	width: 100%;
 }
 
 #comments .form-type-textarea {
@@ -411,7 +424,6 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 #comments #edit-comment-body-und-0-value {
-	width: 80%;
 	font-size: 14px;
 	line-height: 18px;
 	padding: 5px;
@@ -420,21 +432,43 @@ input[type='submit']:hover, input[type='submit']:focus {
 	border: 1px solid #999;
 	float: right;
 	font-family: 'Helvetica', 'Arial', sans-serif;
+	margin: 0;
 }
 
-#comment-form #edit-actions {
+div.comment-form #edit-actions {
 	margin: 0.2em 0 0 0;
 	clear: right;
 	float: right;
 }
 
-#commentform-wrapper a.avatar {
-	float: left;
+div.comment-form .form-left {
+	display: table-cell;
+	width: 32px;
+	vertical-align: top;
+	margin: 0;
+	padding: 0;
 }
 
-#commentform-wrapper a.avatar img {
+div.comment-form .form-right {
+	display: table-cell;
+	margin: 0;
+	padding: 0 0 0 6px;
+	width: 100%;
+	vertical-align: top;
+}
+
+div.comment-form a.avatar {
 	width: 32px;
 	height: 32px;
+	margin: 0;
+	padding: 0;
+}
+
+div.comment-form a.avatar img {
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	padding: 0;
 }
 
 /* Single Comment */

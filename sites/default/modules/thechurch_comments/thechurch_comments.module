@@ -70,8 +70,45 @@ function thechurch_comments_ajax_callback($form, $form_state) {
  */
 function thechurch_comments_menu_alter(&$items) {
 
-    $items['comment/reply/%node']['access callback'] = false;
-    $items['comment/%/view']['access callback'] = false;
-    $items['comment/%']['access callback'] = false;
+	// Remove access to uneccessary menu itesm
+  $items['comment/reply/%node']['access callback'] = false;
+  $items['comment/%/view']['access callback'] = false;
+  $items['comment/%']['access callback'] = false;
+  unset($items['comment/%comment/edit']['access callback']);
+  $items['comment/%comment/edit']['access arguments'] = array('administer comments');
+  
+  // Allow users to delete their own comments
+  $items['comment/%/delete']['access callback'] = 'thechurch_comments_comment_access';
+  $items['comment/%/delete']['access arguments'] = array('edit', 1);
 
+}
+
+/**
+ * Determines whether the current user has access to a particular comment.
+ *
+ * Authenticated users can edit their comments as long they have not been
+ * replied to. This prevents people from changing or revising their statements
+ * based on the replies to their posts.
+ *
+ * @param $op
+ *   The operation that is to be performed on the comment. Only 'edit' is
+ *   recognized now.
+ * @param $comment
+ *   The comment object.
+ * @return
+ *   TRUE if the current user has acces to the comment, FALSE otherwise.
+ */
+function thechurch_comments_comment_access($op, $cid) {
+
+  global $user;
+  
+  $comment = comment_load($cid);
+
+	
+  if ($op == 'edit' && is_object($comment)) {
+    return ($user->uid && $user->uid == $comment->uid && $comment->status == COMMENT_PUBLISHED && user_access('edit own comments')) || user_access('administer comments');
+  } else {
+  	return false;
+  }
+  
 }

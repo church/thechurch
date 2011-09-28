@@ -106,12 +106,33 @@ function thechurch_preprocess_user_profile(&$variables) {
  * Implements template_preprocess_comment()
  */
 function thechurch_preprocess_comment(&$variables) {
+
+	$comment = $variables['elements']['#comment'];
 	
 	// Remove the Reply link
 	unset($variables['content']['links']['comment']['#links']['comment-reply']);
 	
 	// Remove the Comment Forbidden link
 	unset($variables['content']['links']['comment']['#links']['comment_forbidden']);
-
+	
+	// Remove the Comment Delete link and add it back (do this to change who the link appears to)
+	unset($variables['content']['links']['comment']['#links']['comment-edit']);
+	if (user_access('administer comments')) {
+		$variables['content']['links']['comment']['#links']['comment-edit'] = array(
+        'title' => t('edit'),
+        'href' => "comment/$comment->cid/edit",
+        'html' => TRUE,
+      );
+  }
+	
+	// Remove the Comment Delete link and add it back (do this to change who the link appears to)
+	unset($variables['content']['links']['comment']['#links']['comment-delete']);
+  if (user_access('administer comments') || (user_access('edit own comments') && comment_access('edit', $comment))) {
+		$variables['content']['links']['comment']['#links']['comment-delete'] = array(
+        'title' => t('delete'),
+        'href' => "comment/$comment->cid/delete",
+        'html' => TRUE,
+      );
+  }
 
 }
