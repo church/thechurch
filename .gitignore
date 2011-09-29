@@ -1,4 +1,5 @@
 .DS_Store
 sites/
+sites/default/default.settings.php
 sites/default/settings.php
 sites/default/files
