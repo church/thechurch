@@ -80,6 +80,10 @@ function thechurch_comments_menu_alter(&$items) {
   // Allow users to delete their own comments
   $items['comment/%/delete']['access callback'] = 'thechurch_comments_comment_access';
   $items['comment/%/delete']['access arguments'] = array('edit', 1);
+  
+  // Set up the Ajax Delivery of Delete Comments Link
+  $items['comment/%/delete']['delivery callback'] = 'ajax_deliver';
+  $items['comment/%/delete']['ajax']['progress'] = false;
 
 }
 
@@ -112,3 +116,15 @@ function thechurch_comments_comment_access($op, $cid) {
   }
   
 }
+
+/**
+ * Implementation of hook_comment_view_alter().
+ */
+/*
+I think if we use hook_node_view here it will work.
+function thechurch_comments_node(&$build) {
+	print '<pre>';
+	print_r($build);
+	print '</pre>';
+}
+*/

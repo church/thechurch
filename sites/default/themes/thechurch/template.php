@@ -129,10 +129,13 @@ function thechurch_preprocess_comment(&$variables) {
 	unset($variables['content']['links']['comment']['#links']['comment-delete']);
   if (user_access('administer comments') || (user_access('edit own comments') && comment_access('edit', $comment))) {
 		$variables['content']['links']['comment']['#links']['comment-delete'] = array(
-        'title' => t('delete'),
-        'href' => "comment/$comment->cid/delete",
-        'html' => TRUE,
-      );
+	    'title' => t('delete'),
+	    'href' => "comment/$comment->cid/delete",
+	    'attributes' => array(
+	    	'class' => 'use-ajax',
+	    ),
+    );
+      
   }
 
 }

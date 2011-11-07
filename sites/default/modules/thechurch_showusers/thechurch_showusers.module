@@ -25,6 +25,8 @@ function thechurch_showusers_findusers($tid = null) {
 	  
   global $user;
   
+  $user = user_load($user->uid);
+  
   // Find 12 users
   $query = db_select('users' , 'u');
   $picture = $query->join('file_managed', 'p', 'p.fid = u.picture');
