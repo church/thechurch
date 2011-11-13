@@ -66,6 +66,27 @@ function thechurch_comments_ajax_callback($form, $form_state) {
 }
 
 /**
+ * Comments Delete Link Ajax Callback.
+ */
+function thechurch_comments_ajax_confirm_delete_page($cid) {
+
+	// Get the HTML of the detele page.
+	$data = drupal_render(comment_confirm_delete_page($cid));
+	
+	// Put all of the Ajax Commands into an array
+	$commands = array();
+	
+	// Replace the HTML
+	$commands[] = ajax_command_html('#comment-'.$cid.' + .comment', $data, array('effect' => 'fade'));
+		
+
+	return array('#type' => 'ajax', '#commands' => $commands);
+	
+}
+
+
+
+/**
  * Implementation of hook_menu_alter().
  */
 function thechurch_comments_menu_alter(&$items) {
@@ -82,8 +103,9 @@ function thechurch_comments_menu_alter(&$items) {
   $items['comment/%/delete']['access arguments'] = array('edit', 1);
   
   // Set up the Ajax Delivery of Delete Comments Link
-  $items['comment/%/delete']['delivery callback'] = 'ajax_deliver';
-  $items['comment/%/delete']['ajax']['progress'] = false;
+  $items['comment/%/delete/ajax'] = $items['comment/%/delete'];
+  $items['comment/%/delete/ajax']['delivery callback'] = 'ajax_deliver';
+  $items['comment/%/delete/ajax']['page callback'] = 'thechurch_comments_ajax_confirm_delete_page';
 
 }
 
@@ -116,15 +138,3 @@ function thechurch_comments_comment_access($op, $cid) {
   }
   
 }
-
-/**
- * Implementation of hook_comment_view_alter().
- */
-/*
-I think if we use hook_node_view here it will work.
-function thechurch_comments_node(&$build) {
-	print '<pre>';
-	print_r($build);
-	print '</pre>';
-}
-*/

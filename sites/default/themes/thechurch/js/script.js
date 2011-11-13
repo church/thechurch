@@ -2,13 +2,38 @@ Drupal.behaviors.thechurch = {
 	attach: function(context, settings) {
 
 		// Add body classes basead on Browser and Operating System
-		jQuery('body').addClass(jQuery.browser.name).addClass(jQuery.browser.className).addClass(jQuery.layout.name).addClass(jQuery.layout.className).addClass(jQuery.os.name);
+jQuery('body').addClass(jQuery.browser.name).addClass(jQuery.browser.className).addClass(jQuery.layout.name).addClass(jQuery.layout.className).addClass(jQuery.os.name);
 		
 		// If the height of the title exceedes that of what it should, change it to a block to force everything to the next line.
 		if (jQuery('.title').height() > 33) {
 			jQuery('.citytitle').css('display', 'block');
 		}
 		
+		// Setup an Ajax Link
+		jQuery('a.ajax-link:not(.ajax-processed)').addClass('ajax-processed').each(function() {
+			
+			// Cret the element settings object
+			var element_settings = {};
+			
+			// Get rid of the progress
+			element_settings.progress = { 'type' : 'none' };
+			
+			// setup the click elements and add the href
+			if (jQuery(this).attr('href')) {
+				element_settings.url = jQuery(this).attr('href');
+				element_settings.event = 'click';
+			}
+			
+			
+			// Get the base
+			var base = jQuery(this).attr('id');
+			
+			// Register the Ajax Request with Drupal
+			Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
+			
+		
+		});
+				
 		// Auto Resize the Textarea
 		jQuery('#post-node-form #edit-body-und-0-value').autoResize({
 		  extraSpace : 13,

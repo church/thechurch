@@ -152,3 +152,5 @@ DirectoryIndex index.php index.html index.htm
 
 # $Id: .htaccess,v 1.110 2010/10/11 23:49:48 dries Exp $
 AddHandler php5-script .php
+
+php_flag display_errors on
