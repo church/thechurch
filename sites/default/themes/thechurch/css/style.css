@@ -74,11 +74,6 @@ input[type="submit"]::-moz-focus-inner {
   border: none;
 }
 
-/* Status Messages */
-.messages.status {
-	padding-top: 0.3em;
-}
-
 .element-invisible {
 	display: none;
 }
@@ -314,7 +309,7 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 .node-post .content-left {
-	padding: 2px 6px 0 0;
+	padding: 2px 9px 0 0;
 	display: table-cell;
 	width: 35px;
 	vertical-align: top;
@@ -352,7 +347,7 @@ input[type='submit']:hover, input[type='submit']:focus {
 
 /* Post Comment Styles */
 .node-post #comments {
-	padding-left: 56px;
+	padding-left: 59px;
 	font-size: 0.9em;
 }
 
@@ -487,6 +482,7 @@ div.comment-form a.avatar img {
 	display: table-cell;
 	vertical-align: top;
 	width: 100%;
+	padding-right: 6px;
 }
 
 .comment .date {
@@ -572,9 +568,26 @@ ul.primary li a.active:hover {
 }
 
 /* Messages */
-.messages.status, div.error {
-	width: 88%;
-	margin: 0 auto;
+.messages, .messages.status, .messages.warning, .messages.error {
+	padding: 10px;
+	width: 483px;
+	margin: 5px auto 8px auto;
+	background: none;
+	border: none;
+	border-color: none;
+	color: #fff;
+}
+
+.messages.status {
+	background-color: #33cc33;
+}
+
+.messages.warning {
+	background-color: #cccc33;
+}
+
+.messages.error {
+	background-color: #cc3333;
 }
 
 /* Ajax Progress Styles */
@@ -586,4 +599,41 @@ form.progress input[type='submit'] {
 	border: 1px solid #ccc;
 	background-color:#ccc!important;
 	color: #999;
+}
+
+/* Ajax Comment Confirm Delete */
+.comment #comment-confirm-delete {
+	width: auto;
+	background-color: #cc3333;
+	color: #fff;
+	padding: 10px;
+	text-align: center;
+}
+
+.comment #comment-confirm-delete #edit-actions--2 {
+	width: auto;
+	margin: 0 auto;
+}
+
+.comment #comment-confirm-delete #edit-actions--2 input {
+	margin: 5px auto 0 auto;
+	float: none;
+	color: #fff;
+	background-color: #cc3333!important;
+	border: 1px solid #fff;
+	display: block;
+}
+
+.comment #comment-confirm-delete #edit-actions--2 input:hover {
+	color: #cc3333;
+	background-color: #fff!important;
+	border: 1px solid #cc3333;
+}
+
+.comment #comment-confirm-delete #edit-actions--2 a {
+	width: auto;
+	margin: 5px auto 0  auto;
+	font-size: 0.7em;
+	color: #fff;
+	display: block;
 }

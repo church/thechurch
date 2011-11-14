@@ -17,6 +17,20 @@ function thechurch_comments_form_comment_form_alter(&$form, &$form_state, $form_
 		'callback' => 'thechurch_comments_ajax_callback',
 		'progress' => false,
 	);
+	
+}
+
+/**
+ * Implementation of hook_form_BASE_FORM_ID_alter().
+ */
+function thechurch_comments_form_comment_confirm_delete_alter(&$form, &$form_state, $form_id) {
+	/*
+	// Add the Ajax Submit Function
+	$form['actions']['submit']['#ajax'] = array(
+		'callback' => 'thechurch_comments_ajax_delete',
+		'progress' => false,
+	);
+	*/
 }
 
 /**
@@ -59,6 +73,28 @@ function thechurch_comments_ajax_callback($form, $form_state) {
 	
 	// Reset the textarea back to it's original color
 	$commands[] = ajax_command_invoke('#comment-form', 'removeClass', array('progress'));
+	
+	// Return the Ajax Commands Array
+	return array('#type' => 'ajax', '#commands' => $commands);
+	
+}
+
+/**
+ * Comments Ajax Callback.
+ */
+function thechurch_comments_ajax_delete($form, $form_state) {
+	
+	// Get rid of all of the messages that have been set
+	drupal_get_messages();
+
+	// Get the comment & node objects
+	$comment = $form_state['comment'];
+	
+	// Put all of the Ajax Commands into an array
+	$commands = array();
+	
+	// Place the comment above the form
+	$commands[] = ajax_command_remove('#comment-'.$comment->cid.', comment-'.$comment->cid.' + .comment');
 	
 	// Return the Ajax Commands Array
 	return array('#type' => 'ajax', '#commands' => $commands);

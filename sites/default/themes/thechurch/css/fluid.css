@@ -12,3 +12,7 @@ div.tabs {
 	width: auto;
 	margin: 0 10px;
 }
+
+.messages, .messages.status, .messages.warning, .messages.error {
+	width: auto;
+}

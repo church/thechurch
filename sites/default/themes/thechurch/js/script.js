@@ -24,13 +24,13 @@ jQuery('body').addClass(jQuery.browser.name).addClass(jQuery.browser.className).
 				element_settings.event = 'click';
 			}
 			
+			element_settings.effect = 'fade';
 			
 			// Get the base
 			var base = jQuery(this).attr('id');
 			
 			// Register the Ajax Request with Drupal
 			Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
-			
 		
 		});
 				

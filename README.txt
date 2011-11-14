@@ -1,4 +1,3 @@
-/* Update using Supertweet.net */
 
 CONTENTS OF THIS FILE
 ---------------------
