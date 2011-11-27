@@ -602,7 +602,7 @@ form.progress input[type='submit'] {
 }
 
 /* Ajax Comment Confirm Delete */
-.comment #comment-confirm-delete {
+.comment .confirmation {
 	width: auto;
 	background-color: #cc3333;
 	color: #fff;
@@ -610,12 +610,12 @@ form.progress input[type='submit'] {
 	text-align: center;
 }
 
-.comment #comment-confirm-delete #edit-actions--2 {
+.comment .confirmation .form-actions {
 	width: auto;
 	margin: 0 auto;
 }
 
-.comment #comment-confirm-delete #edit-actions--2 input {
+.comment .confirmation .form-actions input {
 	margin: 5px auto 0 auto;
 	float: none;
 	color: #fff;
@@ -624,13 +624,13 @@ form.progress input[type='submit'] {
 	display: block;
 }
 
-.comment #comment-confirm-delete #edit-actions--2 input:hover {
+.comment .confirmation .form-actions input:hover {
 	color: #cc3333;
 	background-color: #fff!important;
 	border: 1px solid #cc3333;
 }
 
-.comment #comment-confirm-delete #edit-actions--2 a {
+.comment .confirmation .form-actions a {
 	width: auto;
 	margin: 5px auto 0  auto;
 	font-size: 0.7em;

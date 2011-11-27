@@ -2,11 +2,11 @@ Drupal.behaviors.thechurch = {
 	attach: function(context, settings) {
 
 		// Add body classes basead on Browser and Operating System
-jQuery('body').addClass(jQuery.browser.name).addClass(jQuery.browser.className).addClass(jQuery.layout.name).addClass(jQuery.layout.className).addClass(jQuery.os.name);
+jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.className).addClass(jQuery.layout.name).addClass(jQuery.layout.className).addClass(jQuery.os.name);
 		
 		// If the height of the title exceedes that of what it should, change it to a block to force everything to the next line.
 		if (jQuery('.title').height() > 33) {
-			jQuery('.citytitle').css('display', 'block');
+			jQuery('.citytitle').once().css('display', 'block');
 		}
 		
 		// Setup an Ajax Link
@@ -25,21 +25,21 @@ jQuery('body').addClass(jQuery.browser.name).addClass(jQuery.browser.className).
 			}
 			
 			element_settings.effect = 'fade';
-			
+								
 			// Get the base
 			var base = jQuery(this).attr('id');
 			
 			// Register the Ajax Request with Drupal
 			Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
-		
+					
 		});
-				
+		
 		// Auto Resize the Textarea
-		jQuery('#post-node-form #edit-body-und-0-value').autoResize({
+		jQuery('#post-node-form #edit-body-und-0-value').once().autoResize({
 		  extraSpace : 13,
 		  animate : false
 		});
-		jQuery('#edit-comment-body-und-0-value').autoResize({
+		jQuery('#edit-comment-body-und-0-value').once().autoResize({
 		  extraSpace : 13,
 		  animate : false
 		});
@@ -70,9 +70,15 @@ jQuery('body').addClass(jQuery.browser.name).addClass(jQuery.browser.className).
 		});
 		
 		// When an ajax form is submited, give the user some indication of this by adding a class to the form
-		jQuery('#comment-form .form-submit.ajax-processed').mousedown(function() {
+		jQuery('#comment-form .form-submit.ajax-processed').once().mousedown(function() {
 			jQuery('#comment-form').addClass('progress');
 		});
+		
+		// Re-attach the Drupal Behaviors after an ajax request.
+  	jQuery('.ajax-processed').once().ajaxSuccess(function() {
+  			Drupal.attachBehaviors();
+		});
+		
   
   }
 }
