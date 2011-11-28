@@ -29,6 +29,8 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: 'Helvetica', 'Arial', sans-serif;
+	font-size: 0.95em;
+	line-height: 1.2em;
 }
 
 div {
@@ -143,6 +145,7 @@ input[type="submit"]::-moz-focus-inner {
 }
 
 #comments {
+	font-size: 0.9em;
 	margin: 0;
 	clear: both;
 }
@@ -285,8 +288,6 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 #post-node-form #edit-body-und-0-value {
-	font-size: 14px;
-	line-height: 18px;
 	padding: 5px;
 	height: 50px;
 	resize: none;
@@ -321,6 +322,7 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 .node-post .author-info {
+	margin: 0 0 2px 0;
 	font-weight: bold;
 }
 
@@ -419,8 +421,8 @@ div.comment-form {
 }
 
 #comments #edit-comment-body-und-0-value {
-	font-size: 14px;
-	line-height: 18px;
+	font-size: 1em;
+	line-height: 1.1em;
 	padding: 5px;
 	height: 32px;
 	resize: none;
@@ -467,9 +469,13 @@ div.comment-form a.avatar img {
 }
 
 /* Single Comment */
+.comment .author-info {
+	margin: 0;
+}
 
 .comment .content {
 	display: table;
+	line-height: 1.1em;
 }
 
 .comment .content-left {
@@ -602,7 +608,13 @@ form.progress input[type='submit'] {
 }
 
 /* Ajax Comment Confirm Delete */
-.comment .confirmation {
+.comment + .confirmation-wrapper {
+	border-top: 1px solid #eee;
+	margin: 0.5em 0 0 0;
+	padding: 0.5em 0 0 0;
+}
+
+.comment + .confirmation-wrapper .confirmation {
 	width: auto;
 	background-color: #cc3333;
 	color: #fff;
@@ -610,12 +622,12 @@ form.progress input[type='submit'] {
 	text-align: center;
 }
 
-.comment .confirmation .form-actions {
+.comment + .confirmation-wrapper .form-actions {
 	width: auto;
 	margin: 0 auto;
 }
 
-.comment .confirmation .form-actions input {
+.comment + .confirmation-wrapper .form-actions input {
 	margin: 5px auto 0 auto;
 	float: none;
 	color: #fff;
@@ -624,13 +636,13 @@ form.progress input[type='submit'] {
 	display: block;
 }
 
-.comment .confirmation .form-actions input:hover {
+.comment + .confirmation-wrapper .form-actions input:hover {
 	color: #cc3333;
 	background-color: #fff!important;
 	border: 1px solid #cc3333;
 }
 
-.comment .confirmation .form-actions a {
+.comment + .confirmation-wrapper .form-actions a {
 	width: auto;
 	margin: 5px auto 0  auto;
 	font-size: 0.7em;

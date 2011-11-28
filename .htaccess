@@ -7,6 +7,8 @@ RewriteCond %{REMOTE_HOST} !^71.43.128.251
 RewriteCond %{REMOTE_HOST} !^97.102.226.128
 RewriteCond %{REMOTE_HOST} !^10.0.1.30
 RewriteCond %{REMOTE_HOST} !^10.0.1.6
+RewriteCond %{REMOTE_HOST} !^97.101.197.197
+RewriteCond %{REMOTE_HOST} !^72.64.208.215
 RewriteRule .* http://thechur.ch/$1 [R=302,L]
 
 #

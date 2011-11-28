@@ -94,7 +94,7 @@ function thechurch_comments_ajax_delete($form, $form_state) {
 	$commands = array();
 	
 	// FadeOut the deleted comment
-	$commands[] = ajax_command_invoke('#comment-'.$comment->cid.' + .comment', 'fadeOut');
+	$commands[] = ajax_command_invoke('#comment-'.$comment->cid.' + .comment + .confirmation-wrapper', 'fadeOut');
 		
 	// Return the Ajax Commands Array
   return array('#type' => 'ajax', '#commands' => $commands);
@@ -110,14 +110,17 @@ function thechurch_comments_ajax_confirm_delete_page($cid) {
 
     $form = drupal_get_form('comment_confirm_delete', $comment);
 		
-    $data = drupal_render($form);
+    $data = '<div class="confirmation-wrapper">'.drupal_render($form).'</div>';
   }
 	
 	// Put all of the Ajax Commands into an array
 	$commands = array();
 	
-	// Replace the HTML
-	$commands[] = ajax_command_html('#comment-'.$cid.' + .comment', $data, array('effect' => 'fade'));
+	// Fade out the Comment so the Delete Form can take Precidence
+	$commands[] = ajax_command_invoke('#comment-'.$comment->cid.' + .comment', 'hide');
+	
+	// Append the Delete Form
+	$commands[] = ajax_command_after('#comment-'.$comment->cid.' + .comment', $data, array('effect' => 'fade'));
 	
 	// Mark it as changed
 	$commands[] = ajax_command_changed('#comment-'.$cid.' + .comment');

@@ -79,6 +79,15 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
   			Drupal.attachBehaviors();
 		});
 		
+		// Cancel Deletion remove Delete form and fade in comment
+		jQuery('.comment + .confirmation-wrapper .form-actions a').click(function (event) {
+			event.preventDefault();
+			var comment = jQuery(this).parents('.confirmation-wrapper').prev('.comment');
+			jQuery(this).parents('.confirmation-wrapper').fadeOut(400, function() {
+				jQuery(this).remove();
+				comment.fadeIn();
+			});
+		});
   
   }
 }

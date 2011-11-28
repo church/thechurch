@@ -23,7 +23,7 @@ drupal_add_html_head(
 	 	unset($variables['content']['comment_form']['author']['_author']);
 	 	unset($variables['content']['comment_form']['comment_body']['und'][0]['format']);
 	}
-		
+			
  }
  
  /**
