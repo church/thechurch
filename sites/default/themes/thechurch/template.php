@@ -138,6 +138,37 @@ function thechurch_preprocess_comment(&$variables) {
     );
       
   }
-  
 
 }
+
+/**
+ * Implements template_preprocess_pager()
+ */
+function thechurch_preprocess_pager(&$variables) {
+	
+	$variables['quantity'] = 0;
+
+}
+
+/**
+ * Implements template_preprocess_item_list()
+ */
+function thechurch_preprocess_item_list(&$variables) {
+	
+	$i = 0;
+	foreach ($variables['items'] as $item) {
+		foreach ($item['class'] as $class) {
+			if ($class == 'pager-first' || $class == 'pager-ellipsis' || $class == 'pager-last') {
+				$remove[] = $i;
+			}
+		}
+		$i++;
+	}
+	
+	foreach ($remove as $gone) {
+		unset($variables['items'][$gone]);
+	}
+	
+
+}
+

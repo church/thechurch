@@ -34,6 +34,45 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 					
 		});
 		
+		// Setup Ajax Paging on Comments
+		jQuery('ul.pager li.pager-next a:not(.ajax-processed)').addClass('ajax-processed').each(function() {
+			
+			jQuery(this).attr('title', '');
+			
+			jQuery(this).html('show newer');
+			
+			// Cret the element settings object
+			var element_settings = {};
+			
+			// Get rid of the progress
+			element_settings.progress = { 'type' : 'none' };
+			
+			// setup the click elements and add the href
+			if (jQuery(this).attr('href')) {
+				var href = jQuery(this).attr('href');
+				var pieces = href.split("?");
+				element_settings.url = jQuery('link[rel="shortlink"]').attr('href')+'/comments/ajax/next?'+pieces[1];
+				element_settings.event = 'click';
+			}
+			
+			element_settings.effect = 'fade';
+								
+			// Get the base
+			var base = jQuery(this).attr('id');
+			
+			jQuery(this).click(function(event) {
+			  
+			  jQuery(this).addClass('progress');
+			  
+			});
+
+						
+			// Register the Ajax Request with Drupal
+			Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
+					
+		});
+		
+		
 		// Auto Resize the Textarea
 		jQuery('#post-node-form #edit-body-und-0-value').once().autoResize({
 		  extraSpace : 13,

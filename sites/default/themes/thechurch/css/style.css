@@ -92,7 +92,7 @@ input[type="submit"]::-moz-focus-inner {
 #header {
 	width: 100%;
 	background-color: #eee;
-	margin-bottom: 5px;
+	margin-bottom: 0.5em;
 	padding-bottom: 3px;
 }
 
@@ -218,7 +218,7 @@ ul.links.inline {
 }
 
 /* Form Styles */
-#edit-actions {
+.form-actions {
 	margin: 0;
 	padding: 0;
 }
@@ -276,7 +276,7 @@ input[type='submit']:hover, input[type='submit']:focus {
 	vertical-align: top;
 }
 
-#post-node-form #edit-actions {
+#post-node-form .form-actions {
 	margin: 0.2em 0 0 0;
 	clear: right;
 	float: right;
@@ -432,7 +432,7 @@ div.comment-form {
 	margin: 0;
 }
 
-div.comment-form #edit-actions {
+div.comment-form .form-actions {
 	margin: 0.2em 0 0 0;
 	clear: right;
 	float: right;
@@ -633,7 +633,6 @@ form.progress input[type='submit'] {
 	color: #fff;
 	background-color: #cc3333!important;
 	border: 1px solid #fff;
-	display: block;
 }
 
 .comment + .confirmation-wrapper .form-actions input:hover {
@@ -648,4 +647,54 @@ form.progress input[type='submit'] {
 	font-size: 0.7em;
 	color: #fff;
 	display: block;
+}
+
+/* Delete Confirmation Page */
+.page-comment-delete .form-actions {
+	padding: 0.5em 0 0 0;
+}
+
+.page-comment-delete .form-actions a {
+	display: inline-block;
+	font-size: 0.8em;
+	margin: 0.7em 0 0 1em;
+}
+
+/* Pager Links */
+ul.pager {
+	margin: 0;
+	padding: 0;
+}
+
+ul.pager li a {
+	display: inline-block;
+	margin: 0;
+	background-color: #fff;
+	border: 1px solid #999;
+	color: #999;
+	font-weight: bold;
+	cursor: pointer;
+	font-size: 12px;
+	padding: 3px 5px;
+	text-decoration: none;
+	width: 70px;
+}
+
+ul.pager li a.progress, ul.pager li a.progress:hover {
+	border: 1px solid #ccc;
+	background-color:#ccc;
+	color: #999;
+	margin: 0 auto;
+	display: block;
+}
+
+ul.pager li a:hover {
+	background-color:#CC3333;
+	border-color: #CC3333;
+	color: #ffffff;
+}
+.comment-wrapper div.item-list {
+	border-top: 1px solid #eee;
+	margin: 0.5em 0 0 0;
+	padding: 0.5em 0 0 0;
 }

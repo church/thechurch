@@ -152,6 +152,12 @@ function thechurch_comments_menu_alter(&$items) {
   $items['comment/%/delete/ajax']['delivery callback'] = 'ajax_deliver';
   $items['comment/%/delete/ajax']['page callback'] = 'thechurch_comments_ajax_confirm_delete_page';
   $items['comment/%/delete/ajax']['type'] = MENU_CALLBACK;
+  
+  // Set up the Ajax Delivery of Delete Comments Link
+  $items['node/%node/comments/ajax'] = $items['node/%node'];
+  $items['node/%node/comments/ajax']['delivery callback'] = 'ajax_deliver';
+  $items['node/%node/comments/ajax']['page callback'] = 'thechurch_comments_comment_node_page_additions';
+  $items['node/%node/comments/ajax']['type'] = MENU_CALLBACK;
 
 }
 
@@ -183,4 +189,45 @@ function thechurch_comments_comment_access($op, $cid) {
   	return false;
   }
   
+}
+
+/**
+ * Build the comment-related elements for node detail pages.
+ *
+ * @param $node
+ *  A node object.
+ */
+function thechurch_comments_comment_node_page_additions($node, $dir) {
+	
+  $additions = array();
+
+  // Only attempt to render comments if the node has visible comments.
+  // Unpublished comments are not included in $node->comment_count, so show
+  // comments unconditionally if the user is an administrator.
+  if (($node->comment_count && user_access('access comments')) || user_access('administer comments')) {
+    $mode = variable_get('comment_default_mode_' . $node->type, COMMENT_MODE_THREADED);
+    $comments_per_page = variable_get('comment_default_per_page_' . $node->type, 50);
+    if ($cids = comment_get_thread($node, $mode, $comments_per_page)) {
+      $comments = comment_load_multiple($cids);
+      comment_prepare_thread($comments);
+      $build = comment_view_multiple($comments, $node);
+      $build['pager']['#theme'] = 'pager';
+      $additions['comments'] = $build;
+    }
+  }
+  
+  // Put all of the Ajax Commands into an array
+	$commands = array();
+	
+	// Fade out the Comment so the Delete Form can take Precidence
+	// $commands[] = ajax_command_invoke('#comment-'.$comment->cid.' + .comment', 'hide');
+	
+	// Append the Delete Form
+	$commands[] = ajax_command_replace('.comment-wrapper .item-list', drupal_render($additions), array('effect' => 'fade'));
+	
+	// Mark it as changed
+	
+	return array('#type' => 'ajax', '#commands' => $commands);
+
+
 }
