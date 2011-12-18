@@ -122,6 +122,8 @@ function thechurch_comments_ajax_confirm_delete_page($cid) {
 	// Append the Delete Form
 	$commands[] = ajax_command_after('#comment-'.$comment->cid.' + .comment', $data, array('effect' => 'fade'));
 	
+	$commands[] = ajax_command_invoke(null, "reAttach", array());
+	
 	// Mark it as changed
 	$commands[] = ajax_command_changed('#comment-'.$cid.' + .comment');
 	
@@ -138,8 +140,8 @@ function thechurch_comments_menu_alter(&$items) {
 
 	// Remove access to uneccessary menu itesm
   $items['comment/reply/%node']['access callback'] = false;
-  $items['comment/%/view']['access callback'] = false;
-  $items['comment/%']['access callback'] = false;
+  // $items['comment/%/view']['access callback'] = false;
+  // $items['comment/%']['access callback'] = false;
   unset($items['comment/%comment/edit']['access callback']);
   $items['comment/%comment/edit']['access arguments'] = array('administer comments');
   
@@ -154,10 +156,11 @@ function thechurch_comments_menu_alter(&$items) {
   $items['comment/%/delete/ajax']['type'] = MENU_CALLBACK;
   
   // Set up the Ajax Delivery of Delete Comments Link
-  $items['node/%node/comments/ajax'] = $items['node/%node'];
-  $items['node/%node/comments/ajax']['delivery callback'] = 'ajax_deliver';
-  $items['node/%node/comments/ajax']['page callback'] = 'thechurch_comments_comment_node_page_additions';
-  $items['node/%node/comments/ajax']['type'] = MENU_CALLBACK;
+  $items['node/%node/comments/ajax/%'] = $items['node/%node'];
+  $items['node/%node/comments/ajax/%']['delivery callback'] = 'ajax_deliver';
+  $items['node/%node/comments/ajax/%']['page callback'] = 'thechurch_comments_comment_node_page_additions';
+  $items['node/%node/comments/ajax/%']['type'] = MENU_CALLBACK;
+  $items['node/%node/comments/ajax/%']['page arguments'] = array(1,4);
 
 }
 
@@ -191,6 +194,7 @@ function thechurch_comments_comment_access($op, $cid) {
   
 }
 
+
 /**
  * Build the comment-related elements for node detail pages.
  *
@@ -200,6 +204,7 @@ function thechurch_comments_comment_access($op, $cid) {
 function thechurch_comments_comment_node_page_additions($node, $dir) {
 	
   $additions = array();
+  global $pager_page_array, $pager_total;
 
   // Only attempt to render comments if the node has visible comments.
   // Unpublished comments are not included in $node->comment_count, so show
@@ -210,24 +215,124 @@ function thechurch_comments_comment_node_page_additions($node, $dir) {
     if ($cids = comment_get_thread($node, $mode, $comments_per_page)) {
       $comments = comment_load_multiple($cids);
       comment_prepare_thread($comments);
-      $build = comment_view_multiple($comments, $node);
-      $build['pager']['#theme'] = 'pager';
-      $additions['comments'] = $build;
+      $build = array();
+      if ($dir == 'previous' && $pager_page_array[0] > 0) {
+      	$build['pager']['#theme'] = 'thechurch_comments_pager_previous';
+      }
+      $build['comments'] = comment_view_multiple($comments, $node);
+      if ($dir == 'next' && $pager_page_array[0] < $pager_total[0]-1) {
+      	$build['pager']['#theme'] = 'thechurch_comments_pager_next';
+      }
+      $additions['build'] = $build;
     }
   }
-  
+    
   // Put all of the Ajax Commands into an array
 	$commands = array();
 	
-	// Fade out the Comment so the Delete Form can take Precidence
-	// $commands[] = ajax_command_invoke('#comment-'.$comment->cid.' + .comment', 'hide');
-	
-	// Append the Delete Form
-	$commands[] = ajax_command_replace('.comment-wrapper .item-list', drupal_render($additions), array('effect' => 'fade'));
-	
-	// Mark it as changed
-	
+	// Add the Comments to the existing list
+	// $commands[] = ajax_command_replace('.comment-wrapper .item-list', drupal_render($additions), array('effect' => 'fade'));
+	if ($dir == 'next') {
+		$commands[] = ajax_command_remove('.item-list ul.pager-next');
+		$commands[] = ajax_command_append('.comment-list', drupal_render($additions), array('effect' => 'fade'));
+	} else {
+		$commands[] = ajax_command_remove('.item-list ul.pager-previous');
+		$commands[] = ajax_command_prepend('.comment-list', drupal_render($additions), array('effect' => 'fade'));
+	}
+	// $commands[] = ajax_command_replace('.comment-wrapper .item-list', '<pre>'.print_r($pager_page_array, true).'</pre>', array('effect' => 'fade'));
+
+		
 	return array('#type' => 'ajax', '#commands' => $commands);
 
+}
 
+function theme_thechurch_comments_pager_previous($variables) {
+	$dir = $variables['dir'];
+	$tags = $variables['tags'];
+  $element = 0;
+  $parameters = $variables['parameters'];
+  $quantity = 0;
+  global $pager_page_array, $pager_total;
+
+  // Calculate various markers within this pager piece:
+  // Middle is used to "center" pages around the current page.
+  $pager_middle = ceil($quantity / 2);
+  // current is the page we are currently paged to
+  $pager_current = $pager_page_array[$element] + 1;
+  // first is the first page listed by this pager piece (re quantity)
+  $pager_first = $pager_current - $pager_middle + 1;
+  // last is the last page listed by this pager piece (re quantity)
+  $pager_last = $pager_current + $quantity - $pager_middle;
+  // max is the maximum page number
+  $pager_max = $pager_total[$element];
+  // End of marker calculations.
+
+  $li_previous = theme('pager_previous', array('text' => (isset($tags[1]) ? $tags[1] : t('‹ previous')), 'element' => $element, 'interval' => 1, 'parameters' => $parameters));
+
+  if ($pager_total[$element] > 1) {
+
+    if ($li_previous) {
+      $items[] = array(
+        'class' => array('pager-previous'),
+        'data' => $li_previous,
+      );
+    }
+    
+    return '<h2 class="element-invisible">' . t('Pages') . '</h2>' . theme('item_list', array(
+      'items' => $items,
+      'attributes' => array('class' => array('pager-previous')),
+    ));
+  }
+
+}
+
+
+function theme_thechurch_comments_pager_next($variables) {
+	$dir = $variables['dir'];
+	$tags = $variables['tags'];
+  $element = 0;
+  $parameters = $variables['parameters'];
+  $quantity = 0;
+  global $pager_page_array, $pager_total;
+
+  // Calculate various markers within this pager piece:
+  // Middle is used to "center" pages around the current page.
+  $pager_middle = ceil($quantity / 2);
+  // current is the page we are currently paged to
+  $pager_current = $pager_page_array[$element] + 1;
+  // first is the first page listed by this pager piece (re quantity)
+  $pager_first = $pager_current - $pager_middle + 1;
+  // last is the last page listed by this pager piece (re quantity)
+  $pager_last = $pager_current + $quantity - $pager_middle;
+  // max is the maximum page number
+  $pager_max = $pager_total[$element];
+  // End of marker calculations.
+
+  $li_next = theme('pager_next', array('text' => (isset($tags[3]) ? $tags[3] : t('next ›')), 'element' => $element, 'interval' => 1, 'parameters' => $parameters));
+
+  if ($pager_total[$element] > 1) {
+
+    if ($li_next) {
+      $items[] = array(
+        'class' => array('pager-next'),
+        'data' => $li_next,
+      );
+    }
+    
+    return '<h2 class="element-invisible">' . t('Pages') . '</h2>' . theme('item_list', array(
+      'items' => $items,
+      'attributes' => array('class' => array('pager-next')),
+    ));
+  }
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function thechurch_comments_theme() {
+  return array(
+    'thechurch_comments_pager_next' => array(),
+    'thechurch_comments_pager_previous' => array(),
+  );
 }

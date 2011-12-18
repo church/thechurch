@@ -1,6 +1,6 @@
 Drupal.behaviors.thechurch = {
 	attach: function(context, settings) {
-
+	
 		// Add body classes basead on Browser and Operating System
 jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.className).addClass(jQuery.layout.name).addClass(jQuery.layout.className).addClass(jQuery.os.name);
 		
@@ -8,6 +8,7 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 		if (jQuery('.title').height() > 33) {
 			jQuery('.citytitle').once().css('display', 'block');
 		}
+		
 		
 		// Setup an Ajax Link
 		jQuery('a.ajax-link:not(.ajax-processed)').addClass('ajax-processed').each(function() {
@@ -28,45 +29,74 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 								
 			// Get the base
 			var base = jQuery(this).attr('id');
-			
+						
 			// Register the Ajax Request with Drupal
 			Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
 					
 		});
+				
+		
+		jQuery('.comment-wrapper .item-list ul.pager').once(function () {
+		
+			var list = jQuery(this);
+			var html = list.html();
+			
+			jQuery('.comment-wrapper .item-list').remove();
+			
+			if (jQuery(list).children('li').hasClass('pager-previous')) {
+				jQuery('.comment-list').prepend('<div class="item-list"><ul class="pager-previous">'+html+'</ul></div>');
+			} 
+			if (jQuery(list).children('li').hasClass('pager-next')) {
+				jQuery('.comment-list').append('<div class="item-list"><ul class="pager-next">'+html+'</ul></div>');
+			}
+			
+			jQuery('ul.pager-previous li.pager-next').remove();
+			
+			jQuery('ul.pager-next li.pager-previous').remove();
+			
+		});
+		
 		
 		// Setup Ajax Paging on Comments
-		jQuery('ul.pager li.pager-next a:not(.ajax-processed)').addClass('ajax-processed').each(function() {
+		jQuery('.comment-wrapper ul.pager li a:not(.ajax-processed), .comment-wrapper ul.pager-next li a:not(.ajax-processed), .comment-wrapper ul.pager-previous li a:not(.ajax-processed)').addClass('ajax-processed').each(function() {
 			
 			jQuery(this).attr('title', '');
-			
-			jQuery(this).html('show newer');
-			
+						
 			// Cret the element settings object
 			var element_settings = {};
+			
+			var system = jQuery('link[rel="shortlink"]').attr('href');
+			
+			var href = jQuery(this).attr('href');
+			var pieces = href.split("?");
+			if (jQuery(this).parent().hasClass('pager-next')) {
+				jQuery(this).html('show newer');
+				if (pieces[1]) {
+					element_settings.url = system+'/comments/ajax/next?'+pieces[1];
+				} else {
+					element_settings.url = system+'/comments/ajax/next';
+				}
+			} else if (jQuery(this).parent().hasClass('pager-previous')) {
+				jQuery(this).html('show older');
+				if (pieces[1]) {
+					element_settings.url = system+'/comments/ajax/previous?'+pieces[1];
+				} else {
+					element_settings.url = system+'/comments/ajax/previous';
+				}
+			}
 			
 			// Get rid of the progress
 			element_settings.progress = { 'type' : 'none' };
 			
 			// setup the click elements and add the href
-			if (jQuery(this).attr('href')) {
-				var href = jQuery(this).attr('href');
-				var pieces = href.split("?");
-				element_settings.url = jQuery('link[rel="shortlink"]').attr('href')+'/comments/ajax/next?'+pieces[1];
-				element_settings.event = 'click';
-			}
+			element_settings.event = 'click';
 			
 			element_settings.effect = 'fade';
 								
 			// Get the base
-			var base = jQuery(this).attr('id');
-			
-			jQuery(this).click(function(event) {
-			  
-			  jQuery(this).addClass('progress');
-			  
-			});
-
-						
+			// var base = jQuery(this).attr('id');
+			var base = jQuery(this).attr('class');
+										
 			// Register the Ajax Request with Drupal
 			Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
 					
@@ -113,10 +143,11 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 			jQuery('#comment-form').addClass('progress');
 		});
 		
-		// Re-attach the Drupal Behaviors after an ajax request.
-  	jQuery('.ajax-processed').once().ajaxSuccess(function() {
-  			Drupal.attachBehaviors();
-		});
+		// ReAttach the Drupal Javascript Behaviors
+  	jQuery.fn.reAttach = function(data) {
+  		Drupal.attachBehaviors();
+  	};
+
 		
 		// Cancel Deletion remove Delete form and fade in comment
 		jQuery('.comment + .confirmation-wrapper .form-actions a').click(function (event) {
@@ -129,4 +160,6 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 		});
   
   }
+  
 }
+

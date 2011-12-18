@@ -67,7 +67,7 @@
 	<div class="content-right">
 		<div class="author-info">
 			<?php print $author; ?>
-			<span class="date" ><?php print $created; ?></span>
+			<a href="/comment/<?php print $comment->cid; ?>#comment-<?php print $comment->cid; ?>" ><span class="date" ><?php print $created; ?></span></a>
 		</div>
 		
 	  <div class="content"<?php print $content_attributes; ?>>

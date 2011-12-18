@@ -661,12 +661,23 @@ form.progress input[type='submit'] {
 }
 
 /* Pager Links */
-ul.pager {
-	margin: 0;
+.item-list ul.pager, .item-list ul.pager-next, .item-list ul.pager-previous {
 	padding: 0;
+	list-style-type: none;
+	border-top: 1px solid #eee;
+	margin: 0.5em 0 0 0;
+	padding: 0.5em 0 0 0;
+	text-align: center;
 }
 
-ul.pager li a {
+.item-list ul.pager li, .item-list ul.pager-next li, .item-list ul.pager-previous li {
+	margin: 0 auto;
+	width: auto;
+	padding: 0 1em;
+}
+
+.item-list ul.pager li a, .item-list ul.pager-next li a, .item-list ul.pager-previous li a {
+	float: none;
 	display: inline-block;
 	margin: 0;
 	background-color: #fff;
@@ -677,24 +688,16 @@ ul.pager li a {
 	font-size: 12px;
 	padding: 3px 5px;
 	text-decoration: none;
-	width: 70px;
 }
 
-ul.pager li a.progress, ul.pager li a.progress:hover {
+.item-list ul.pager li a[disabled="true"], .item-list ul.pager li a[disabled="true"]:hover, .item-list ul.pager-next li a[disabled="true"], .item-list ul.pager-next li a[disabled="true"]:hover, .item-list ul.pager-previous li a[disabled="true"], .item-list ul.pager-previous li a[disabled="true"]:hover {
 	border: 1px solid #ccc;
 	background-color:#ccc;
 	color: #999;
-	margin: 0 auto;
-	display: block;
 }
 
-ul.pager li a:hover {
+.item-list ul.pager li a:hover, .item-list ul.pager-next li a:hover, .item-list ul.pager-previous li a:hover {
 	background-color:#CC3333;
 	border-color: #CC3333;
 	color: #ffffff;
-}
-.comment-wrapper div.item-list {
-	border-top: 1px solid #eee;
-	margin: 0.5em 0 0 0;
-	padding: 0.5em 0 0 0;
 }

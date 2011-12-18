@@ -171,4 +171,3 @@ function thechurch_preprocess_item_list(&$variables) {
 	
 
 }
-
