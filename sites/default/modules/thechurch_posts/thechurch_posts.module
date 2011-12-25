@@ -87,3 +87,11 @@ function thechurch_posts_filter_trimlink_process($text, $filter, $format, $langc
   
 }
 
+/**
+ * Implementation of hook_node_view().
+ */
+function thechurch_posts_node_view($node, $view_mode, $langcode) {
+	if ($view_mode == 'teaser') {
+		$node->content['comments'] = comment_node_page_additions($node);
+	}
+}

@@ -43,7 +43,7 @@ function thechurch_preprocess_username(&$variables) {
  * Implements template_preprocess_taxonomy_term()
  */
 function thechurch_preprocess_taxonomy_term(&$variables) {
-
+	
 	if ($variables['vocabulary_machine_name'] == 'city') {
 		module_load_include('inc', 'node', 'node.pages');
 		$variables['content']['post_form'] = node_add('post');
@@ -61,7 +61,12 @@ function thechurch_preprocess_taxonomy_term(&$variables) {
  * Implements template_preprocess_node()
  */
 function thechurch_preprocess_node(&$variables) {
-
+	/*
+	print '<pre>';
+	print_r($variables);
+	print '</pre>';
+	*/
+	$variables['content']['links'] = array();
 	// Fix the Title
 	if ($variables['page'] && isset($variables['title'])) {
 		if ($variables['is_front']) {
@@ -156,17 +161,22 @@ function thechurch_preprocess_pager(&$variables) {
 function thechurch_preprocess_item_list(&$variables) {
 	
 	$i = 0;
+	$remove = array();
 	foreach ($variables['items'] as $item) {
-		foreach ($item['class'] as $class) {
-			if ($class == 'pager-first' || $class == 'pager-ellipsis' || $class == 'pager-last') {
-				$remove[] = $i;
+		if (is_array($item['class'])) {
+			foreach ($item['class'] as $class) {
+				if ($class == 'pager-first' || $class == 'pager-ellipsis' || $class == 'pager-last') {
+					$remove[] = $i;
+				}
 			}
 		}
 		$i++;
 	}
 	
-	foreach ($remove as $gone) {
-		unset($variables['items'][$gone]);
+	if (is_array($remove)) {
+		foreach ($remove as $gone) {
+			unset($variables['items'][$gone]);
+		}
 	}
 	
 
