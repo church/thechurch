@@ -33,8 +33,7 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 			// Register the Ajax Request with Drupal
 			Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
 					
-		});
-				
+		});				
 		
 		jQuery('.comment-wrapper .item-list ul.pager').once(function () {
 		
@@ -55,8 +54,7 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 			jQuery('ul.pager-next li.pager-previous').remove();
 			
 		});
-		
-		
+				
 		// Setup Ajax Paging on Comments
 		jQuery('.comment-wrapper ul.pager li a:not(.ajax-processed), .comment-wrapper ul.pager-next li a:not(.ajax-processed), .comment-wrapper ul.pager-previous li a:not(.ajax-processed)').addClass('ajax-processed').each(function() {
 			
@@ -65,18 +63,20 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 			// Cret the element settings object
 			var element_settings = {};
 			
-			var system = jQuery('link[rel="shortlink"]').attr('href');
+			var system = jQuery(this).parents('.node').attr('id');
+			system = system.split('-');
+			system = '/'+system[0]+'/'+system[1]
 			
 			var href = jQuery(this).attr('href');
 			var pieces = href.split("?");
-			if (jQuery(this).parent().hasClass('pager-next')) {
+			if (jQuery(this).parents().hasClass('pager-next')) {
 				jQuery(this).html('show newer');
 				if (pieces[1]) {
 					element_settings.url = system+'/comments/ajax/next?'+pieces[1];
 				} else {
 					element_settings.url = system+'/comments/ajax/next';
 				}
-			} else if (jQuery(this).parent().hasClass('pager-previous')) {
+			} else if (jQuery(this).parents().hasClass('pager-previous')) {
 				jQuery(this).html('show older');
 				if (pieces[1]) {
 					element_settings.url = system+'/comments/ajax/previous?'+pieces[1];
@@ -94,21 +94,20 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 			element_settings.effect = 'fade';
 								
 			// Get the base
-			// var base = jQuery(this).attr('id');
-			var base = jQuery(this).attr('class');
+			var base = jQuery(this).attr('id');
+			// var base = jQuery(this).attr('class');
 										
 			// Register the Ajax Request with Drupal
 			Drupal.ajax[base] = new Drupal.ajax(base, this, element_settings);
 					
 		});
 		
-		
 		// Auto Resize the Textarea
 		jQuery('#post-node-form #edit-body-und-0-value').once().autoResize({
 		  extraSpace : 13,
 		  animate : false
 		});
-		jQuery('#edit-comment-body-und-0-value').once().autoResize({
+		jQuery('.comment-form textarea').once().autoResize({
 		  extraSpace : 13,
 		  animate : false
 		});
@@ -121,14 +120,14 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 			var day = date.getDate();
 			var hours = date.getHours();
 			if (!isNaN(year)) {
-				var period = (hours < 13) ? 'am' : 'pm';
+				var period = (hours < 12) ? 'am' : 'pm';
 				var minutes = date.getMinutes();
 				var fulldate = String(year)+String(month)+String(day);
 				var current = new Date();
 				var fullcurrent = String(current.getFullYear())+String(current.getMonth())+String(current.getDate());
 				var today = (fulldate == fullcurrent) ? true : false;
 				month = month+1;
-				hours = (hours+1 < 13) ? hours : hours-12;
+				hours = (hours < 13) ? hours : hours-12;
 				minutes = (minutes < 10) ? '0'+minutes : minutes;
 				if (today) {
 					jQuery(this).text(hours+':'+minutes+period);
@@ -139,8 +138,9 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 		});
 		
 		// When an ajax form is submited, give the user some indication of this by adding a class to the form
-		jQuery('#comment-form .form-submit.ajax-processed').once().mousedown(function() {
-			jQuery('#comment-form').addClass('progress');
+		jQuery('.comment-form .form-submit.ajax-processed').once().mousedown(function() {
+			var id = jQuery(this).parents('.node').attr('id');
+			jQuery(id+' .comment-form').addClass('progress');
 		});
 		
 		// ReAttach the Drupal Javascript Behaviors

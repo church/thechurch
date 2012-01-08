@@ -1,5 +1,7 @@
 <?php
 
+drupal_add_js('misc/ajax.js', 'file');
+
 drupal_add_html_head(
 	array(
 		'#tag' => 'meta',
@@ -61,12 +63,31 @@ function thechurch_preprocess_taxonomy_term(&$variables) {
  * Implements template_preprocess_node()
  */
 function thechurch_preprocess_node(&$variables) {
-	/*
-	print '<pre>';
-	print_r($variables);
-	print '</pre>';
-	*/
-	$variables['content']['links'] = array();
+	
+	global $user;
+	
+	if (user_access('delete any '.$variables['type'].' content') || ($user->uid == $variables['uid'] && user_access('delete own '.$variables['type'].' content'))) {
+		// Add the Delete Links
+		$variables['content']['links']['delete'] = array(
+			'#theme' => 'links__node__node', 
+			'#links' => array(
+				'node-delete' => array(
+					'title' => t('delete'),
+					'href' => 'node/'.$variables['nid'].'/delete/nojs',
+					'attributes' => array(
+						'class' => array(
+							'ajax-link',
+						),
+					),
+				),
+			),
+		);
+	}
+	
+	unset($variables['content']['links']['node']);
+	unset($variables['content']['links']['comment']);
+	
+	// drupal_set_message('<pre>'.print_r($variables, true).'</pre>');
 	// Fix the Title
 	if ($variables['page'] && isset($variables['title'])) {
 		if ($variables['is_front']) {

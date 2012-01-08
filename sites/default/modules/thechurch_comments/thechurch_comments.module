@@ -60,19 +60,19 @@ function thechurch_comments_ajax_callback($form, $form_state) {
 		$html = drupal_render($comment_build);
 	
 		// Place the comment above the form
-		$commands[] = ajax_command_append('#comments .comment-list', $html);
+		$commands[] = ajax_command_before("#node-$node->nid div.comment-form", '<div class="new-comment">'.$html.'</div>');
 	
 		// Remove the text in the text field
-		$commands[] = ajax_command_invoke('#comment-form textarea', 'val', array(''));
+		$commands[] = ajax_command_invoke("#node-$node->nid .comment-form textarea", 'val', array(''));
 	
 		// Reset the text area back to it's original height
-		$commands[] = ajax_command_css('#comment-form textarea', array('height' => '32px'));
+		$commands[] = ajax_command_css("#node-$node->nid .comment-form textarea", array('height' => '32px'));
 		
 		
 	}
 	
 	// Reset the textarea back to it's original color
-	$commands[] = ajax_command_invoke('#comment-form', 'removeClass', array('progress'));
+	$commands[] = ajax_command_invoke("#node-$node->nid .comment-form", 'removeClass', array('progress'));
 	
 	// Return the Ajax Commands Array
 	return array('#type' => 'ajax', '#commands' => $commands);
@@ -110,7 +110,7 @@ function thechurch_comments_ajax_confirm_delete_page($cid) {
 
     $form = drupal_get_form('comment_confirm_delete', $comment);
 		
-    $data = '<div class="confirmation-wrapper">'.drupal_render($form).'</div>';
+    $data = '<div class="delete-confirmation-wrapper">'.drupal_render($form).'</div>';
   }
 	
 	// Put all of the Ajax Commands into an array
@@ -233,11 +233,14 @@ function thechurch_comments_comment_node_page_additions($node, $dir) {
 	// Add the Comments to the existing list
 	// $commands[] = ajax_command_replace('.comment-wrapper .item-list', drupal_render($additions), array('effect' => 'fade'));
 	if ($dir == 'next') {
-		$commands[] = ajax_command_remove('.item-list ul.pager-next');
-		$commands[] = ajax_command_append('.comment-list', drupal_render($additions), array('effect' => 'fade'));
+		$commands[] = ajax_command_remove("#node-$node->nid .item-list ul.pager-next");
+		$commands[] = ajax_command_append("#node-$node->nid .comment-list", drupal_render($additions), array('effect' => 'fade'));
+		if ($build['pager']['#theme'] != 'thechurch_comments_pager_next') {
+			$commands[] = ajax_command_remove("#node-$node->nid .new-comment");
+		}
 	} else {
-		$commands[] = ajax_command_remove('.item-list ul.pager-previous');
-		$commands[] = ajax_command_prepend('.comment-list', drupal_render($additions), array('effect' => 'fade'));
+		$commands[] = ajax_command_remove("#node-$node->nid .item-list ul.pager-previous");
+		$commands[] = ajax_command_prepend("#node-$node->nid .comment-list", drupal_render($additions), array('effect' => 'fade'));
 	}
 	// $commands[] = ajax_command_replace('.comment-wrapper .item-list', '<pre>'.print_r($pager_page_array, true).'</pre>', array('effect' => 'fade'));
 

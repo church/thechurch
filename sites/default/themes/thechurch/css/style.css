@@ -416,11 +416,11 @@ div.comment-form {
 	width: 100%;
 }
 
-#comments .form-type-textarea {
+.comment-form .form-type-textarea {
 	margin-top: 0;
 }
 
-#comments #edit-comment-body-und-0-value {
+.comment-form textarea {
 	font-size: 1em;
 	line-height: 1.1em;
 	padding: 5px;
@@ -503,7 +503,7 @@ div.comment-form a.avatar img {
 	margin: 0;
 }
 
-.comment ul.links {
+ul.links {
 	float: left;
 	width: 88%;
 	margin: 0;
@@ -511,12 +511,12 @@ div.comment-form a.avatar img {
 	font-size: 0.7em;
 }
 
-.comment ul.links li:first-child {
+ul.links li:first-child {
 	margin-left: 0;
 	padding-left: 0;
 }
 
-.comment ul.links li a {
+ul.links li a {
 	color: #999;
 }
 
@@ -608,13 +608,18 @@ form.progress input[type='submit'] {
 }
 
 /* Ajax Comment Confirm Delete */
-.comment + .confirmation-wrapper {
+.delete-confirmation-wrapper {
 	border-top: 1px solid #eee;
 	margin: 0.5em 0 0 0;
 	padding: 0.5em 0 0 0;
 }
 
-.comment + .confirmation-wrapper .confirmation {
+.page-node .delete-confirmation-wrapper {
+	margin: 0;
+	border-top: none;
+}
+
+.delete-confirmation-wrapper .confirmation {
 	width: auto;
 	background-color: #cc3333;
 	color: #fff;
@@ -622,12 +627,12 @@ form.progress input[type='submit'] {
 	text-align: center;
 }
 
-.comment + .confirmation-wrapper .form-actions {
+.delete-confirmation-wrapper .form-actions {
 	width: auto;
 	margin: 0 auto;
 }
 
-.comment + .confirmation-wrapper .form-actions input {
+.delete-confirmation-wrapper .form-actions input {
 	margin: 5px auto 0 auto;
 	float: none;
 	color: #fff;
@@ -635,13 +640,13 @@ form.progress input[type='submit'] {
 	border: 1px solid #fff;
 }
 
-.comment + .confirmation-wrapper .form-actions input:hover {
+.delete-confirmation-wrapper .form-actions input:hover {
 	color: #cc3333;
 	background-color: #fff!important;
 	border: 1px solid #cc3333;
 }
 
-.comment + .confirmation-wrapper .form-actions a {
+.delete-confirmation-wrapper .form-actions a {
 	width: auto;
 	margin: 5px auto 0  auto;
 	font-size: 0.7em;
