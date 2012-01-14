@@ -17,15 +17,14 @@ drupal_add_html_head(
  * Implements template_preprocess_comment_wrapper()
  */
  function thechurch_preprocess_comment_wrapper(&$variables) {
- 	
+ 	$node = $variables['content']['#node'];
  	if (!empty($variables['content']['comment_form'])) {
 	 	$variables['content']['comment_form']['actions']['submit']['#value'] = 'Share';
 	 	$variables['content']['comment_form']['comment_body']['und'][0]['value']['#title'] = null;
 	 	$variables['content']['comment_form']['comment_body']['und'][0]['value']['#resizable'] = 0;
 	 	unset($variables['content']['comment_form']['author']['_author']);
 	 	unset($variables['content']['comment_form']['comment_body']['und'][0]['format']);
-	}
-			
+	}	
  }
  
  /**
@@ -199,6 +198,5 @@ function thechurch_preprocess_item_list(&$variables) {
 			unset($variables['items'][$gone]);
 		}
 	}
-	
-
 }
+

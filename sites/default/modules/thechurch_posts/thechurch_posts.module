@@ -85,7 +85,7 @@ function thechurch_posts_filter_trimlink_process($text, $filter, $format, $langc
  * Implementation of hook_node_view().
  */
 function thechurch_posts_node_view($node, $view_mode, $langcode) {
-	if (arg(0) == 'taxonomy' && arg(1) == 'term' && is_numeric(arg(2))) {
+	if (arg(0) == 'taxonomy' && arg(1) == 'term' && is_numeric(arg(2)) && arg(3) != 'feed') {
 		$_GET['page'] = 200;
 		$node->content['comments'] = comment_node_page_additions($node);
 		unset($node->content['comments']['comments']['pager']);
@@ -125,7 +125,7 @@ function thechurch_posts_ajax_confirm_delete_page($form, $node) {
 
     $form = drupal_get_form($form, $node);
 		
-    $data = '<div class="delete-confirmation-wrapper">'.drupal_render($form).'</div>';
+    $data = drupal_render($form);
   }
   
   // Put all of the Ajax Commands into an array
@@ -144,4 +144,106 @@ function thechurch_posts_ajax_confirm_delete_page($form, $node) {
 	
 	return array('#type' => 'ajax', '#commands' => $commands);
   
+}
+
+
+/**
+ * Implementation of hook_form_BASE_FORM_ID_alter().
+ */
+function thechurch_posts_form_node_delete_confirm_alter(&$form, &$form_state, $form_id) {
+	// Get the Comment
+	$node = $form['#node'];
+	
+	$form['description']['#markup'] = t('Any replies to this @type will be lost. This action cannot be undone.', array('@type' => $node->type));
+	// Add the Ajax Submit Function
+	$form['actions']['submit']['#ajax'] = array(
+		'callback' => 'thechurch_posts_ajax_delete',
+		'progress' => false,
+	);
+	
+	// Get the Comment
+	$node = $form['#node'];
+	
+	// Give the Comment a Proper, Numerical ID
+	$form['#id'] = 'node-'.$node->nid.'-confirm-delete';
+	$form['#attributes']['class'][] = 'confirm-delete';
+	
+}
+
+/**
+ * Node Ajax Callback.
+ */
+function thechurch_posts_ajax_delete($form, $form_state) {
+	
+	// Get rid of all of the messages that have been set
+	drupal_get_messages();
+
+	// Get the comment & node objects
+	$node = $form['#node'];
+	
+	// Put all of the Ajax Commands into an array
+	$commands = array();
+	
+	// FadeOut the deleted comment
+	$commands[] = ajax_command_invoke('#node-'.$node->nid.'-confirm-delete', 'fadeOut');
+		
+	// Return the Ajax Commands Array
+  return array('#type' => 'ajax', '#commands' => $commands);
+	
+}
+
+/**
+ * Implementation of hook_form_BASE_FORM_ID_alter().
+ */
+function thechurch_comments_form_post_node_form_alter(&$form, &$form_state, $form_id) {
+	// Add the Ajax Submit Function
+	$form['actions']['submit']['#ajax'] = array(
+		'callback' => 'thechurch_posts_ajax_callback',
+		'progress' => false,
+	);
+	
+}
+
+/**
+ * Node Ajax Callback.
+ */
+function thechurch_post_ajax_callback($form, $form_state) {
+	
+	// Get rid of all of the messages that have been set
+	drupal_get_messages();
+
+	// Get the comment & node objects
+	$node = $form_state['node'];
+	$node = node_load($node->nid);
+	
+	// Put all of the Ajax Commands into an array
+	$commands = array();
+	
+	// Make sure that comment was actually loaded before proceeding. 
+	if (!empty($node->nid) && $form_state['executed']) {
+	
+		// Generate the Array for Drupal Render
+		$node_build = node_view($node);
+	
+		// Render the Array
+		$html = drupal_render($node_build);
+	
+		// Place the comment above the form
+		$commands[] = ajax_command_before("#node-$node->nid", '<div class="new-node">'.$html.'</div>');
+	
+		// Remove the text in the text field
+		$commands[] = ajax_command_invoke(".node-form textarea", 'val', array(''));
+	
+		// Reset the text area back to it's original height
+		$commands[] = ajax_command_css(".node-form textarea", array('height' => '32px'));
+		
+		
+	}
+	
+	// Reset the textarea back to it's original color
+	$commands[] = ajax_command_invoke("#node-$node->nid .comment-form", 'removeClass', array('progress'));
+	
+	// Return the Ajax Commands Array
+	return array('#type' => 'ajax', '#commands' => $commands);
+	
 }

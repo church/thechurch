@@ -150,15 +150,25 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 
 		
 		// Cancel Deletion remove Delete form and fade in comment
-		jQuery('.comment + .confirmation-wrapper .form-actions a').click(function (event) {
+		jQuery('.comment + .confirm-delete .form-actions a').click(function (event) {
 			event.preventDefault();
-			var comment = jQuery(this).parents('.confirmation-wrapper').prev('.comment');
-			jQuery(this).parents('.confirmation-wrapper').fadeOut(400, function() {
+			var comment = jQuery(this).parents('.confirm-delete').prev('.comment');
+			jQuery(this).parents('.confirm-delete').fadeOut(400, function() {
 				jQuery(this).remove();
 				comment.fadeIn();
 			});
 		});
   
+  	// Cancel Deletion remove Delete form and fade in comment
+		jQuery('.node + .confirm-delete .form-actions a').click(function (event) {
+			event.preventDefault();
+			var comment = jQuery(this).parents('.confirm-delete').prev('.node');
+			jQuery(this).parents('.confirm-delete').fadeOut(400, function() {
+				jQuery(this).remove();
+				comment.fadeIn();
+			});
+		});
+  	
   }
   
 }

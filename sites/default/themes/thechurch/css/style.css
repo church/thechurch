@@ -144,7 +144,7 @@ input[type="submit"]::-moz-focus-inner {
 	position: relative;
 }
 
-#comments {
+.comment-wrapper {
 	font-size: 0.9em;
 	margin: 0;
 	clear: both;
@@ -348,7 +348,7 @@ input[type='submit']:hover, input[type='submit']:focus {
 }
 
 /* Post Comment Styles */
-.node-post #comments {
+.node-post .comment-wrapper {
 	padding-left: 59px;
 	font-size: 0.9em;
 }
@@ -608,18 +608,18 @@ form.progress input[type='submit'] {
 }
 
 /* Ajax Comment Confirm Delete */
-.delete-confirmation-wrapper {
+.confirm-delete {
 	border-top: 1px solid #eee;
 	margin: 0.5em 0 0 0;
 	padding: 0.5em 0 0 0;
 }
 
-.page-node .delete-confirmation-wrapper {
+.page-node .confirm-delete {
 	margin: 0;
 	border-top: none;
 }
 
-.delete-confirmation-wrapper .confirmation {
+.confirm-delete {
 	width: auto;
 	background-color: #cc3333;
 	color: #fff;
@@ -627,12 +627,12 @@ form.progress input[type='submit'] {
 	text-align: center;
 }
 
-.delete-confirmation-wrapper .form-actions {
+.confirm-delete .form-actions {
 	width: auto;
 	margin: 0 auto;
 }
 
-.delete-confirmation-wrapper .form-actions input {
+.confirm-delete .form-actions input {
 	margin: 5px auto 0 auto;
 	float: none;
 	color: #fff;
@@ -640,13 +640,13 @@ form.progress input[type='submit'] {
 	border: 1px solid #fff;
 }
 
-.delete-confirmation-wrapper .form-actions input:hover {
+.confirm-delete .form-actions input:hover {
 	color: #cc3333;
 	background-color: #fff!important;
 	border: 1px solid #cc3333;
 }
 
-.delete-confirmation-wrapper .form-actions a {
+.confirm-delete .form-actions a {
 	width: auto;
 	margin: 5px auto 0  auto;
 	font-size: 0.7em;
@@ -658,13 +658,13 @@ form.progress input[type='submit'] {
 .page-comment-delete .form-actions {
 	padding: 0.5em 0 0 0;
 }
-
+/*
 .page-comment-delete .form-actions a {
 	display: inline-block;
 	font-size: 0.8em;
 	margin: 0.7em 0 0 1em;
 }
-
+*/
 /* Pager Links */
 .item-list ul.pager, .item-list ul.pager-next, .item-list ul.pager-previous {
 	padding: 0;

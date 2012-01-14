@@ -5,7 +5,7 @@
  * Implementation of hook_form_BASE_FORM_ID_alter().
  */
 function thechurch_comments_form_comment_form_alter(&$form, &$form_state, $form_id) {
-	
+	//drupal_set_message('<pre>'.print_r($form, true).'</pre>');
 	// Add the Ajax Submit Function
 	$form['actions']['submit']['#ajax'] = array(
 		'callback' => 'thechurch_comments_ajax_callback',
@@ -18,7 +18,8 @@ function thechurch_comments_form_comment_form_alter(&$form, &$form_state, $form_
  * Implementation of hook_form_BASE_FORM_ID_alter().
  */
 function thechurch_comments_form_comment_confirm_delete_alter(&$form, &$form_state, $form_id) {
-	
+	// drupal_set_message('<pre>'.print_r($form, true).'</pre>');
+	$form['description']['#markup'] = t('This action cannot be undone.');
 	// Add the Ajax Submit Function
 	$form['actions']['submit']['#ajax'] = array(
 		'callback' => 'thechurch_comments_ajax_delete',
@@ -30,6 +31,7 @@ function thechurch_comments_form_comment_confirm_delete_alter(&$form, &$form_sta
 	
 	// Give the Comment a Proper, Numerical ID
 	$form['#id'] = 'comment-'.$comment->cid.'-confirm-delete';
+	$form['#attributes']['class'][] = 'confirm-delete';
 	
 }
 
@@ -94,7 +96,7 @@ function thechurch_comments_ajax_delete($form, $form_state) {
 	$commands = array();
 	
 	// FadeOut the deleted comment
-	$commands[] = ajax_command_invoke('#comment-'.$comment->cid.' + .comment + .confirmation-wrapper', 'fadeOut');
+	$commands[] = ajax_command_invoke('#comment-'.$comment->cid.' + .comment + .confirmation', 'fadeOut');
 		
 	// Return the Ajax Commands Array
   return array('#type' => 'ajax', '#commands' => $commands);
@@ -110,7 +112,7 @@ function thechurch_comments_ajax_confirm_delete_page($cid) {
 
     $form = drupal_get_form('comment_confirm_delete', $comment);
 		
-    $data = '<div class="delete-confirmation-wrapper">'.drupal_render($form).'</div>';
+    $data = drupal_render($form);
   }
 	
 	// Put all of the Ajax Commands into an array

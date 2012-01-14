@@ -36,18 +36,20 @@
  * @see theme_comment_wrapper()
  */
 ?>
-<div id="comments" class="<?php print $classes; ?>"<?php print $attributes; ?>>
+<div id="node-<?php print $node->nid; ?>-comments" class="<?php print $classes; ?>"<?php print $attributes; ?>>
 	<div class="comment-list">
   	<?php print render($content['comments']); ?>
   </div>
   <?php if (!empty($content['comment_form'])): ?>
-  	<div class="comment-form" class="clearfix">
+  	<div class="comment-form clearfix">
   		<?php if (isset($user->picture)) : ?>
   			<div class="form-left">
 		  		<?php $user = user_load($user->uid); ?>
 		  		<?php
-		   			$img = theme('image_style', array('style_name' => 'square', 'path' => $user->picture->uri, 'alt' => $user->name));
-		  			print l($img, 'user/'.$user->uid, array('attributes' => array('class' => 'avatar'),'html' => true));
+		  			if (!empty($user)) {
+			   			$img = theme('image_style', array('style_name' => 'square', 'path' => $user->picture->uri, 'alt' => $user->name));
+			  			print l($img, 'user/'.$user->uid, array('attributes' => array('class' => 'avatar'),'html' => true));
+			  		}
 		  		?>
 		  	</div>
   		<?php endif; ?>
