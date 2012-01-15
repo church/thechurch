@@ -64,27 +64,37 @@ function thechurch_preprocess_taxonomy_term(&$variables) {
 function thechurch_preprocess_node(&$variables) {
 	
 	global $user;
+	// drupal_set_message('<pre>'.print_r($variables, true).'</pre>');
+	unset($variables['content']['links']['node']);
+	unset($variables['content']['links']['comment']);
+	
+	$variables['content']['links'] = array(
+		'#theme' => 'links__node__node', 
+	);
+	if ($variables['comment'] == 2 && user_access('post comments')) {
+		$variables['content']['links']['#links']['node-comment'] = array(
+			'title' => t('comment'),
+			'href' => 'node/'.$variables['nid'],
+		);
+	} else if ($variables['comment'] == 2 && $user->uid == 0) {
+		$variables['content']['links']['#links']['node-comment-login'] = array(
+			'title' => t('comment'),
+			'href' => 'user/login',
+		);
+	}
 	
 	if (user_access('delete any '.$variables['type'].' content') || ($user->uid == $variables['uid'] && user_access('delete own '.$variables['type'].' content'))) {
 		// Add the Delete Links
-		$variables['content']['links']['delete'] = array(
-			'#theme' => 'links__node__node', 
-			'#links' => array(
-				'node-delete' => array(
-					'title' => t('delete'),
-					'href' => 'node/'.$variables['nid'].'/delete/nojs',
-					'attributes' => array(
-						'class' => array(
-							'ajax-link',
-						),
-					),
+		$variables['content']['links']['#links']['node-delete'] = array(
+			'title' => t('delete'),
+			'href' => 'node/'.$variables['nid'].'/delete/nojs',
+			'attributes' => array(
+				'class' => array(
+					'ajax-link',
 				),
 			),
 		);
 	}
-	
-	unset($variables['content']['links']['node']);
-	unset($variables['content']['links']['comment']);
 	
 	// drupal_set_message('<pre>'.print_r($variables, true).'</pre>');
 	// Fix the Title

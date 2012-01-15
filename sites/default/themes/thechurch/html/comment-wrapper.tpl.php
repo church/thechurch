@@ -36,12 +36,13 @@
  * @see theme_comment_wrapper()
  */
 ?>
+<?php // drupal_set_message('<pre>'.print_r($node, true).'</pre>'); ?>
 <div id="node-<?php print $node->nid; ?>-comments" class="<?php print $classes; ?>"<?php print $attributes; ?>>
 	<div class="comment-list">
   	<?php print render($content['comments']); ?>
   </div>
   <?php if (!empty($content['comment_form'])): ?>
-  	<div class="comment-form clearfix">
+  	<div class="comment-form clearfix"<?php if (((arg(0) == 'taxonomy' && arg(1) == 'term' && is_numeric(arg(2))) || (arg(0) == 'system' && arg(1) == 'ajax')) && empty($node->comment_count)) : ?> style="display:none;" <?php endif; ?>>
   		<?php if (isset($user->picture)) : ?>
   			<div class="form-left">
 		  		<?php $user = user_load($user->uid); ?>

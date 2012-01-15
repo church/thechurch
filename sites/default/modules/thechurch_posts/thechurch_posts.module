@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file
@@ -50,8 +49,15 @@ function thechurch_posts_form_post_node_form_alter(&$form, &$form_state, $form_i
 	// Rename the 'Submit' button to 'Share'
 	$form['actions']['submit']['#value'] = 'Share';
 	
+	$form['actions']['submit']['#ajax'] = array(
+		'callback' => 'thechurch_posts_ajax_callback',
+		'progress' => false,
+	);
+	
 	// No one should have access to the additional options
 	$form['additional_settings']['#access'] = false;
+	
+	form_load_include($form_state, 'inc', 'node', 'node.pages');
 	
 }
 
@@ -82,24 +88,31 @@ function thechurch_posts_filter_trimlink_process($text, $filter, $format, $langc
 }
 
 /**
+ * Add Comments to Node
+ */
+function thechurch_posts_attach_comments($node) {
+	$node->content['comments'] = comment_node_page_additions($node);
+	unset($node->content['comments']['comments']['pager']);
+	$comments_per_page = variable_get('comment_default_per_page_' . $node->type, 50);
+	if ($node->comment_count > $comments_per_page) {
+		$items = array(
+			l(t('next ›'), 'node/'.$node->nid, array('attributes' => array('class' => 'pager-next'), 'query' => array('page' => 1))),
+		);
+		$node->content['comments']['comments']['pager'] = array(
+			'#theme' => 'item_list',
+   		'#items' => $items,
+    	'#attributes' => array('class' => array('pager-next')),
+  	);
+	}
+}
+
+
+/**
  * Implementation of hook_node_view().
  */
 function thechurch_posts_node_view($node, $view_mode, $langcode) {
-	if (arg(0) == 'taxonomy' && arg(1) == 'term' && is_numeric(arg(2)) && arg(3) != 'feed') {
-		$_GET['page'] = 200;
-		$node->content['comments'] = comment_node_page_additions($node);
-		unset($node->content['comments']['comments']['pager']);
-		$comments_per_page = variable_get('comment_default_per_page_' . $node->type, 50);
-		if ($node->comment_count > $comments_per_page) {
-			$items = array(
-				l(t('next ›'), 'node/'.$node->nid, array('attributes' => array('class' => 'pager-next'), 'query' => array('page' => 1))),
-			);
-			$node->content['comments']['comments']['pager'] = array(
-				'#theme' => 'item_list',
-     		'#items' => $items,
-      	'#attributes' => array('class' => array('pager-next')),
-    	);
-		}
+	if ((arg(0) == 'taxonomy' && arg(1) == 'term' && is_numeric(arg(2)) && arg(3) != 'feed') ||(arg(0) == 'system' && arg(1) == 'ajax')) {
+		thechurch_posts_attach_comments(&$node);
 	}
 }
 
@@ -193,21 +206,9 @@ function thechurch_posts_ajax_delete($form, $form_state) {
 }
 
 /**
- * Implementation of hook_form_BASE_FORM_ID_alter().
- */
-function thechurch_comments_form_post_node_form_alter(&$form, &$form_state, $form_id) {
-	// Add the Ajax Submit Function
-	$form['actions']['submit']['#ajax'] = array(
-		'callback' => 'thechurch_posts_ajax_callback',
-		'progress' => false,
-	);
-	
-}
-
-/**
  * Node Ajax Callback.
  */
-function thechurch_post_ajax_callback($form, $form_state) {
+function thechurch_posts_ajax_callback($form, $form_state) {
 	
 	// Get rid of all of the messages that have been set
 	drupal_get_messages();
@@ -223,25 +224,38 @@ function thechurch_post_ajax_callback($form, $form_state) {
 	if (!empty($node->nid) && $form_state['executed']) {
 	
 		// Generate the Array for Drupal Render
-		$node_build = node_view($node);
-	
+		$node_build = node_view($node, 'teaser');
+			
 		// Render the Array
 		$html = drupal_render($node_build);
 	
 		// Place the comment above the form
-		$commands[] = ajax_command_before("#node-$node->nid", '<div class="new-node">'.$html.'</div>');
-	
+		$commands[] = ajax_command_after(".term-listing-heading", '<div class="new-node" style="display: none;">'.$html.'</div>');
+		
+		$commands[] = ajax_command_invoke('.new-node', 'animate', array(
+			array(
+				'height' => 'toggle',
+				'opacity' => 'toggle',
+			),
+			'slow',
+		));
+		
+		$commands[] = ajax_command_invoke(".new-node", 'removeClass', array('new-node'));
+		
+		// Reset the textarea back to it's original color
+		$commands[] = ajax_command_invoke(".node-form", 'removeClass', array('progress'));
+				
 		// Remove the text in the text field
 		$commands[] = ajax_command_invoke(".node-form textarea", 'val', array(''));
 	
 		// Reset the text area back to it's original height
-		$commands[] = ajax_command_css(".node-form textarea", array('height' => '32px'));
+		$commands[] = ajax_command_css(".node-form textarea", array('height' => '50px'));
 		
 		
 	}
 	
 	// Reset the textarea back to it's original color
-	$commands[] = ajax_command_invoke("#node-$node->nid .comment-form", 'removeClass', array('progress'));
+	$commands[] = ajax_command_invoke(".node-form", 'removeClass', array('progress'));
 	
 	// Return the Ajax Commands Array
 	return array('#type' => 'ajax', '#commands' => $commands);

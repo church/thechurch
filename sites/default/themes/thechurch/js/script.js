@@ -103,11 +103,7 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 		});
 		
 		// Auto Resize the Textarea
-		jQuery('#post-node-form #edit-body-und-0-value').once().autoResize({
-		  extraSpace : 13,
-		  animate : false
-		});
-		jQuery('.comment-form textarea').once().autoResize({
+		jQuery('#post-node-form textarea, .comment-form textarea').once().autoResize({
 		  extraSpace : 13,
 		  animate : false
 		});
@@ -140,7 +136,12 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 		// When an ajax form is submited, give the user some indication of this by adding a class to the form
 		jQuery('.comment-form .form-submit.ajax-processed').once().mousedown(function() {
 			var id = jQuery(this).parents('.node').attr('id');
-			jQuery(id+' .comment-form').addClass('progress');
+			jQuery('#'+id+' .comment-form').addClass('progress');
+		});
+		
+		// When an ajax form is submited, give the user some indication of this by adding a class to the form
+		jQuery('.node-form .form-submit.ajax-processed').once().mousedown(function() {
+			jQuery('.node-form').addClass('progress');
 		});
 		
 		// ReAttach the Drupal Javascript Behaviors
@@ -168,7 +169,14 @@ jQuery('body').once().addClass(jQuery.browser.name).addClass(jQuery.browser.clas
 				comment.fadeIn();
 			});
 		});
-  	
+		
+		// Get rid of the comment form if there are no comments.
+		jQuery('.node-comment a').click(function (event) {
+			event.preventDefault();
+			var id = jQuery(this).parents('.node').attr('id');
+			jQuery('#'+id+' .comment-form').show();
+			jQuery('#'+id+' .comment-form textarea').focus();
+		});
   }
   
 }

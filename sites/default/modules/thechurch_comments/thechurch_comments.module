@@ -62,7 +62,17 @@ function thechurch_comments_ajax_callback($form, $form_state) {
 		$html = drupal_render($comment_build);
 	
 		// Place the comment above the form
-		$commands[] = ajax_command_before("#node-$node->nid div.comment-form", '<div class="new-comment">'.$html.'</div>');
+		$commands[] = ajax_command_before("#node-$node->nid div.comment-form", '<div class="new-comment" style="display:none;">'.$html.'</div>');
+		
+		$commands[] = ajax_command_invoke('.new-comment', 'animate', array(
+			array(
+				'height' => 'toggle',
+				'opacity' => 'toggle',
+			),
+			'slow',
+		));
+		
+		$commands[] = ajax_command_invoke(".new-comment", 'removeClass', array('new-comment'));
 	
 		// Remove the text in the text field
 		$commands[] = ajax_command_invoke("#node-$node->nid .comment-form textarea", 'val', array(''));
