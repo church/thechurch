@@ -1,3 +1,0 @@
-ChurchTeaserBundle_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: ChurchTeaserBundle:Default:index }
