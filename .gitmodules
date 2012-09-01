@@ -1,0 +1,3 @@
+[submodule "src/Church/TeaserBundle"]
+	path = src/Church/TeaserBundle
+	url = git@github.com:davidbarratt/ChurchTeaserBundle.git
