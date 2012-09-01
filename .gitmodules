@@ -1,0 +1,3 @@
+[submodule "TeaserBundle"]
+	path = TeaserBundle
+	url = https://github.com/davidbarratt/church-teaser.git
