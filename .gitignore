@@ -1,2 +1,3 @@
-/html/bundles//app/bootstrap*/app/cache/*/app/logs/*/vendor//app/config/parameters.ini
+html/bundles/*
+app/bootstrapapp/bootstrap/*app/cache/*app/logs/*vendor/*app/config/parameters.ini
 web/.htaccess
