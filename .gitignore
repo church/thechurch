@@ -1,4 +1,6 @@
-sites/default/settings.php
-sites/default/files/
-tmp/
-.DS_Store
+web/bundles/
+app/bootstrap*
+app/cache/*
+app/logs/*
+vendor/
+app/config/parameters.yml
