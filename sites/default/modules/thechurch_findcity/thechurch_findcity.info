@@ -1,7 +1,0 @@
-;$Id$
-name = Find City & Location
-description = Finds a user's location and finds their city or creates one.
-core = 7.x
-package = thechur.ch
-files[] = thechurch_findcity.module
-version = 0.1

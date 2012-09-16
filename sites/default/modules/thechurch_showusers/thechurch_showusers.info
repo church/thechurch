@@ -1,9 +1,0 @@
-;$Id$
-name = Show Users
-description = Shows Random users when not logged in and closest users when logged in
-core = 7.x
-package = thechur.ch
-files[] = thechurch_showusers.module
-version = 0.2
-scripts[] = js/jquery.tools.min.js
-scripts[] = js/script.js
