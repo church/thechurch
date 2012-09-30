@@ -1,6 +1,6 @@
 church_user:
     resource: "@ChurchUserBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /user
 
 # Internal routing configuration to handle ESI
 #_internal:
