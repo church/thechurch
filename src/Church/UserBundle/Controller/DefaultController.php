@@ -3,38 +3,60 @@
 namespace Church\UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Church\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
-use Church\UserBundle\Form\Type\RegisterType;
+
+use Church\UserBundle\Entity\User;
+use Church\UserBundle\Entity\Email;
+use Church\UserBundle\Form\Type\RegistrationType;
+use Church\UserBundle\Form\Model\Registration;
 
 class DefaultController extends Controller
 {
     public function registerAction(Request $request)
     {
-    		// Create a new User
-    		$user = new User();
     		
     		// Build the Registration Form
-        $form = $this->createForm(new RegisterType(), $user);
+         $form = $this->createForm(new RegistrationType(), new Registration());
         
         
         // If this Form has been completed
         if ($request->isMethod('POST')) {
-        
+          
+          // Bind the Form to the request
         	$form->bind($request);
         	
+        	// Check to make sure the form is valid before procceding
         	if ($form->isValid()) {
+        	
+        	  // Get the form data
+        	  $register = $form->getData();
+        	  $user = new User();
+        	  $user->setName($register->getName());
+        	  $user->setUsername($register->getUsername());
         		
         		// Encrypt the Password
         		$factory = $this->get('security.encoder_factory');
         		$encoder = $factory->getEncoder($user);
-        		$password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+        		$password = $encoder->encodePassword($register->getPassword(), $user->getSalt());
         		$user->setPassword($password);
         		
         		// Save the User
 	        	$em = $this->getDoctrine()->getManager();
 	        	$em->persist($user);
 	        	$em->flush();
+	        	
+	        	
+	        	// Create the Email
+	        	$email = new Email();
+        		$email->setUser($user);
+        		$email->setEmail($register->getEmail());
+        		$user->setPrimaryEmail($email);
+        		
+        		// Save the Email
+        		$em->persist($email);
+        		$em->persist($user);
+        		$em->flush();
+	        	
 	        	
 	        	// Redirect the User
 	        	return $this->redirect($this->generateUrl('church_user_register'));

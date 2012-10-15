@@ -4,6 +4,8 @@ namespace Church\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Church\UserBundle\Entity\Email;
 
 /**
  * Church\UserBundle\Entity\User
@@ -42,10 +44,23 @@ class User implements UserInterface
      */
     private $name;
     
+    /**
+     * @ORM\OneToMany(targetEntity="Email", mappedBy="email")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
+     */
+    private $emails;
+    
+    /**
+     * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
+     * @ORM\JoinColumn(name="primary_email", referencedColumnName="email")
+     */
+    private $primary_email;
+
+    
     public function __construct()
     {
-        $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
+        $this->emails = new ArrayCollection();
     }
 
     /**
@@ -158,5 +173,63 @@ class User implements UserInterface
     public function getName()
     {
         return $this->name;
+    }
+
+
+    /**
+     * Add emails
+     *
+     * @param Church\UserBundle\Entity\Email $emails
+     * @return User
+     */
+    public function addEmail(Email $emails)
+    {
+        $this->emails[] = $emails;
+    
+        return $this;
+    }
+
+    /**
+     * Remove emails
+     *
+     * @param Church\UserBundle\Entity\Email $emails
+     */
+    public function removeEmail(Email $emails)
+    {
+        $this->emails->removeElement($emails);
+    }
+
+    /**
+     * Get emails
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getEmails()
+    {
+        return $this->emails;
+    }
+
+
+    /**
+     * Set primary_email
+     *
+     * @param Church\UserBundle\Entity\Email $primaryEmail
+     * @return User
+     */
+    public function setPrimaryEmail(Email $primaryEmail = null)
+    {
+        $this->primary_email = $primaryEmail;
+    
+        return $this;
+    }
+
+    /**
+     * Get primary_email
+     *
+     * @return Church\UserBundle\Entity\Email 
+     */
+    public function getPrimaryEmail()
+    {
+        return $this->primary_email;
     }
 }
