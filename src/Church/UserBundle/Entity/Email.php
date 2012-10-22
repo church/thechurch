@@ -6,12 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Church\UserBundle\Entity\User;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * Church\UserBundle\Entity\Email
  *
  * @ORM\Table(name="users_email")
  * @ORM\Entity
+ * @UniqueEntity("primary_email")
  */
 class Email
 {
@@ -28,6 +31,16 @@ class Email
      * @Assert\Email()
      */
     private $email;
+    
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $verified;
+    
+    public function __construct()
+    {
+        $this->verified = FALSE;
+    }
     
     /**
      * Set email
@@ -73,5 +86,28 @@ class Email
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set verified
+     *
+     * @param boolean $verified
+     * @return Email
+     */
+    public function setVerified($verified)
+    {
+        $this->verified = $verified;
+    
+        return $this;
+    }
+
+    /**
+     * Get verified
+     *
+     * @return boolean 
+     */
+    public function getVerified()
+    {
+        return $this->verified;
     }
 }

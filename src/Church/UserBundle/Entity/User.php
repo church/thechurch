@@ -6,12 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Church\UserBundle\Entity\Email;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Church\UserBundle\Entity\User
  *
  * @ORM\Table(name="users")
  * @ORM\Entity
+ * @UniqueEntity("username")
+ * @UniqueEntity("primary_email")
  */
 class User implements UserInterface
 {
@@ -30,7 +33,7 @@ class User implements UserInterface
     private $username;
     
     /**
-     * @ORM\Column(type="string", length=40)
+     * @ORM\Column(type="string", length=88)
      */
     private $password;
     

@@ -12,6 +12,8 @@ security:
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
+        main:
+            entity: { class: Church\UserBundle\Entity\User, property: username }
         in_memory:
             memory:
                 users:

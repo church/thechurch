@@ -39,7 +39,7 @@ class DefaultController extends Controller
         		$encoder = $factory->getEncoder($user);
         		$password = $encoder->encodePassword($register->getPassword(), $user->getSalt());
         		$user->setPassword($password);
-        		
+        		        		
         		// Save the User
 	        	$em = $this->getDoctrine()->getManager();
 	        	$em->persist($user);
