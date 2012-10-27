@@ -48,7 +48,7 @@ class User implements UserInterface
     private $name;
     
     /**
-     * @ORM\OneToMany(targetEntity="Email", mappedBy="email")
+     * @ORM\OneToMany(targetEntity="Email", mappedBy="email",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
     private $emails;
