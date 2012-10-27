@@ -1,3 +1,7 @@
+church_place:
+    resource: "@ChurchPlaceBundle/Resources/config/routing.yml"
+    prefix:   /
+
 church_user:
     resource: "@ChurchUserBundle/Resources/config/routing.yml"
     prefix:   /user
