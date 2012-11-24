@@ -1,7 +1,7 @@
 parameters:
-#    church_place.example.class: Church\PlaceBundle\Example
+    church_place.place_finder.class: Church\PlaceBundle\Service\PlaceFinder
 
 services:
-#    church_place.example:
-#        class: %church_place.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+   church_place.place_finder:
+       class: %church_place.place_finder.class%
+       arguments: [%church_place.place_finder.consumer_key%, %church_place.place_finder.consumer_secret%, %church_place.place_finder.generic_appid%]

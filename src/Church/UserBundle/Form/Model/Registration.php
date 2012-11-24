@@ -31,6 +31,12 @@ class Registration
      * @Assert\MaxLength(255)
      */
     protected $password;
+    
+    /**
+     * @Assert\NotBlank()
+     * @Assert\MaxLength(255)
+     */
+    protected $address;
 
 
     public function setName($name)
@@ -71,6 +77,16 @@ class Registration
     public function getPassword()
     {
         return $this->password;
+    }
+    
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    }
+
+    public function getAddress()
+    {
+        return $this->address;
     }
     
 }

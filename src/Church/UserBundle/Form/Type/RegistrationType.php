@@ -14,7 +14,8 @@ class RegistrationType extends AbstractType
         $builder->add('name', 'text');
         $builder->add('email', 'email');
         $builder->add('username', 'text');
-        $builder->add('password', 'password');      
+        $builder->add('password', 'password');
+        $builder->add('address', 'text');
     }
     
     public function setDefaultOptions(OptionsResolverInterface $resolver)

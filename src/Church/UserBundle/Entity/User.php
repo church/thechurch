@@ -5,8 +5,10 @@ namespace Church\UserBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Church\UserBundle\Entity\Email;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+use Church\UserBundle\Entity\Email;
+use Church\PlaceBundle\Entity\Place;
 
 /**
  * Church\UserBundle\Entity\User
@@ -58,6 +60,17 @@ class User implements UserInterface
      * @ORM\JoinColumn(name="primary_email", referencedColumnName="email")
      */
     private $primary_email;
+    
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $address;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Church\PlaceBundle\Entity\Place")
+     * @ORM\JoinColumn(name="place_id", referencedColumnName="place_id")
+     */
+    private $place;
 
     
     public function __construct()
@@ -234,5 +247,52 @@ class User implements UserInterface
     public function getPrimaryEmail()
     {
         return $this->primary_email;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     * @return User
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string 
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+
+    /**
+     * Set place
+     *
+     * @param Church\PlaceBundle\Entity\Place $place
+     * @return User
+     */
+    public function setPlace(\Church\PlaceBundle\Entity\Place $place = null)
+    {
+        $this->place = $place;
+    
+        return $this;
+    }
+
+    /**
+     * Get place
+     *
+     * @return Church\PlaceBundle\Entity\Place 
+     */
+    public function getPlace()
+    {
+        return $this->place;
     }
 }
