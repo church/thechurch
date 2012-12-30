@@ -1,9 +1,6 @@
-html/bundles/*
-app/bootstrap
-app/bootstrap/*
-app/cache/
-app/cache/*
-app/logs/*
-vendor/*
-app/config/parameters.ini
-web/.htaccess
+/web/bundles/
+/app/bootstrap*
+/app/cache/*
+/app/logs/*
+/vendor/
+/app/config/parameters.yml
