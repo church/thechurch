@@ -41,16 +41,22 @@ class DefaultController extends Controller
         		$password = $encoder->encodePassword($register->getPassword(), $user->getSalt());
         		$user->setPassword($password);
         		        		
-        		// Find the User's Place        		
+        		// Find the User's Place
+        		$em = $this->getDoctrine()->getManager();
         		$finder = $this->get('church_place.place_finder');
-        		$place = $finder->findPlace($this, $register->getAddress());
+        		$place = $finder->findPlace($em, $register->getAddress());
         		
         		if (!empty($place)) {
+        		  $user->setLatitude($place->getLatitude());
+        		  $user->setLongitude($place->getLongitude());
+        		  
+        		  // Before setting the Place to the user, get it from the Database
+        		  $repository = $this->getDoctrine()->getRepository('Church\PlaceBundle\Entity\Place');
+        		  $place = $repository->find($place->getID());
           		$user->setPlace($place);
         		}
         		        		        		
         		// Save the User
-	        	$em = $this->getDoctrine()->getManager();
 	        	$em->persist($user);
 	        	$em->flush();
 	        	

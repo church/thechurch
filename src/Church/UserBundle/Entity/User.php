@@ -71,6 +71,16 @@ class User implements UserInterface
      * @ORM\JoinColumn(name="place_id", referencedColumnName="place_id")
      */
     private $place;
+    
+    /**
+     * @ORM\Column(type="decimal", precision=8, scale=6)
+     */
+    private $latitude;
+    
+    /**
+     * @ORM\Column(type="decimal", precision=9, scale=6)
+     */
+    private $longitude;
 
     
     public function __construct()
@@ -294,5 +304,51 @@ class User implements UserInterface
     public function getPlace()
     {
         return $this->place;
+    }
+
+    /**
+     * Set latitude
+     *
+     * @param float $latitude
+     * @return User
+     */
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
+    
+        return $this;
+    }
+
+    /**
+     * Get latitude
+     *
+     * @return float 
+     */
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+
+    /**
+     * Set longitude
+     *
+     * @param float $longitude
+     * @return User
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+    
+        return $this;
+    }
+
+    /**
+     * Get longitude
+     *
+     * @return float 
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
     }
 }

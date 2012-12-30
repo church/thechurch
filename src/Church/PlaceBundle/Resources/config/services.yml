@@ -1,11 +1,14 @@
 parameters:
     church_place.place_finder.class: Church\PlaceBundle\Service\PlaceFinder
+    church_place.tree_maker.class: Church\PlaceBundle\Listener\TreeMaker
 
 services:
    church_place.place_finder:
        class: %church_place.place_finder.class%
        arguments: [%church_place.place_finder.consumer_key%, %church_place.place_finder.consumer_secret%, %church_place.place_finder.generic_appid%]
-  church_place.tree_maker.listener:
-        class: Church\PlaceBundle\Listener\TreeMaker
+   church_place.tree_maker.listener:
+        class: %church_place.tree_maker.class%
         tags:
             - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
