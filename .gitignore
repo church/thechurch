@@ -1,3 +1,4 @@
+composer.phar
 /web/bundles/
 /app/bootstrap*
 /app/cache/*
