@@ -2,6 +2,10 @@
 
 namespace Church\PlaceBundle\Service;
 
+use Guzzle\Http\Client;
+use Guzzle\Plugin\Oauth\OauthPlugin;
+use Guzzle\Http\Exception\BadResponseException;
+
 use Church\PlaceBundle\Entity\Place;
 
 class PlaceFinder {
@@ -9,6 +13,8 @@ class PlaceFinder {
     protected $consumer_key;
     
     protected $consumer_secret;
+    
+    protected $generic_appid;
         
     public function __construct($consumer_key, $consumer_secret, $generic_appid)
     {
@@ -20,41 +26,28 @@ class PlaceFinder {
     public function findPlace($em, $query) {
     
       $repository = $em->getRepository('Church\PlaceBundle\Entity\Place');
-    
-      $params = array(
-        'service' => 'placefinder',
-        'ck' => $this->consumer_key,
-        'secret' => $this->consumer_secret,
-        'count' => 1,
-        'q' => $query,
-      );
-  
       
-      $conditions = array();
-      foreach ($params as $key => $value) {
-        $conditions[] = $key . '="' . addslashes($value) . '"';
+      $boss = new Client('http://yboss.yahooapis.com/geo?count=1&flags=J');
+      $oauth = new OauthPlugin(array(
+          'consumer_key'    => $this->consumer_key,
+          'consumer_secret' => $this->consumer_secret,
+      ));
+      
+      $boss->addSubscriber($oauth);
+      
+      $request = $boss->get('placefinder');
+      $request->getQuery()->set('q', $query);
+      
+      try {
+          $response = $request->send();
+      } catch (BadResponseException $e) {
+          return FALSE;
       }
       
-      $condition_string = implode(' AND ', $conditions);
-      
-      $yquery = "SELECT * FROM boss.search WHERE " . $condition_string;
-      
-      $url_params = array(
-        'q' => $yquery,
-        'format' => 'json',
-        'env' => 'http://datatables.org/alltables.env',
-      );
-      
-      $ch = curl_init('http://query.yahooapis.com/v1/public/yql?' . http_build_query($url_params));
-      curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      
-      $response = curl_exec($ch);
-      
-      $response = json_decode($response, TRUE);
-                  
-      if (!empty($response['query']['results']['bossresponse']['placefinder']['results']['result'])) {
-        $result = $response['query']['results']['bossresponse']['placefinder']['results']['result'];
+      $data = $response->json();
+                        
+      if (!empty($data['bossresponse']['placefinder']['results'][0])) {
+        $result = $data['bossresponse']['placefinder']['results'][0];
       }
       else {
         return FALSE;
@@ -66,29 +59,27 @@ class PlaceFinder {
       $user_place->setLatitude($result['latitude']);
       $user_place->setLongitude($result['longitude']);
       
-      $params = array(
-        'appid' => $this->generic_appid,
-        'format' => 'json',
-      );
+      $geo = new Client('http://where.yahooapis.com/v1/place?format=json&appid='.$this->generic_appid);
       
-      $endpoint = 'http://where.yahooapis.com/v1/place/' . $user_place->getID();
-      $ch = curl_init($endpoint . '?' . http_build_query($params));
-      curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      $request = $geo->get($user_place->getID());
       
-      $response = curl_exec($ch);
+      try {
+          $response = $request->send();
+      } catch (BadResponseException $e) {
+          return $user_place;
+      }
       
-      $response = json_decode($response, TRUE);
+      $data = $response->json();
       
-      if (empty($response['place']['woeid'])) {
+      if (empty($data['place']['woeid'])) {
         return $user_place;
       }
             
       $place = new Place();
-      $place->setID($response['place']['woeid']);
-      $place->setType($response['place']['placeTypeName attrs']['code']);
-      $place->setLatitude($response['place']['centroid']['latitude']);
-      $place->setLongitude($response['place']['centroid']['longitude']);
+      $place->setID($data['place']['woeid']);
+      $place->setType($data['place']['placeTypeName attrs']['code']);
+      $place->setLatitude($data['place']['centroid']['latitude']);
+      $place->setLongitude($data['place']['centroid']['longitude']);
       
       $places = array();
       
@@ -101,42 +92,48 @@ class PlaceFinder {
           break;
         }
         
-        $endpoint = 'http://where.yahooapis.com/v1/place/' . $place->getID() . '/parent';
-        $ch = curl_init($endpoint . '?' . http_build_query($params));
-        curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $request = $geo->get($place->getID() . '/parent');
         
-        $response = curl_exec($ch);
+        try {
+            $response = $request->send();
+        } catch (BadResponseException $e) {
+            $places[] = clone $place;
+            $parent = FALSE;
+            continue;
+        }
+
+        $data = $response->json();
         
-        $response = json_decode($response, TRUE);
-        
-        if (empty($response['place']['woeid'])) {
+        if (empty($data['place']['woeid'])) {
           $places[] = clone $place;
           $parent = FALSE;
           continue;
         }
         
-        $endpoint = 'http://where.yahooapis.com/v1/place/' . $response['place']['woeid'];
-        $ch = curl_init($endpoint . '?' . http_build_query($params));
-        curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $request = $geo->get($data['place']['woeid']);
         
-        $response = curl_exec($ch);
+        try {
+            $response = $request->send();
+        } catch (BadResponseException $e) {
+            $places[] = clone $place;
+            $parent = FALSE;
+            continue;
+        }
         
-        $response = json_decode($response, TRUE);
+        $data = $response->json();
         
-        if (empty($response['place']['woeid'])) {
+        if (empty($data['place']['woeid'])) {
           $places[] = clone $place;
           $parent = FALSE;
           continue;
         }
         
         $parent = new Place();
-        $parent->setID($response['place']['woeid']);
-        $parent->setName($response['place']['name']);
-        $parent->setType($response['place']['placeTypeName attrs']['code']);
-        $parent->setLatitude($response['place']['centroid']['latitude']);
-        $parent->setLongitude($response['place']['centroid']['longitude']);
+        $parent->setID($data['place']['woeid']);
+        $parent->setName($data['place']['name']);
+        $parent->setType($data['place']['placeTypeName attrs']['code']);
+        $parent->setLatitude($data['place']['centroid']['latitude']);
+        $parent->setLongitude($data['place']['centroid']['longitude']);
         
         $place->setParent(clone $parent);
         
