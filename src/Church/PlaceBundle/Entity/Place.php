@@ -3,6 +3,7 @@
 namespace Church\PlaceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Church\PlaceBundle\Entity\Place
@@ -21,8 +22,8 @@ class Place
     private $id;
     
     /**
-     * @ORM\JoinColumn(name="parent", referencedColumnName="place_id")
      * @ORM\ManyToOne(targetEntity="Place")
+     * @ORM\JoinColumn(name="parent", referencedColumnName="place_id")
      */
     private $parent;
     
@@ -32,7 +33,7 @@ class Place
     private $type;
     
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\OneToMany(targetEntity="PlaceName", mappedBy="place", cascade={"all"})
      */
     private $name;
     
@@ -45,14 +46,22 @@ class Place
      * @ORM\Column(type="decimal", precision=9, scale=6)
      */
     private $longitude;
-
-
+    
+    
+    /**
+     * Construct
+     */
+    public function __construct()
+    {
+        $this->name = new ArrayCollection();
+    }
+    
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
+    public function getID()
     {
         return $this->id;
     }
@@ -63,11 +72,44 @@ class Place
      * @param integer $id
      * @return Place
      */
-    public function setId($id)
+    public function setID($id)
     {
         $this->id = $id;
     
         return $this;
+    }
+    
+    /**
+     * Add name
+     *
+     * @param \Church\PlaceBundle\Entity\PlaceName $name
+     * @return Place
+     */
+    public function addName(\Church\PlaceBundle\Entity\PlaceName $name)
+    {
+        $this->name[] = $name;
+    
+        return $this;
+    }
+
+    /**
+     * Remove name
+     *
+     * @param \Church\PlaceBundle\Entity\PlaceName $name
+     */
+    public function removeName(\Church\PlaceBundle\Entity\PlaceName $name)
+    {
+        $this->name->removeElement($name);
+    }
+
+    /**
+     * Get name
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getName()
+    {
+        return $this->name;
     }
     
     /**
@@ -115,29 +157,6 @@ class Place
     public function getParent()
     {
         return $this->parent;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return Place
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**

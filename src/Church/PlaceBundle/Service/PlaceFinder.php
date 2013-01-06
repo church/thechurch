@@ -5,29 +5,34 @@ namespace Church\PlaceBundle\Service;
 use Guzzle\Http\Client;
 use Guzzle\Plugin\Oauth\OauthPlugin;
 use Guzzle\Http\Exception\BadResponseException;
+use Doctrine\ORM\EntityManager;
 
 use Church\PlaceBundle\Entity\Place;
+use Church\PlaceBundle\Entity\PlaceName;
 
 class PlaceFinder {
-        
+    
+    protected $em;
+    
     protected $consumer_key;
     
     protected $consumer_secret;
     
     protected $generic_appid;
         
-    public function __construct($consumer_key, $consumer_secret, $generic_appid)
+    public function __construct(EntityManager $em, $consumer_key, $consumer_secret, $generic_appid)
     {
+        $this->em = $em;
         $this->consumer_key = $consumer_key;
         $this->consumer_secret = $consumer_secret;
         $this->generic_appid = $generic_appid;
     }
     
-    public function findPlace($em, $query) {
+    public function findPlace($query) {
     
-      $repository = $em->getRepository('Church\PlaceBundle\Entity\Place');
+      $repository = $this->em->getRepository('Church\PlaceBundle\Entity\Place');
       
-      $boss = new Client('http://yboss.yahooapis.com/geo?count=1&flags=J');
+      $boss = new Client('http://yboss.yahooapis.com');
       $oauth = new OauthPlugin(array(
           'consumer_key'    => $this->consumer_key,
           'consumer_secret' => $this->consumer_secret,
@@ -35,8 +40,7 @@ class PlaceFinder {
       
       $boss->addSubscriber($oauth);
       
-      $request = $boss->get('placefinder');
-      $request->getQuery()->set('q', $query);
+      $request = $boss->get('geo/placefinder?count=1&flags=J&q='.$query);
       
       try {
           $response = $request->send();
@@ -82,6 +86,7 @@ class PlaceFinder {
       $place->setLongitude($data['place']['centroid']['longitude']);
       
       $places = array();
+      $names = array();
       
       do {
         
@@ -130,10 +135,15 @@ class PlaceFinder {
         
         $parent = new Place();
         $parent->setID($data['place']['woeid']);
-        $parent->setName($data['place']['name']);
         $parent->setType($data['place']['placeTypeName attrs']['code']);
         $parent->setLatitude($data['place']['centroid']['latitude']);
         $parent->setLongitude($data['place']['centroid']['longitude']);
+        
+        $lang = explode('-', $data['place']['lang']);
+        
+        $names[$data['place']['woeid']]['name'] = $data['place']['name'];
+        $names[$data['place']['woeid']]['language'] = $lang[0];
+        $names[$data['place']['woeid']]['country'] = $lang[1];
         
         $place->setParent(clone $parent);
         
@@ -150,11 +160,30 @@ class PlaceFinder {
       
       // Save the Place
       foreach ($places as $place) {
-        $em->merge($place);
+        $this->em->merge($place); // This has to be a merge or an exception is thrown
       }
       
-      $em->flush();
-      	    
+      $this->em->flush();
+      
+      // Ideally, you should be able to save the name with the
+      // Place, however, you can't seem to do this without
+      // throwing an exception. By the same token, you
+      // also can't query for all of the places
+      // The solution below is the only solution that
+      // has been found thus far.
+      foreach ($names as $id => $name_array) {
+          $place = $repository->findOneById($id);
+          $name = new PlaceName();
+          $name->setPlace($place);
+          $name->setName($name_array['name']);
+          $name->setLanguage($name_array['language']);
+          $name->setCountry($name_array['country']);
+          $this->em->merge($name);
+      }
+      
+      $this->em->flush();
+        
+            	    
       return $user_place;
       
     }

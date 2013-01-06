@@ -44,7 +44,7 @@ class DefaultController extends Controller
         		// Find the User's Place
         		$em = $this->getDoctrine()->getManager();
         		$finder = $this->get('church_place.place_finder');
-        		$place = $finder->findPlace($em, $register->getAddress());
+        		$place = $finder->findPlace($register->getAddress());
         		
         		if (!empty($place)) {
         		  $user->setLatitude($place->getLatitude());
