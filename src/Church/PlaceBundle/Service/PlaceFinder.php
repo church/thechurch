@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 
 use Church\PlaceBundle\Entity\Place;
 use Church\PlaceBundle\Entity\PlaceName;
+use Church\PlaceBundle\Entity\City;
 
 class PlaceFinder {
     
@@ -84,7 +85,7 @@ class PlaceFinder {
       $place->setType($data['place']['placeTypeName attrs']['code']);
       $place->setLatitude($data['place']['centroid']['latitude']);
       $place->setLongitude($data['place']['centroid']['longitude']);
-      
+            
       $places = array();
       $names = array();
       
@@ -92,7 +93,7 @@ class PlaceFinder {
         
         $db_place = $repository->find($place->getID());
         
-        if (!empty($db_place)) {
+        if ($db_place) {
           $parent = FALSE;
           break;
         }
@@ -160,7 +161,7 @@ class PlaceFinder {
       
       // Save the Place
       foreach ($places as $place) {
-        $this->em->merge($place); // This has to be a merge or an exception is thrown
+        $this->em->merge($place); // This has to be a merge or an exception is thrown TODO: Figure out how to do this wihtout the merge.
       }
       
       $this->em->flush();
@@ -178,7 +179,14 @@ class PlaceFinder {
           $name->setName($name_array['name']);
           $name->setLanguage($name_array['language']);
           $name->setCountry($name_array['country']);
-          $this->em->merge($name);
+          $this->em->merge($name); // Merge does not work so well with duplicate data
+          
+          if ($place->getType() == 7) {
+            $city = new City();
+            $city->setPlace($place);
+            $city->setSlug(strtolower($name->getName()));
+            $this->em->merge($city); // Merge does not work so well with duplicate data
+          }
       }
       
       $this->em->flush();

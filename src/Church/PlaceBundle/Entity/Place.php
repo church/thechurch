@@ -38,6 +38,11 @@ class Place
     private $name;
     
     /**
+     * @ORM\OneToOne(targetEntity="City", mappedBy="place")
+     */
+    private $city;
+    
+    /**
      * @ORM\Column(type="decimal", precision=8, scale=6)
      */
     private $latitude;
@@ -157,6 +162,29 @@ class Place
     public function getParent()
     {
         return $this->parent;
+    }
+    
+    /**
+     * Set city
+     *
+     * @param \Church\PlaceBundle\Entity\City $city
+     * @return Place
+     */
+    public function setCity(\Church\PlaceBundle\Entity\City $city = null)
+    {
+        $this->city = $city;
+    
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return \Church\PlaceBundle\Entity\City 
+     */
+    public function getCity()
+    {
+        return $this->city;
     }
 
     /**
