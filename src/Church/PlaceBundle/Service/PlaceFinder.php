@@ -66,132 +66,96 @@ class PlaceFinder {
       
       $geo = new Client('http://where.yahooapis.com/v1/place?format=json&appid='.$this->generic_appid);
       
-      $request = $geo->get($user_place->getID());
-      
-      try {
-          $response = $request->send();
-      } catch (BadResponseException $e) {
-          return $user_place;
-      }
-      
-      $data = $response->json();
-      
-      if (empty($data['place']['woeid'])) {
-        return $user_place;
-      }
-            
-      $place = new Place();
-      $place->setID($data['place']['woeid']);
-      $place->setType($data['place']['placeTypeName attrs']['code']);
-      $place->setLatitude($data['place']['centroid']['latitude']);
-      $place->setLongitude($data['place']['centroid']['longitude']);
-            
-      $places = array();
-      $names = array();
+      $items = array();
+      $current = $result['woeid'];
       
       do {
+          
+        if ($db_place = $repository->find($current)) {
+          break;
+        }
+      
+        $request = $geo->get($current);
+      
+        try {
+            $response = $request->send();
+        } catch (BadResponseException $e) {
+            break;
+        }
         
-        $db_place = $repository->find($place->getID());
+        $data = $response->json();
         
-        if ($db_place) {
-          $parent = FALSE;
+        if (empty($data['place']['woeid'])) {
           break;
         }
         
-        $request = $geo->get($place->getID() . '/parent');
-        
-        try {
-            $response = $request->send();
-        } catch (BadResponseException $e) {
-            $places[] = clone $place;
-            $parent = FALSE;
-            continue;
-        }
-
-        $data = $response->json();
-        
-        if (empty($data['place']['woeid'])) {
-          $places[] = clone $place;
-          $parent = FALSE;
-          continue;
-        }
-        
-        $request = $geo->get($data['place']['woeid']);
-        
-        try {
-            $response = $request->send();
-        } catch (BadResponseException $e) {
-            $places[] = clone $place;
-            $parent = FALSE;
-            continue;
-        }
-        
-        $data = $response->json();
-        
-        if (empty($data['place']['woeid'])) {
-          $places[] = clone $place;
-          $parent = FALSE;
-          continue;
-        }
-        
-        $parent = new Place();
-        $parent->setID($data['place']['woeid']);
-        $parent->setType($data['place']['placeTypeName attrs']['code']);
-        $parent->setLatitude($data['place']['centroid']['latitude']);
-        $parent->setLongitude($data['place']['centroid']['longitude']);
-        
         $lang = explode('-', $data['place']['lang']);
         
-        $names[$data['place']['woeid']]['name'] = $data['place']['name'];
-        $names[$data['place']['woeid']]['language'] = $lang[0];
-        $names[$data['place']['woeid']]['country'] = $lang[1];
+        $items[$data['place']['woeid']] = array(
+          'type' => $data['place']['placeTypeName attrs']['code'],
+          'latitude' => $data['place']['centroid']['latitude'],
+          'longitude' => $data['place']['centroid']['longitude'],
+          'name' => $data['place']['name'],
+          'language' => $lang[0],
+          'country' => $lang[1],
+        );
         
-        $place->setParent(clone $parent);
+        $request = $geo->get($current . '/parent');
         
-        $places[] = clone $place;
-                
-        $place = clone $parent;
+        try {
+            $response = $request->send();
+        } catch (BadResponseException $e) {
+            break;
+        }
         
-        $parent = NULL;
+        $parent = $response->json();
         
-      } while ($parent !== FALSE);
+        if (empty($parent['place']['woeid'])) {
+          break;
+        }
+        
+        $items[$data['place']['woeid']]['parent'] = $parent['place']['woeid'];
+        
+        $current = $parent['place']['woeid'];
+        
+      } while (!empty($current));
             
       // Reverse the Array to start with the Highest Parent
-      $places = array_reverse($places);
+      $items = array_reverse($items, TRUE);
       
       // Save the Place
-      foreach ($places as $place) {
-        $this->em->merge($place); // This has to be a merge or an exception is thrown TODO: Figure out how to do this wihtout the merge.
-      }
-      
-      $this->em->flush();
-      
-      // Ideally, you should be able to save the name with the
-      // Place, however, you can't seem to do this without
-      // throwing an exception. By the same token, you
-      // also can't query for all of the places
-      // The solution below is the only solution that
-      // has been found thus far.
-      foreach ($names as $id => $name_array) {
-          $place = $repository->findOneById($id);
+      foreach ($items as $id => $item) {
+        $place = new Place();
+        $place->setID($id);
+        $place->setType($item['type']);
+        $place->setLatitude($item['latitude']);
+        $place->setLongitude($item['longitude']);
+        
+        if (!empty($item['parent']) && $parent = $repository->find($item['parent'])) {
+          $place->setParent($parent);
+        }
+        
+        if ($item['type'] != 11 && !empty($item['name'])) {
           $name = new PlaceName();
           $name->setPlace($place);
-          $name->setName($name_array['name']);
-          $name->setLanguage($name_array['language']);
-          $name->setCountry($name_array['country']);
-          $this->em->merge($name); // Merge does not work so well with duplicate data
-          
-          if ($place->getType() == 7) {
-            $city = new City();
-            $city->setPlace($place);
-            $city->setSlug(strtolower($name->getName()));
-            $this->em->merge($city); // Merge does not work so well with duplicate data
-          }
+          $name->setLanguage($item['language']);
+          $name->setCountry($item['country']);
+          $name->setName($item['name']);
+          $place->addName($name);
+        }
+        
+        if ($item['type'] == 7) {
+          $city = new City();
+          $city->setPlace($place);
+          $city->setSlug(strtolower($item['name']));
+          $place->setCity($city);
+        }
+        
+        $this->em->persist($place);
       }
       
       $this->em->flush();
-        
-            	    
+    
       return $user_place;
       
     }

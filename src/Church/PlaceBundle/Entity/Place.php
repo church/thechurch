@@ -38,7 +38,7 @@ class Place
     private $name;
     
     /**
-     * @ORM\OneToOne(targetEntity="City", mappedBy="place")
+     * @ORM\OneToOne(targetEntity="City", mappedBy="place", cascade={"all"})
      */
     private $city;
     
