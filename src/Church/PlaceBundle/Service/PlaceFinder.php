@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 
 use Church\PlaceBundle\Entity\Place;
 use Church\PlaceBundle\Entity\PlaceName;
+use Church\PlaceBundle\Entity\PlaceType;
 use Church\PlaceBundle\Entity\City;
 
 class PlaceFinder {
@@ -32,6 +33,7 @@ class PlaceFinder {
     public function findPlace($query) {
     
       $repository = $this->em->getRepository('Church\PlaceBundle\Entity\Place');
+      $type_repository = $this->em->getRepository('Church\PlaceBundle\Entity\PlaceType');
       
       $boss = new Client('http://yboss.yahooapis.com');
       $oauth = new OauthPlugin(array(
@@ -127,9 +129,17 @@ class PlaceFinder {
       foreach ($items as $id => $item) {
         $place = new Place();
         $place->setID($id);
-        $place->setType($item['type']);
-        $place->setLatitude($item['latitude']);
-        $place->setLongitude($item['longitude']);
+        
+        if (!empty($item['latitude'])) {
+          $place->setLatitude($item['latitude']);
+        }
+        if (!empty($item['longitude'])) {
+          $place->setLongitude($item['longitude']);
+        }
+        
+        if ($type = $type_repository->find($item['type'])) {
+          $place->setType($type);
+        }
         
         if (!empty($item['parent']) && $parent = $repository->find($item['parent'])) {
           $place->setParent($parent);
@@ -157,6 +167,45 @@ class PlaceFinder {
       $this->em->flush();
     
       return $user_place;
+      
+    }
+    
+    public function getTypes()
+    {
+    
+       $geo = new Client('http://where.yahooapis.com/v1?format=json&appid='.$this->generic_appid);
+       
+       $request = $geo->get('placetypes');
+        
+        try {
+            $response = $request->send();
+        } catch (BadResponseException $e) {
+            return FALSE;
+        }
+        
+        $types = $response->json();
+        
+        $types = !empty($types['placeTypes']['placeType']) ? $types['placeTypes']['placeType'] : array();
+        
+        return $types;
+      
+    }
+    
+    public function saveTypes($types = array())
+    {
+    
+       foreach ($types as $type) {
+        if (!empty($type['placeTypeName']) && !empty($type['placeTypeName attrs']['code'])) {
+          $place_type = new PlaceType();
+          $place_type->setID($type['placeTypeName attrs']['code']);
+          $place_type->setName($type['placeTypeName']);
+          $this->em->persist($place_type);
+        }
+       }
+       
+       $this->em->flush();
+        
+       return TRUE;
       
     }
     

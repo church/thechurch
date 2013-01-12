@@ -28,7 +28,8 @@ class Place
     private $parent;
     
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="PlaceType")
+     * @ORM\JoinColumn(name="place_type_id", referencedColumnName="place_type_id")
      */
     private $type;
     
@@ -43,12 +44,12 @@ class Place
     private $city;
     
     /**
-     * @ORM\Column(type="decimal", precision=8, scale=6)
+     * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
      */
     private $latitude;
     
     /**
-     * @ORM\Column(type="decimal", precision=9, scale=6)
+     * @ORM\Column(type="decimal", precision=9, scale=6, nullable=true)
      */
     private $longitude;
     
@@ -120,10 +121,10 @@ class Place
     /**
      * Set type
      *
-     * @param integer $type
+     * @param \Church\PlaceBundle\Entity\PlaceType $type
      * @return Place
      */
-    public function setType($type)
+    public function setType(\Church\PlaceBundle\Entity\PlaceType $type = null)
     {
         $this->type = $type;
     

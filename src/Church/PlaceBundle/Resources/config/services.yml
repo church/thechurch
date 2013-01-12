@@ -1,11 +1,15 @@
 parameters:
     church_place.place_finder.class: Church\PlaceBundle\Service\PlaceFinder
     church_place.tree_maker.class: Church\PlaceBundle\Listener\TreeMaker
+    church_place.consumer_key: ~
+    church_place.consumer_secret: ~
+    church_place.generic_appid: ~
+    
 
 services:
    church_place.place_finder:
        class: %church_place.place_finder.class%
-       arguments: [@doctrine.orm.entity_manager, %church_place.place_finder.consumer_key%, %church_place.place_finder.consumer_secret%, %church_place.place_finder.generic_appid%]
+       arguments: [@doctrine.orm.entity_manager, %church_place.consumer_key%, %church_place.consumer_secret%, %church_place.generic_appid%]
    church_place.tree_maker.listener:
         class: %church_place.tree_maker.class%
         tags:
