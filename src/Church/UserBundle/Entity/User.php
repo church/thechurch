@@ -45,7 +45,7 @@ class User implements UserInterface
     private $salt;
     
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
     
@@ -62,7 +62,7 @@ class User implements UserInterface
     private $primary_email;
     
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $address;
     
@@ -73,12 +73,12 @@ class User implements UserInterface
     private $place;
     
     /**
-     * @ORM\Column(type="decimal", precision=8, scale=6)
+     * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
      */
     private $latitude;
     
     /**
-     * @ORM\Column(type="decimal", precision=9, scale=6)
+     * @ORM\Column(type="decimal", precision=9, scale=6, nullable=true)
      */
     private $longitude;
 
