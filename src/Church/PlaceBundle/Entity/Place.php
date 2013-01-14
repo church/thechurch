@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\Table(name="place")
+ * @ORM\Entity(repositoryClass="Church\PlaceBundle\Entity\PlaceRepository")
  */
 class Place
 {
@@ -26,6 +27,18 @@ class Place
      * @ORM\JoinColumn(name="parent", referencedColumnName="place_id")
      */
     private $parent;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="PlaceTree", mappedBy="descendant")
+     * @ORM\JoinColumn(name="place_id", referencedColumnName="descendant")
+     */
+    private $ancestor;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="PlaceTree", mappedBy="ancestor")
+     * @ORM\JoinColumn(name="place_id", referencedColumnName="ancestor")
+     */
+    private $descendant;
     
     /**
      * @ORM\ManyToOne(targetEntity="PlaceType")
@@ -60,6 +73,8 @@ class Place
     public function __construct()
     {
         $this->name = new ArrayCollection();
+        $this->ancestor = new ArrayCollection();
+        $this->descendant = new ArrayCollection();
     }
     
     /**
@@ -116,6 +131,72 @@ class Place
     public function getName()
     {
         return $this->name;
+    }
+    
+    /**
+     * Add ancestor
+     *
+     * @param \Church\PlaceBundle\Entity\PlaceTree $ancestor
+     * @return Place
+     */
+    public function addAncestor(\Church\PlaceBundle\Entity\PlaceTree $ancestor)
+    {
+        $this->ancestor[] = $ancestor;
+    
+        return $this;
+    }
+
+    /**
+     * Remove ancestor
+     *
+     * @param \Church\PlaceBundle\Entity\PlaceTree $ancestor
+     */
+    public function removeAncestor(\Church\PlaceBundle\Entity\PlaceTree $ancestor)
+    {
+        $this->ancestor->removeElement($ancestor);
+    }
+
+    /**
+     * Get ancestor
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAncestor()
+    {
+        return $this->ancestor;
+    }
+    
+    /**
+     * Add descendant
+     *
+     * @param \Church\PlaceBundle\Entity\PlaceTree $descendant
+     * @return Place
+     */
+    public function addDescendant(\Church\PlaceBundle\Entity\PlaceTree $descendant)
+    {
+        $this->descendant[] = $descendant;
+    
+        return $this;
+    }
+
+    /**
+     * Remove descendant
+     *
+     * @param \Church\PlaceBundle\Entity\PlaceTree $descendant
+     */
+    public function removeDescendant(\Church\PlaceBundle\Entity\PlaceTree $descendant)
+    {
+        $this->descendant->removeElement($descendant);
+    }
+
+    /**
+     * Get descendant
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDescendant()
+    {
+        return $this->descendant;
     }
     
     /**

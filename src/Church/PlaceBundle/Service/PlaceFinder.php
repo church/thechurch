@@ -5,6 +5,7 @@ namespace Church\PlaceBundle\Service;
 use Guzzle\Http\Client;
 use Guzzle\Plugin\Oauth\OauthPlugin;
 use Guzzle\Http\Exception\BadResponseException;
+use Guzzle\Plugin\Backoff\BackoffPlugin;
 use Doctrine\ORM\EntityManager;
 
 use Church\PlaceBundle\Entity\Place;
@@ -33,6 +34,7 @@ class PlaceFinder {
     public function findPlace($query) {
     
       $repository = $this->em->getRepository('Church\PlaceBundle\Entity\Place');
+      $city_repository = $this->em->getRepository('Church\PlaceBundle\Entity\City');
       $type_repository = $this->em->getRepository('Church\PlaceBundle\Entity\PlaceType');
       
       $boss = new Client('http://yboss.yahooapis.com');
@@ -43,6 +45,10 @@ class PlaceFinder {
       
       $boss->addSubscriber($oauth);
       
+      $backoff = BackoffPlugin::getExponentialBackoff();
+
+      $boss->addSubscriber($backoff);
+            
       $request = $boss->get('geo/placefinder?count=1&flags=J&q='.$query);
       
       try {
@@ -73,7 +79,7 @@ class PlaceFinder {
       
       do {
           
-        if ($db_place = $repository->find($current)) {
+        if ($repository->find($current)) {
           break;
         }
       
@@ -127,6 +133,7 @@ class PlaceFinder {
       
       // Save the Place
       foreach ($items as $id => $item) {
+      
         $place = new Place();
         $place->setID($id);
         
@@ -154,14 +161,57 @@ class PlaceFinder {
           $place->addName($name);
         }
         
-        if ($item['type'] == 7) {
+        $this->em->persist($place);
+
+      }
+      
+      $this->em->flush();
+      
+      foreach ($items as $id => $item) {
+      
+        if ($item['type'] == 7 && !$city_repository->find($id) && $place = $repository->find($id)) {
+                    
           $city = new City();
           $city->setPlace($place);
-          $city->setSlug(strtolower($item['name']));
-          $place->setCity($city);
+          
+          // Prepare the Name.
+          $slug = trim($item['name']);
+          $slug = strtolower($slug);
+          $slug = str_replace(' ', '-', $slug);
+          $slug = str_replace('.', '', $slug);
+          
+          // If the City slug already exists, create a new one
+          if ($city_repository->findOneBySlug($slug)) {
+            
+            if ($state = $repository->findState($place->getID())) {
+              $state_slug = trim($state->getName()->first()->getName());
+              $state_slug = strtolower($state_slug);
+              $state_slug = str_replace(' ', '-', $state_slug);
+              $state_slug = str_replace('.', '', $state_slug);
+              $slug .= '-'.$state_slug;
+            }
+            
+          } 
+        
+          // Make sure that this name doesn't exist
+          if ($city_repository->findOneBySlug($slug)) {
+            
+            if ($country = $repository->findCountry($place->getID())) {
+              $country_slug = trim($country->getName()->first()->getName());
+              $country_slug = strtolower($country_slug);
+              $country_slug = str_replace(' ', '-', $country_slug);
+              $country_slug = str_replace('.', '', $country_slug);
+              $slug .= '-'.$country_slug;
+            }
+            
+          }
+          
+          $city->setSlug($slug);
+          
+          $this->em->persist($city);
+          
         }
         
-        $this->em->persist($place);
       }
       
       $this->em->flush();
