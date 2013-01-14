@@ -184,11 +184,13 @@ class PlaceFinder {
           if ($city_repository->findOneBySlug($slug)) {
             
             if ($state = $repository->findState($place->getID())) {
-              $state_slug = trim($state->getName()->first()->getName());
-              $state_slug = strtolower($state_slug);
-              $state_slug = str_replace(' ', '-', $state_slug);
-              $state_slug = str_replace('.', '', $state_slug);
-              $slug .= '-'.$state_slug;
+              if ($state_name = $state->getName()->first()->getName()) {
+                $state_slug = trim($state_name);
+                $state_slug = strtolower($state_slug);
+                $state_slug = str_replace(' ', '-', $state_slug);
+                $state_slug = str_replace('.', '', $state_slug);
+                $slug .= '-'.$state_slug;
+              }
             }
             
           } 
@@ -197,11 +199,13 @@ class PlaceFinder {
           if ($city_repository->findOneBySlug($slug)) {
             
             if ($country = $repository->findCountry($place->getID())) {
-              $country_slug = trim($country->getName()->first()->getName());
-              $country_slug = strtolower($country_slug);
-              $country_slug = str_replace(' ', '-', $country_slug);
-              $country_slug = str_replace('.', '', $country_slug);
-              $slug .= '-'.$country_slug;
+              if ($country_name = $country->getName()->first()->getName()) {
+                $country_slug = trim($country_name);
+                $country_slug = strtolower($country_slug);
+                $country_slug = str_replace(' ', '-', $country_slug);
+                $country_slug = str_replace('.', '', $country_slug);
+                $slug .= '-'.$country_slug;
+              }
             }
             
           }
