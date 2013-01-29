@@ -17,18 +17,37 @@ class PlaceFinder {
     
     protected $em;
     
-    protected $consumer_key;
+    protected $boss;
     
-    protected $consumer_secret;
+    protected $geo;
     
-    protected $generic_appid;
         
     public function __construct(EntityManager $em, $consumer_key, $consumer_secret, $generic_appid)
     {
         $this->em = $em;
-        $this->consumer_key = $consumer_key;
-        $this->consumer_secret = $consumer_secret;
-        $this->generic_appid = $generic_appid;
+        
+        $this->boss = new Client('http://yboss.yahooapis.com');
+        $oauth = new OauthPlugin(array(
+            'consumer_key'    => $consumer_key,
+            'consumer_secret' => $consumer_secret,
+        ));
+        $this->boss->addSubscriber($oauth);
+        $backoff = BackoffPlugin::getExponentialBackoff();
+        $this->boss->addSubscriber($backoff);
+        
+        $this->geo = new Client('http://where.yahooapis.com/v1?format=json&appid='.$generic_appid);
+        
+    }
+    
+    public function findSavePlace($query) {
+      
+      $result = $this->findPlace($query);
+      $places = $this->findNewPlaceTree($result['woeid']);
+      $this->savePlaces($places);
+      $this->saveCities($places);
+      
+      return $result;
+      
     }
     
     public function findPlace($query) {
@@ -36,20 +55,8 @@ class PlaceFinder {
       $repository = $this->em->getRepository('Church\PlaceBundle\Entity\Place');
       $city_repository = $this->em->getRepository('Church\PlaceBundle\Entity\City');
       $type_repository = $this->em->getRepository('Church\PlaceBundle\Entity\PlaceType');
-      
-      $boss = new Client('http://yboss.yahooapis.com');
-      $oauth = new OauthPlugin(array(
-          'consumer_key'    => $this->consumer_key,
-          'consumer_secret' => $this->consumer_secret,
-      ));
-      
-      $boss->addSubscriber($oauth);
-      
-      $backoff = BackoffPlugin::getExponentialBackoff();
-
-      $boss->addSubscriber($backoff);
             
-      $request = $boss->get('geo/placefinder?count=1&flags=J&q='.$query);
+      $request = $this->boss->get('geo/placefinder?count=1&flags=J&q='.$query);
       
       try {
           $response = $request->send();
@@ -63,19 +70,20 @@ class PlaceFinder {
         $result = $data['bossresponse']['placefinder']['results'][0];
       }
       else {
-        return FALSE;
+        return array();
       }
       
-      // Create the Place
-      $user_place = new Place();
-      $user_place->setID($result['woeid']);
-      $user_place->setLatitude($result['latitude']);
-      $user_place->setLongitude($result['longitude']);
+      return $result;
+            
+    }
+    
+    public function findNewPlaceTree($place_id)
+    {
       
-      $geo = new Client('http://where.yahooapis.com/v1/place?format=json&appid='.$this->generic_appid);
+      $repository = $this->em->getRepository('Church\PlaceBundle\Entity\Place');
       
       $items = array();
-      $current = $result['woeid'];
+      $current = $place_id;
       
       do {
           
@@ -83,7 +91,7 @@ class PlaceFinder {
           break;
         }
       
-        $request = $geo->get($current);
+        $request = $this->geo->get('place/'.$current);
       
         try {
             $response = $request->send();
@@ -108,7 +116,7 @@ class PlaceFinder {
           'country' => $lang[1],
         );
         
-        $request = $geo->get($current . '/parent');
+        $request = $this->geo->get('place/'.$current.'/parent');
         
         try {
             $response = $request->send();
@@ -127,12 +135,21 @@ class PlaceFinder {
         $current = $parent['place']['woeid'];
         
       } while (!empty($current));
-            
+        
       // Reverse the Array to start with the Highest Parent
       $items = array_reverse($items, TRUE);
       
-      // Save the Place
-      foreach ($items as $id => $item) {
+      return $items;
+      
+    }
+    
+    public function savePlaces($places = array())
+    {
+      
+      $repository = $this->em->getRepository('Church\PlaceBundle\Entity\Place');
+      $type_repository = $this->em->getRepository('Church\PlaceBundle\Entity\PlaceType');
+      
+      foreach ($places as $id => $item) {
       
         $place = new Place();
         $place->setID($id);
@@ -167,7 +184,15 @@ class PlaceFinder {
       
       $this->em->flush();
       
-      foreach ($items as $id => $item) {
+    }
+    
+    public function saveCities($places = array())
+    {
+      
+      $repository = $this->em->getRepository('Church\PlaceBundle\Entity\Place');
+      $city_repository = $this->em->getRepository('Church\PlaceBundle\Entity\City');
+    
+      foreach ($places as $id => $item) {
       
         if ($item['type'] == 7 && !$city_repository->find($id) && $place = $repository->find($id)) {
                     
@@ -175,21 +200,14 @@ class PlaceFinder {
           $city->setPlace($place);
           
           // Prepare the Name.
-          $slug = trim($item['name']);
-          $slug = strtolower($slug);
-          $slug = str_replace(' ', '-', $slug);
-          $slug = str_replace('.', '', $slug);
+          $slug = $this->makeSlug($item['name']);
           
           // If the City slug already exists, create a new one
           if ($city_repository->findOneBySlug($slug)) {
             
             if ($state = $repository->findState($place->getID())) {
               if ($state_name = $state->getName()->first()->getName()) {
-                $state_slug = trim($state_name);
-                $state_slug = strtolower($state_slug);
-                $state_slug = str_replace(' ', '-', $state_slug);
-                $state_slug = str_replace('.', '', $state_slug);
-                $slug .= '-'.$state_slug;
+                $slug .= '-'.$this->makeSlug($state_name);
               }
             }
             
@@ -200,11 +218,7 @@ class PlaceFinder {
             
             if ($country = $repository->findCountry($place->getID())) {
               if ($country_name = $country->getName()->first()->getName()) {
-                $country_slug = trim($country_name);
-                $country_slug = strtolower($country_slug);
-                $country_slug = str_replace(' ', '-', $country_slug);
-                $country_slug = str_replace('.', '', $country_slug);
-                $slug .= '-'.$country_slug;
+                $slug .= '-'.$this->makeSlug($country_name);
               }
             }
             
@@ -219,17 +233,13 @@ class PlaceFinder {
       }
       
       $this->em->flush();
-    
-      return $user_place;
       
     }
     
     public function getTypes()
     {
-    
-       $geo = new Client('http://where.yahooapis.com/v1?format=json&appid='.$this->generic_appid);
        
-       $request = $geo->get('placetypes');
+       $request = $this->geo->get('placetypes');
         
         try {
             $response = $request->send();
@@ -261,6 +271,16 @@ class PlaceFinder {
         
        return TRUE;
       
+    }
+    
+    public function makeSlug($str)
+    {
+      $slug = trim($str);
+      $slug = strtolower($slug);
+      $slug = str_replace(' ', '-', $slug);
+      $slug = str_replace('.', '', $slug);
+      
+      return $slug;
     }
     
 }

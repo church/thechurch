@@ -44,15 +44,16 @@ class DefaultController extends Controller
         		// Find the User's Place
         		$em = $this->getDoctrine()->getManager();
         		$finder = $this->get('church_place.place_finder');
-        		$place = $finder->findPlace($register->getAddress());
+        		$place = $finder->findSavePlace($register->getAddress());
+        		
+        		// Before setting the Place to the user, get it from the Database
+      		  $repository = $this->getDoctrine()->getRepository('Church\PlaceBundle\Entity\Place');
+      		  $place = $repository->find($place['woeid']);
         		
         		if (!empty($place)) {
         		  $user->setLatitude($place->getLatitude());
         		  $user->setLongitude($place->getLongitude());
         		  
-        		  // Before setting the Place to the user, get it from the Database
-        		  $repository = $this->getDoctrine()->getRepository('Church\PlaceBundle\Entity\Place');
-        		  $place = $repository->find($place->getID());
           		$user->setPlace($place);
         		}
         		        		        		
