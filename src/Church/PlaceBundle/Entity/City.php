@@ -9,7 +9,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * Church\PlaceBundle\Entity\City
  *
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="city")
  * @UniqueEntity("slug")
  */
@@ -26,19 +25,6 @@ class City
      * @ORM\Column(type="string", unique=true)
      */
     private $slug;
-    
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $created;
-    
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedValue()
-    {
-        $this->created = new \DateTime();
-    }
     
     /**
      * Set place
@@ -85,29 +71,6 @@ class City
     public function getSlug()
     {
         return $this->slug;
-    }
-    
-    /**
-     * Set created
-     *
-     * @param \DateTime $verified
-     * @return Email
-     */
-    public function setCreated($created)
-    {
-        $this->created = $created;
-    
-        return $this;
-    }
-
-    /**
-     * Get created
-     *
-     * @return \DateTime 
-     */
-    public function getCreated()
-    {
-        return $this->created;
     }
     
 }
