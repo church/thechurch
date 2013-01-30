@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\Table(name="users_email")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("primary_email")
  */
 class Email
@@ -33,13 +34,22 @@ class Email
     private $email;
     
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
+    
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $verified;
     
-    public function __construct()
+    
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedValue()
     {
-        $this->verified = FALSE;
+        $this->created = new \DateTime();
     }
     
     /**
@@ -87,11 +97,35 @@ class Email
     {
         return $this->user;
     }
+    
+    /**
+     * Set created
+     *
+     * @param \DateTime $verified
+     * @return Email
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+    
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
 
     /**
      * Set verified
      *
-     * @param boolean $verified
+     * @param \DateTime $verified
      * @return Email
      */
     public function setVerified($verified)
@@ -104,7 +138,7 @@ class Email
     /**
      * Get verified
      *
-     * @return boolean 
+     * @return \DateTime 
      */
     public function getVerified()
     {

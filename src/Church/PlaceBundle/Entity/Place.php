@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Church\PlaceBundle\Entity\Place
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="place")
  * @ORM\Entity(repositoryClass="Church\PlaceBundle\Entity\PlaceRepository")
  */
@@ -66,6 +67,11 @@ class Place
      */
     private $longitude;
     
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
+    
     
     /**
      * Construct
@@ -75,6 +81,14 @@ class Place
         $this->name = new ArrayCollection();
         $this->ancestor = new ArrayCollection();
         $this->descendant = new ArrayCollection();
+    }
+    
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedValue()
+    {
+        $this->created = new \DateTime();
     }
     
     /**
@@ -313,6 +327,29 @@ class Place
     public function getLongitude()
     {
         return $this->longitude;
+    }
+    
+    /**
+     * Set created
+     *
+     * @param \DateTime $verified
+     * @return Email
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+    
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
     }
 
 }

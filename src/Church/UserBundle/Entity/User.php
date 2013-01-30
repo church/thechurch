@@ -15,6 +15,7 @@ use Church\PlaceBundle\Entity\Place;
  *
  * @ORM\Table(name="users")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("username")
  * @UniqueEntity("primary_email")
  */
@@ -81,12 +82,27 @@ class User implements UserInterface
      * @ORM\Column(type="decimal", precision=9, scale=6, nullable=true)
      */
     private $longitude;
-
     
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
+
+    /**
+     * Construct
+     */
     public function __construct()
     {
         $this->salt = md5(uniqid(null, true));
         $this->emails = new ArrayCollection();
+    }
+    
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedValue()
+    {
+        $this->created = new \DateTime();
     }
 
     /**
@@ -350,5 +366,28 @@ class User implements UserInterface
     public function getLongitude()
     {
         return $this->longitude;
+    }
+    
+    /**
+     * Set created
+     *
+     * @param \DateTime $verified
+     * @return Email
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+    
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
     }
 }
