@@ -19,7 +19,7 @@ use Church\PlaceBundle\Entity\Place;
  * @UniqueEntity("username")
  * @UniqueEntity("primary_email")
  */
-class User implements UserInterface
+class User implements UserInterface, \Serializable
 {
     /**
      * @var integer $id
@@ -87,12 +87,15 @@ class User implements UserInterface
      * @ORM\Column(type="datetime")
      */
     private $created;
+    
+    private $isActive;
 
     /**
      * Construct
      */
     public function __construct()
     {
+        $this->isActive = TRUE;
         $this->salt = md5(uniqid(null, true));
         $this->emails = new ArrayCollection();
     }
@@ -110,9 +113,14 @@ class User implements UserInterface
      *
      * @return integer 
      */
-    public function getId()
+    public function getID()
     {
         return $this->id;
+    }
+    
+    public function isActive()
+    {
+        return TRUE;
     }
     
     /**
@@ -153,6 +161,26 @@ class User implements UserInterface
     public function eraseCredentials()
     {
     
+    }
+    
+    /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+        ));
+    }
+
+    /**
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+        ) = unserialize($serialized);
     }
 
     /**

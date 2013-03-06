@@ -4,8 +4,8 @@ jms_security_extra:
 
 security:
     encoders:
-        Church\UserBundle\Entity\User: sha512
-        Symfony\Component\Security\Core\User\User: plaintext
+        Church\UserBundle\Entity\User:
+          algorithm: bcrypt
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
@@ -14,33 +14,26 @@ security:
     providers:
         main:
             entity: { class: Church\UserBundle\Entity\User, property: username }
-        in_memory:
-            memory:
-                users:
-                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
 
     firewalls:
         dev:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        login:
-            pattern:  ^/demo/secured/login$
-            security: false
-
         secured_area:
-            pattern:    ^/demo/secured/
+            pattern:    ^/
+            anonymous: ~
             form_login:
-                check_path: /demo/secured/login_check
-                login_path: /demo/secured/login
+                login_path:  /user/login
+                check_path:  /user/login_check
             logout:
-                path:   /demo/secured/logout
-                target: /demo/
+                path:   /user/logout
+                target: /
             #anonymous: ~
             #http_basic:
             #    realm: "Secured Demo Area"
 
     access_control:
-        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
+        - { path: ^/user/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/, roles: ROLE_USER}
+        - { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
