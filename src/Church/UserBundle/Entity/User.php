@@ -14,7 +14,7 @@ use Church\PlaceBundle\Entity\Place;
  * Church\UserBundle\Entity\User
  *
  * @ORM\Table(name="users")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Church\UserBundle\Entity\UserRepository")
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("username")
  * @UniqueEntity("primary_email")
@@ -51,10 +51,10 @@ class User implements UserInterface, \Serializable
     private $name;
     
     /**
-     * @ORM\OneToMany(targetEntity="Email", mappedBy="email",  cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Email", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
-    private $emails;
+    private $email;
     
     /**
      * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
@@ -97,7 +97,7 @@ class User implements UserInterface, \Serializable
     {
         $this->isActive = TRUE;
         $this->salt = md5(uniqid(null, true));
-        $this->emails = new ArrayCollection();
+        $this->email = new ArrayCollection();
     }
     
     /**
@@ -252,7 +252,7 @@ class User implements UserInterface, \Serializable
      * @param Church\UserBundle\Entity\Email $emails
      * @return User
      */
-    public function addEmail(Email $emails)
+    public function addEmail(Email $email)
     {
         $this->emails[] = $emails;
     
@@ -264,9 +264,9 @@ class User implements UserInterface, \Serializable
      *
      * @param Church\UserBundle\Entity\Email $emails
      */
-    public function removeEmail(Email $emails)
+    public function removeEmail(Email $email)
     {
-        $this->emails->removeElement($emails);
+        $this->email->removeElement($email);
     }
 
     /**
@@ -276,7 +276,7 @@ class User implements UserInterface, \Serializable
      */
     public function getEmails()
     {
-        return $this->emails;
+        return $this->email;
     }
 
 
