@@ -1,3 +1,3 @@
-church_place_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: ChurchPlaceBundle:Default:index }
+church_place_city:
+    pattern:  /{slug}
+    defaults: { _controller: ChurchPlaceBundle:Default:city }

@@ -13,19 +13,16 @@ class UserRepository extends EntityRepository implements UserProviderInterface
 {
     public function loadUserByUsername($username)
     {
-        $q = $this
-            ->createQueryBuilder('u')
-            ->where('u.username = :username OR e.email = :email')
-            ->leftJoin('u.email' ,'e')
-            ->setParameter('username', $username)
-            ->setParameter('email', $username)
-            ->getQuery()
-        ;
+        $query = $this->createQueryBuilder('u');
+        $query->where('u.username = :username OR e.email = :email');
+        $query->leftJoin('u.email' ,'e');
+        $query->setParameter('username', $username);
+        $query->setParameter('email', $username);
 
         try {
             // The Query::getSingleResult() method throws an exception
             // if there is no record matching the criteria.
-            $user = $q->getSingleResult();
+            $user = $query->getQuery()->getSingleResult();
         } catch (NoResultException $e) {
             $message = sprintf(
                 'Unable to find an active admin ChurchUserBundle:User object identified by "%s".',
