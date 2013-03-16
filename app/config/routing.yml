@@ -1,3 +1,7 @@
+church_make_it_happen:
+    resource: "@ChurchMakeItHappenBundle/Resources/config/routing.yml"
+    prefix:   /
+
 ChurchTeaserBundle:
     resource: "@ChurchTeaserBundle/Resources/config/routing.yml"
     prefix:   /
