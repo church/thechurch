@@ -1,15 +1,38 @@
 <!DOCTYPE html>
 <html>
     <head>
-    		{% block metatags %}
-        	<meta charset="UTF-8" />
-        {% endblock %}
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta charset="UTF-8" />
+        <title>{% block title %}thechur.ch{% endblock %}</title>
+        {% stylesheets '../app/Resources/public/css/*' %}
+          <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
         {% block stylesheets %}{% endblock %}
-        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+        {% image '../app/Resources/public/images/icon.png' %}
+          <link rel="icon" type="image/png" href="{{ asset_url }}" />
+        {% endimage %}
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% block body %}
+          <div id="page">
+            {% block page %}
+              <div id="logo">
+                {% block logo %}
+                  {% image '../app/Resources/public/images/logo.png' %}
+                      <img src="{{ asset_url }}" alt="thechur.ch" />
+                  {% endimage %}
+                {% endblock %}
+              </div>
+              <div id="content">
+                {% block content %}{% endblock %}
+              </div>
+            {% endblock %}
+          </div>
+        {% endblock %}
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        {% javascripts '../app/Resources/public/js/*' %}
+           <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>
