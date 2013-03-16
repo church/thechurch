@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\MakeItHappenBundle\Tests\Controller;
+namespace DavidBarratt\MakeItHappenBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
