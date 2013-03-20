@@ -1,12 +1,12 @@
 church_make_it_happen:
     resource: "@DavidBarrattMakeItHappenBundle/Resources/config/routing.yml"
     prefix:   /
+    schemes:  [https]
 
 ChurchTeaserBundle:
     resource: "@ChurchTeaserBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-        _scheme:  https
+    schemes:  [https]
 
 # Internal routing configuration to handle ESI
 #_internal:
