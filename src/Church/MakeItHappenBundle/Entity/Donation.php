@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidBarratt\MakeItHappenBundle\Entity;
+namespace Church\MakeItHappenBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;

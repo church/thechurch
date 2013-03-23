@@ -1,6 +1,6 @@
 <?php
 
-namespace DavidBarratt\MakeItHappenBundle\Controller;
+namespace Church\MakeItHappenBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -11,6 +11,6 @@ class DefaultController extends Controller
         
         $params = array();
         
-        return $this->render('DavidBarrattMakeItHappenBundle:Default:donate.html.twig', $params);
+        return $this->render('ChurchMakeItHappenBundle:Default:donate.html.twig', $params);
     }
 }

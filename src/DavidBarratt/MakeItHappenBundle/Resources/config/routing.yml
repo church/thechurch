@@ -1,3 +1,0 @@
-david_barratt_make_it_happen_donate:
-    pattern:  /donate
-    defaults: { _controller: DavidBarrattMakeItHappenBundle:Default:donate }

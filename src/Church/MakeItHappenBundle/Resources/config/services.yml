@@ -1,0 +1,7 @@
+parameters:
+#    church_make_it_happen.example.class: Church\MakeItHappenBundle\Example
+
+services:
+#    church_make_it_happen.example:
+#        class: %church_make_it_happen.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

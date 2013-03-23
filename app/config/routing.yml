@@ -1,9 +1,9 @@
 church_make_it_happen:
-    resource: "@DavidBarrattMakeItHappenBundle/Resources/config/routing.yml"
+    resource: "@ChurchMakeItHappenBundle/Resources/config/routing.yml"
     prefix:   /
     schemes:  [https]
 
-ChurchTeaserBundle:
+church_teaser:
     resource: "@ChurchTeaserBundle/Resources/config/routing.yml"
     prefix:   /
     schemes:  [https]
