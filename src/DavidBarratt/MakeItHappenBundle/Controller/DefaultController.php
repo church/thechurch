@@ -6,8 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
-    public function indexAction($name)
+    public function donateAction()
     {
-        return $this->render('DavidBarrattMakeItHappenBundle:Default:index.html.twig', array('name' => $name));
+        
+        $params = array();
+        
+        return $this->render('DavidBarrattMakeItHappenBundle:Default:donate.html.twig', $params);
     }
 }

@@ -1,3 +1,3 @@
-david_barratt_make_it_happen_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: DavidBarrattMakeItHappenBundle:Default:index }
+david_barratt_make_it_happen_donate:
+    pattern:  /donate
+    defaults: { _controller: DavidBarrattMakeItHappenBundle:Default:donate }

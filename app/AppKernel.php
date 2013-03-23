@@ -20,7 +20,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Church\TeaserBundle\ChurchTeaserBundle(),
-            new DavidBarratt\MakeItHappenBundle\ChurchMakeItHappenBundle(),
+            new DavidBarratt\MakeItHappenBundle\DavidBarrattMakeItHappenBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
