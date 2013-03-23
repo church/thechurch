@@ -1,0 +1,5 @@
+parameters:
+    church_make_it_happen:
+      stripe:
+        secret_key: ~
+        publishable_key: ~

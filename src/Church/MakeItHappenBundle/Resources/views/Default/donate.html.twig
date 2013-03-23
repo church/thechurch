@@ -1,1 +1,28 @@
-Hello!
+<form class="donate" action="{{ path('church_make_it_happen_donate') }}" method="post" {{ form_enctype(form) }}>
+  
+  {{ form_widget(form) }}
+  
+  <div class="payment-errors"></div>
+  
+  <div id="credit_card">
+  
+    <div>
+      <labe>Card Number</labe>
+      <input type="text" size="20" data-stripe="number"/>
+    </div>
+    
+    <div>
+      <labe>CVC</labe>
+      <input type="text" size="4" data-stripe="cvc" required="required" />
+    </div>
+    
+    <div>
+      <label>Expiration (MM/YYYY)</label>
+      <input type="text" size="2" data-stripe="exp-month" required="required" /><span> / </span><input type="text" size="4" data-stripe="exp-year" required="required"/>
+    </div>
+  
+  </div>
+  
+  <input class="submit" type="submit" value="Donate" />
+  
+</form>

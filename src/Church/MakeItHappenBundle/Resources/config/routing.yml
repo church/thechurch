@@ -1,3 +1,7 @@
+church_make_it_happen_index:
+    pattern:  /
+    defaults: { _controller: ChurchMakeItHappenBundle:Default:index }
+
 church_make_it_happen_donate:
     pattern:  /donate
     defaults: { _controller: ChurchMakeItHappenBundle:Default:donate }

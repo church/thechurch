@@ -1,0 +1,7 @@
+{% extends 'ChurchMakeItHappenBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="donation-form">
+      {{ render(controller("ChurchMakeItHappenBundle:Default:donate")) }}
+    </div>
+{% endblock %}
