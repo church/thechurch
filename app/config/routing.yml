@@ -2,6 +2,14 @@ church_make_it_happen:
     resource: "@ChurchMakeItHappenBundle/Resources/config/routing.yml"
     prefix:   /
     schemes:  [https]
+    
+church_place:
+    resource: "@ChurchPlaceBundle/Resources/config/routing.yml"
+    prefix:   /
+
+church_user:
+    resource: "@ChurchUserBundle/Resources/config/routing.yml"
+    prefix:   /user
 
 church_teaser:
     resource: "@ChurchTeaserBundle/Resources/config/routing.yml"
@@ -10,5 +18,5 @@ church_teaser:
 
 # Internal routing configuration to handle ESI
 #_internal:
-#   resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
-#   prefix:   /_internal
+#    resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
+#    prefix:   /_internal
