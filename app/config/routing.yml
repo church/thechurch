@@ -1,6 +1,7 @@
 ChurchTeaserBundle:
     resource: "@ChurchTeaserBundle/Resources/config/routing.yml"
     prefix:   /
+    schemes:  [https]
 
 # Internal routing configuration to handle ESI
 #_internal:
