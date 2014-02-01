@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+
+{% block metatags %}
+    {{ parent() }}
+    <meta name="viewport" content="width=785" />
+{% endblock %}
+
+{% block title %}thechur.ch{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/churchteaser/css/default.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+			
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-24641704-1']);
+		_gaq.push(['_trackPageview']);
+		
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+{% endblock %}
+
+{% block body %}
+<section>
+	<article>
+		<img src="{{ asset('bundles/churchteaser/images/logo2.png') }}" alt="thechur.ch" />
+		<a href="http://www.facebook.com/thechur.ch">facebook.com/thechur.ch</a>
+		<a href="http://twitter.com/thechurch">twitter.com/thechurch</a>
+	</article>
+</section>
+{% endblock %}
