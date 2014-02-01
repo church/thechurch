@@ -1,0 +1,7 @@
+parameters:
+#    church_teaser.example.class: Church\TeaserBundle\Example
+
+services:
+#    church_teaser.example:
+#        class: %church_teaser.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

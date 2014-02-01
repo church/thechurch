@@ -6,6 +6,12 @@ church_user:
     resource: "@ChurchUserBundle/Resources/config/routing.yml"
     prefix:   /user
 
+church_teaser:
+    resource: "@ChurchTeaserBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+        _scheme:  https
+
 # Internal routing configuration to handle ESI
 #_internal:
 #    resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
