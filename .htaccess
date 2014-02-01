@@ -1,4 +1,0 @@
-php_flag allow_url_fopen on
-AddHandler php5-script .php
-
-ErrorDocument 404 /index.php
