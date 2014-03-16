@@ -19,31 +19,31 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Email
 {
+
     /**
      * @ORM\Id
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Email()
+     */
+    private $email;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="emails")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
     private $user;
-    
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="string", unique=true, length=255)
-     * @Assert\Email()
-     */
-    private $email;
-    
+
     /**
      * @ORM\Column(type="datetime")
      */
     private $created;
-    
+
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $verified;
-    
-    
+
+
     /**
      * @ORM\PrePersist
      */
@@ -51,7 +51,7 @@ class Email
     {
         $this->created = new \DateTime();
     }
-    
+
     /**
      * Set email
      *
@@ -61,14 +61,14 @@ class Email
     public function setEmail($email)
     {
         $this->email = $email;
-    
+
         return $this;
     }
 
     /**
      * Get email
      *
-     * @return string 
+     * @return string
      */
     public function getEmail()
     {
@@ -84,20 +84,20 @@ class Email
     public function setUser(User $user = null)
     {
         $this->user = $user;
-    
+
         return $this;
     }
 
     /**
      * Get user
      *
-     * @return Church\UserBundle\Entity\User 
+     * @return Church\UserBundle\Entity\User
      */
     public function getUser()
     {
         return $this->user;
     }
-    
+
     /**
      * Set created
      *
@@ -107,14 +107,14 @@ class Email
     public function setCreated($created)
     {
         $this->created = $created;
-    
+
         return $this;
     }
 
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {
@@ -131,17 +131,18 @@ class Email
     public function setVerified($verified)
     {
         $this->verified = $verified;
-    
+
         return $this;
     }
 
     /**
      * Get verified
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getVerified()
     {
         return $this->verified;
     }
+    
 }
