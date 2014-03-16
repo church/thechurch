@@ -12,3 +12,11 @@ _configurator:
 
 _main:
     resource: routing.yml
+
+church_place:
+    resource: "@ChurchPlaceBundle/Resources/config/routing.yml"
+    prefix:   /
+
+church_user:
+    resource: "@ChurchUserBundle/Resources/config/routing.yml"
+    prefix:   /user
