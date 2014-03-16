@@ -29,65 +29,70 @@ class User implements UserInterface, \Serializable
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-    
-    /**
-     * @ORM\Column(type="string", length=25, unique=true)
-     */
-    private $username;
-    
-    /**
-     * @ORM\Column(type="string", length=88)
-     */
-    private $password;
-    
-    /**
-     * @ORM\Column(type="string", length=32)
-     */
-    private $salt;
-    
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $name;
-    
+    private $first_name;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $last_name;
+
+    /**
+     * @ORM\Column(type="string", length=25, unique=true, nullable=true)
+     */
+    private $username;
+
+    /**
+     * @ORM\Column(type="string", length=88, nullable=true)
+     */
+    private $password;
+
+    /**
+     * @ORM\Column(type="string", length=32, nullable=true)
+     */
+    private $salt;
+
     /**
      * @ORM\OneToMany(targetEntity="Email", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
     private $email;
-    
+
     /**
      * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
      * @ORM\JoinColumn(name="primary_email", referencedColumnName="email")
      */
     private $primary_email;
-    
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $address;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="Church\PlaceBundle\Entity\Place")
      * @ORM\JoinColumn(name="place_id", referencedColumnName="place_id")
      */
     private $place;
-    
+
     /**
      * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
      */
     private $latitude;
-    
+
     /**
      * @ORM\Column(type="decimal", precision=9, scale=6, nullable=true)
      */
     private $longitude;
-    
+
     /**
      * @ORM\Column(type="datetime")
      */
     private $created;
-    
+
     private $isActive;
 
     /**
@@ -99,7 +104,7 @@ class User implements UserInterface, \Serializable
         $this->salt = md5(uniqid(null, true));
         $this->email = new ArrayCollection();
     }
-    
+
     /**
      * @ORM\PrePersist
      */
@@ -111,18 +116,18 @@ class User implements UserInterface, \Serializable
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getID()
     {
         return $this->id;
     }
-    
+
     public function isActive()
     {
         return TRUE;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -160,9 +165,9 @@ class User implements UserInterface, \Serializable
      */
     public function eraseCredentials()
     {
-    
+
     }
-    
+
     /**
      * @see \Serializable::serialize()
      */
@@ -192,7 +197,7 @@ class User implements UserInterface, \Serializable
     public function setUsername($username)
     {
         $this->username = $username;
-    
+
         return $this;
     }
 
@@ -205,7 +210,7 @@ class User implements UserInterface, \Serializable
     public function setPassword($password)
     {
         $this->password = $password;
-    
+
         return $this;
     }
 
@@ -218,31 +223,54 @@ class User implements UserInterface, \Serializable
     public function setSalt($salt)
     {
         $this->salt = $salt;
-    
+
         return $this;
     }
 
     /**
-     * Set name
+     * Set first_name
      *
-     * @param string $name
+     * @param string $first_name
      * @return User
      */
-    public function setName($name)
+    public function setFirstName($first_name)
     {
-        $this->name = $name;
-    
+        $this->first_name = $first_name;
+
+        return $this;
+    }
+
+    /**
+     * Get first_name
+     *
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->first_name;
+    }
+
+    /**
+     * Set last_name
+     *
+     * @param string $last_name
+     * @return User
+     */
+    public function setLastName($last_name)
+    {
+        $this->last_name = $last_name;
+
         return $this;
     }
 
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
-    public function getName()
+    public function getLastName()
     {
-        return $this->name;
+        return $this->last_name;
     }
 
 
@@ -255,7 +283,7 @@ class User implements UserInterface, \Serializable
     public function addEmail(Email $email)
     {
         $this->emails[] = $emails;
-    
+
         return $this;
     }
 
@@ -272,7 +300,7 @@ class User implements UserInterface, \Serializable
     /**
      * Get emails
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return Doctrine\Common\Collections\Collection
      */
     public function getEmails()
     {
@@ -289,14 +317,14 @@ class User implements UserInterface, \Serializable
     public function setPrimaryEmail(Email $primaryEmail = null)
     {
         $this->primary_email = $primaryEmail;
-    
+
         return $this;
     }
 
     /**
      * Get primary_email
      *
-     * @return Church\UserBundle\Entity\Email 
+     * @return Church\UserBundle\Entity\Email
      */
     public function getPrimaryEmail()
     {
@@ -312,14 +340,14 @@ class User implements UserInterface, \Serializable
     public function setAddress($address)
     {
         $this->address = $address;
-    
+
         return $this;
     }
 
     /**
      * Get address
      *
-     * @return string 
+     * @return string
      */
     public function getAddress()
     {
@@ -336,14 +364,14 @@ class User implements UserInterface, \Serializable
     public function setPlace(\Church\PlaceBundle\Entity\Place $place = null)
     {
         $this->place = $place;
-    
+
         return $this;
     }
 
     /**
      * Get place
      *
-     * @return Church\PlaceBundle\Entity\Place 
+     * @return Church\PlaceBundle\Entity\Place
      */
     public function getPlace()
     {
@@ -359,14 +387,14 @@ class User implements UserInterface, \Serializable
     public function setLatitude($latitude)
     {
         $this->latitude = $latitude;
-    
+
         return $this;
     }
 
     /**
      * Get latitude
      *
-     * @return float 
+     * @return float
      */
     public function getLatitude()
     {
@@ -382,20 +410,20 @@ class User implements UserInterface, \Serializable
     public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
-    
+
         return $this;
     }
 
     /**
      * Get longitude
      *
-     * @return float 
+     * @return float
      */
     public function getLongitude()
     {
         return $this->longitude;
     }
-    
+
     /**
      * Set created
      *
@@ -405,14 +433,14 @@ class User implements UserInterface, \Serializable
     public function setCreated($created)
     {
         $this->created = $created;
-    
+
         return $this;
     }
 
     /**
      * Get created
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreated()
     {

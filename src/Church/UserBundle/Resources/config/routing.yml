@@ -3,15 +3,19 @@ church_user_register:
     defaults: { _controller: ChurchUserBundle:Default:register }
     requirements:
         _method:  POST
-    
+
+church_user_register_email:
+    pattern:  /register/email
+    defaults: { _controller: ChurchUserBundle:Registration:email }
+
 church_user_login:
     pattern: /login
     defaults: { _controller: ChurchUserBundle:Security:login }
-    
+
 church_user_login_check:
     pattern: /login_check
     requirements:
         _method:  POST
-    
+
 church_user_logout:
     pattern: /logout

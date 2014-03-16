@@ -6,16 +6,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class RegistrationType extends AbstractType
+class RegistrationEmailType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-        $builder->add('name', 'text');
         $builder->add('email', 'email');
-        $builder->add('username', 'text');
-        $builder->add('password', 'password');
-        $builder->add('address', 'text');
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -27,6 +23,6 @@ class RegistrationType extends AbstractType
 
     public function getName()
     {
-        return 'registration';
+        return 'registration_email';
     }
 }
