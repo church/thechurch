@@ -4,12 +4,12 @@ parameters:
     church_place.consumer_key: ~
     church_place.consumer_secret: ~
     church_place.generic_appid: ~
-    
+
 
 services:
    church_place.place_finder:
        class: %church_place.place_finder.class%
-       arguments: [@doctrine.orm.entity_manager, %church_place.consumer_key%, %church_place.consumer_secret%, %church_place.generic_appid%]
+       arguments: [@doctrine.orm.entity_manager, %place_finder%]
    church_place.tree_maker.listener:
         class: %church_place.tree_maker.class%
         tags:

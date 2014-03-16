@@ -2,7 +2,7 @@ parameters:
     database_driver:   pdo_mysql
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     symfony
+    database_name:     thechurch
     database_user:     root
     database_password: ~
 
@@ -14,6 +14,7 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    church_place.place_finder.consumer_key: ~
-    church_place.place_finder.consumer_secret: ~
-    church_place.place_finder.generic_appid: ~
+    place_finder:
+      consumer_key: ~
+      consumer_secret: ~
+      generic_appid: ~
