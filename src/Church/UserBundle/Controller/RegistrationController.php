@@ -5,9 +5,6 @@ namespace Church\UserBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-use Hip\MandrillBundle\Message;
-use Hip\MandrillBundle\Dispatcher;
-
 use Church\UserBundle\Entity\User;
 use Church\UserBundle\Entity\Email;
 use Church\UserBundle\Form\Type\RegistrationEmailType;
@@ -35,7 +32,7 @@ class RegistrationController extends Controller
         	  // Get the form data
         	  $register = $form->getData();
 
-            if ($repositry->findOneByEmail($register->getEmail())) {
+            if ($email = $repositry->findOneByEmail($register->getEmail())) {
 
               // @TODO: Do Something if the Email is already found.
               return;
@@ -46,23 +43,13 @@ class RegistrationController extends Controller
               // @TODO: Insert the Email & Validation Code into the Database.
 
               // Get the Dispatcher Service.
-              $dispatcher = $this->get('hip_mandrill.dispatcher');
+              $verify_email = $this->get('church_user.verify_email');
 
-              // Create a new Message.
-              $message = new Message();
-
-              // Build the Message.
-              $message->addTo($register->getEmail());
-              $message->setSubject('Confirm Your Email');
-              // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
-              $message->setText('Click on this validation email to validate your email.');
-
-              // Send the Message using Async.
-              $dispatcher->send($message, '', array(), TRUE);
+              $verify_email->sendVerification($register->getEmail());
 
               // @TODO: Move the User Insertion to post-initial email confirmation.
               //        This should keep the Users clean.
-              
+
               /*
               $em = $this->getDoctrine()->getManager();
 
