@@ -22,20 +22,20 @@ class VerifyEmail {
 
     }
 
-    public function sendVerification($email) {
+    public function sendVerification($verify) {
 
       $message = new Message();
 
-      $verify = new EmailVerify();
-
-      $url = $this->getRouter()->generate('church_user_register_email', array(), true);
+      $params = array(
+        'token' => $verify->getToken(),
+      );
 
       // Build the Message.
-      $message->addTo($email);
+      $message->addTo($verify->getEmail()->getEmail());
       $message->setSubject('Confirm Your Email');
       // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
       $text = "Please visit the following location to verify your email.\n";
-      $text .= $url.'/'.urlencode($verify->getVerification());
+      $text .= $this->getRouter()->generate('church_user_verify_email', $params, true);
       $message->setText($text);
 
       // Send the Message using Async.

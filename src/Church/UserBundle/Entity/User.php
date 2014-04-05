@@ -54,7 +54,7 @@ class User implements UserInterface, \Serializable
      * @ORM\OneToMany(targetEntity="Email", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
-    private $email;
+    private $emails;
 
     /**
      * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
@@ -263,7 +263,7 @@ class User implements UserInterface, \Serializable
      */
     public function addEmail(Email $email)
     {
-        $this->emails[] = $emails;
+        $this->emails[] = $email;
 
         return $this;
     }
@@ -275,7 +275,7 @@ class User implements UserInterface, \Serializable
      */
     public function removeEmail(Email $email)
     {
-        $this->email->removeElement($email);
+        $this->emails->removeElement($email);
     }
 
     /**
@@ -285,7 +285,7 @@ class User implements UserInterface, \Serializable
      */
     public function getEmails()
     {
-        return $this->email;
+        return $this->emails;
     }
 
 

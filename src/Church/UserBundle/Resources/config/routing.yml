@@ -8,6 +8,10 @@ church_user_register_email:
     pattern:  /register/email
     defaults: { _controller: ChurchUserBundle:Registration:email }
 
+church_user_verify_email:
+    pattern: /verify/email/{token}
+    defaults: { _controller: ChurchUserBundle:Verification:email }
+
 church_user_login:
     pattern: /login
     defaults: { _controller: ChurchUserBundle:Security:login }

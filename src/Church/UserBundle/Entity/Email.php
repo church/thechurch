@@ -5,9 +5,10 @@ namespace Church\UserBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Church\UserBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+use Church\UserBundle\Entity\User;
+use Church\UserBundle\Entity\EmailVerify;
 
 /**
  * Church\UserBundle\Entity\Email
@@ -37,6 +38,11 @@ class Email
      * @ORM\Column(type="datetime")
      */
     private $created;
+
+    /**
+     * @ORM\OneToOne(targetEntity="EmailVerify", mappedBy="email")
+     **/
+    private $verify;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -144,5 +150,28 @@ class Email
     {
         return $this->verified;
     }
-    
+
+    /**
+     * Set verify
+     *
+     * @param Church\UserBundle\Entity\EmailVerify $verify
+     * @return Email
+     */
+    public function setVerify(EmailVerify $verify = null)
+    {
+        $this->verify = $verify;
+
+        return $this;
+    }
+
+    /**
+     * Get verify
+     *
+     * @return Church\UserBundle\Entity\EmailVerify
+     */
+    public function getVerify()
+    {
+        return $this->verify;
+    }
+
 }

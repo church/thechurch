@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Util\SecureRandom;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Church\UserBundle\Entity\User;
+use Church\UserBundle\Entity\Email;
 
 
 /**
@@ -17,14 +18,13 @@ use Church\UserBundle\Entity\User;
  * @ORM\Table(name="users_email_verify")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("primary_email")
  */
 class EmailVerify
 {
 
     /**
      * @ORM\Id
-     * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
+     * @ORM\OneToOne(targetEntity="Email", inversedBy="verify", cascade={"persist"})
      * @ORM\JoinColumn(name="email", referencedColumnName="email")
      * @Assert\Email()
      */
@@ -33,7 +33,7 @@ class EmailVerify
     /**
      * @ORM\Column(type="string", length=16, unique=true)
      */
-    private $verification;
+    private $token;
 
     /**
      * @ORM\Column(type="datetime")
@@ -47,7 +47,7 @@ class EmailVerify
     {
         $generator = new SecureRandom();
         $token = mb_convert_encoding($generator->nextBytes(16), 'UTF-8');
-        $this->setVerification($token);
+        $this->setToken($token);
     }
 
     /**
@@ -61,10 +61,10 @@ class EmailVerify
     /**
      * Set email
      *
-     * @param string $email
-     * @return Email
+     * @param Church\UserBundle\Entity\Email $email
+     * @return EmailVerify
      */
-    public function setEmail($email)
+    public function setEmail(Email $email)
     {
         $this->email = $email;
 
@@ -74,7 +74,7 @@ class EmailVerify
     /**
      * Get email
      *
-     * @return string
+     * @return Church\UserBundle\Entity\Email
      */
     public function getEmail()
     {
@@ -82,26 +82,26 @@ class EmailVerify
     }
 
     /**
-     * Set verification
+     * Set token
      *
-     * @param string $verification
+     * @param string $token
      * @return EmailVerify
      */
-    public function setVerification($verification)
+    public function setToken($token)
     {
-        $this->verification = $verification;
+        $this->token = $token;
 
         return $this;
     }
 
     /**
-     * Get verification
+     * Get token
      *
      * @return string
      */
-    public function getVerification()
+    public function getToken()
     {
-        return $this->verification;
+        return $this->token;
     }
 
     /**

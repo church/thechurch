@@ -4,6 +4,7 @@ namespace Church\UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Church\UserBundle\Entity\User;
 use Church\UserBundle\Entity\Email;
@@ -28,6 +29,7 @@ class RegistrationController extends Controller
         	// Check to make sure the form is valid before procceding
         	if ($form->isValid()) {
 
+            $em = $this->getDoctrine()->getManager();
             $repositry = $this->getDoctrine()->getRepository('ChurchUserBundle:Email');
 
         	  // Get the form data
@@ -41,24 +43,12 @@ class RegistrationController extends Controller
             }
             else {
 
-              // @TODO: Insert the Email & Validation Code into the Database.
-
-              // Get the Dispatcher Service.
-              $verify_email = $this->get('church_user.verify_email');
-
-              $verify_email->sendVerification($register->getEmail());
-
-              // @TODO: Move the User Insertion to post-initial email confirmation.
-              //        This should keep the Users clean.
-
-              /*
-              $em = $this->getDoctrine()->getManager();
-
               $user = new User();
 
               // Save the User
               $em->persist($user);
               $em->flush();
+
 
               // Create the Email
               $email = new Email();
@@ -70,7 +60,20 @@ class RegistrationController extends Controller
               $em->persist($email);
               $em->persist($user);
               $em->flush();
-              */
+
+
+              $verify = new EmailVerify();
+              $verify->setEmail($email);
+
+              // Save the Verification.
+              $em->persist($verify);
+              $em->flush();
+
+              // Get the Dispatcher Service.
+              $verify_email = $this->get('church_user.verify_email');
+
+              $verify_email->sendVerification($verify);
+              
 
             }
 
