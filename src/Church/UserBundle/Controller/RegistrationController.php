@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Church\UserBundle\Entity\User;
 use Church\UserBundle\Entity\Email;
+use Church\UserBundle\Entity\EmailVerify;
 use Church\UserBundle\Form\Type\RegistrationEmailType;
 use Church\UserBundle\Form\Model\RegistrationEmail;
 
@@ -17,6 +18,9 @@ class RegistrationController extends Controller
 
     		// Build the Registration Form
         $form = $this->createForm(new RegistrationEmailType(), new RegistrationEmail());
+
+        $verify = new EmailVerify;
+        print $verify->getVerification();
 
         // If this Form has been completed
         if ($request->isMethod('POST')) {

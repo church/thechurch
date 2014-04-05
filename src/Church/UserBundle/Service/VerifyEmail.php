@@ -6,6 +6,8 @@ use Hip\MandrillBundle\Message;
 use Hip\MandrillBundle\Dispatcher;
 use Doctrine\ORM\EntityManager;
 
+use Church\UserBundle\Entity\EmailVerify;
+
 class VerifyEmail {
 
     private $dispatcher;
@@ -22,12 +24,13 @@ class VerifyEmail {
     public function sendVerification($email) {
 
       $message = new Message();
-
+      
       // Build the Message.
       $message->addTo($email);
       $message->setSubject('Confirm Your Email');
       // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
-      $message->setText('Click on this validation email to validate your email.');
+      $message->setText("Click on this validation email to validate your email.\n
+      $generator->nextBytes(10)");
 
       // Send the Message using Async.
       return $this->getDispatcher()->send($message, '', array(), TRUE);

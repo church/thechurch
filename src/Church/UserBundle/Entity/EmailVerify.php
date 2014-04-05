@@ -4,9 +4,11 @@ namespace Church\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Church\UserBundle\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\Util\SecureRandom;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use Church\UserBundle\Entity\User;
 
 
 /**
@@ -43,8 +45,8 @@ class EmailVerify
      */
     public function __construct()
     {
-        // @TODO: Update Symfony to 2.4 to generate a secure token.
-        // $this->setVerification();
+        $generator = new SecureRandom();
+        $this->setVerification($generator->nextBytes(32));
     }
 
     /**
@@ -86,7 +88,7 @@ class EmailVerify
      */
     public function setVerification($verification)
     {
-        $this->user = $verification;
+        $this->verification = $verification;
 
         return $this;
     }
