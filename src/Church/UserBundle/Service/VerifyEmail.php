@@ -36,6 +36,8 @@ class VerifyEmail {
 
     public function setDispatcher($dispatcher) {
       $this->dispatcher = $dispatcher;
+
+      return $this;
     }
 
     public function getDispatcher() {
@@ -44,6 +46,8 @@ class VerifyEmail {
 
     public function setEntityManager($em) {
       $this->em = $em;
+
+      return $this;
     }
 
     public function getEntityManager() {
