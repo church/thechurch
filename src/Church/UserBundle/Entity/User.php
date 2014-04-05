@@ -46,14 +46,9 @@ class User implements UserInterface, \Serializable
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=88, nullable=true)
+     * @ORM\Column(type="string", length=60, nullable=true)
      */
     private $password;
-
-    /**
-     * @ORM\Column(type="string", length=32, nullable=true)
-     */
-    private $salt;
 
     /**
      * @ORM\OneToMany(targetEntity="Email", mappedBy="user",  cascade={"all"})
@@ -101,7 +96,6 @@ class User implements UserInterface, \Serializable
     public function __construct()
     {
         $this->isActive = TRUE;
-        $this->salt = md5(uniqid(null, true));
         $this->email = new ArrayCollection();
     }
 
@@ -141,7 +135,7 @@ class User implements UserInterface, \Serializable
      */
     public function getSalt()
     {
-        return $this->salt;
+        return NULL;
     }
 
     /**
@@ -210,19 +204,6 @@ class User implements UserInterface, \Serializable
     public function setPassword($password)
     {
         $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Set salt
-     *
-     * @param string $salt
-     * @return User
-     */
-    public function setSalt($salt)
-    {
-        $this->salt = $salt;
 
         return $this;
     }
