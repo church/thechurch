@@ -17,7 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("primary_email")
  */
-class Email
+class EmailVerify
 {
 
     /**
