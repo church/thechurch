@@ -4,4 +4,4 @@ parameters:
 services:
     church_user.verify_email:
         class: %church_user.verify_email.class%
-        arguments: [@hip_mandrill.dispatcher, @doctrine.orm.entity_manager]
+        arguments: [@hip_mandrill.dispatcher, @doctrine.orm.entity_manager, @router]

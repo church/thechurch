@@ -19,9 +19,6 @@ class RegistrationController extends Controller
     		// Build the Registration Form
         $form = $this->createForm(new RegistrationEmailType(), new RegistrationEmail());
 
-        $verify = new EmailVerify;
-        print $verify->getVerification();
-
         // If this Form has been completed
         if ($request->isMethod('POST')) {
 

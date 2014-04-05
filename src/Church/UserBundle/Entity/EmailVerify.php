@@ -31,7 +31,7 @@ class EmailVerify
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=32, unique=true)
+     * @ORM\Column(type="string", length=16, unique=true)
      */
     private $verification;
 
@@ -46,7 +46,8 @@ class EmailVerify
     public function __construct()
     {
         $generator = new SecureRandom();
-        $this->setVerification($generator->nextBytes(32));
+        $token = mb_convert_encoding($generator->nextBytes(16), 'UTF-8');
+        $this->setVerification($token);
     }
 
     /**
