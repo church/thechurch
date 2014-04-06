@@ -24,7 +24,7 @@ class EmailVerify
 
     /**
      * @ORM\Id
-     * @ORM\OneToOne(targetEntity="Email", inversedBy="verify", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="Email", inversedBy="verify")
      * @ORM\JoinColumn(name="email", referencedColumnName="email")
      * @Assert\Email()
      */

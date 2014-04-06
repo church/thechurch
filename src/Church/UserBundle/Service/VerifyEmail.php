@@ -28,6 +28,7 @@ class VerifyEmail {
 
       $params = array(
         'token' => $verify->getToken(),
+        'user_id' => $verify->getEmail()->getUser()->getID(),
       );
 
       // Build the Message.

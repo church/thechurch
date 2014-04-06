@@ -30,15 +30,19 @@ class RegistrationController extends Controller
         	if ($form->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-            $repositry = $this->getDoctrine()->getRepository('ChurchUserBundle:Email');
+            $email_repository = $this->getDoctrine()->getRepository('ChurchUserBundle:Email');
+            $verify_repository = $this->getDoctrine()->getRepository('ChurchUserBundle:EmailVerify');
 
         	  // Get the form data
         	  $register = $form->getData();
 
-            if ($email = $repositry->findOneByEmail($register->getEmail())) {
+            if ($verify = $verify_repository->findOneByEmail($register->getEmail())) {
 
-              // @TODO: Do Something if the Email is already found.
-              return;
+              // Delete the verification.
+              $em->remove($verify);
+              $em->flush();
+
+              $email = $email_repository->findOneByEmail($register->getEmail());
 
             }
             else {
@@ -48,7 +52,6 @@ class RegistrationController extends Controller
               // Save the User
               $em->persist($user);
               $em->flush();
-
 
               // Create the Email
               $email = new Email();
@@ -61,21 +64,22 @@ class RegistrationController extends Controller
               $em->persist($user);
               $em->flush();
 
-
-              $verify = new EmailVerify();
-              $verify->setEmail($email);
-
-              // Save the Verification.
-              $em->persist($verify);
-              $em->flush();
-
-              // Get the Dispatcher Service.
-              $verify_email = $this->get('church_user.verify_email');
-
-              $verify_email->sendVerification($verify);
-              
-
             }
+
+
+            $verify = new EmailVerify();
+            $verify->setEmail($email);
+
+            // Save the Verification.
+            $em->refresh($email);
+            $em->persist($verify);
+            $em->flush();
+
+            // Get the Dispatcher Service.
+            $verify_email = $this->get('church_user.verify_email');
+
+            // Send the Verification Email.
+            $verify_email->sendVerification($verify);
 
 	        	// Redirect the User
 	        	return $this->render('ChurchUserBundle:Registration:email.html.twig', array(

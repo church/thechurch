@@ -11,7 +11,7 @@ use Church\UserBundle\Entity\EmailVerify;
 
 class VerificationController extends Controller
 {
-    public function emailAction(Request $request)
+    public function emailAction(Request $request, $user_id, $token)
     {
 
       return;
