@@ -10,13 +10,14 @@ _configurator:
     resource: "@SensioDistributionBundle/Resources/config/routing/webconfigurator.xml"
     prefix:   /_configurator
 
-_main:
-    resource: routing.yml
+
+church_user:
+    resource: "@ChurchUserBundle/Resources/config/routing.yml"
+    prefix:   /user
 
 church_place:
     resource: "@ChurchPlaceBundle/Resources/config/routing.yml"
     prefix:   /
 
-church_user:
-    resource: "@ChurchUserBundle/Resources/config/routing.yml"
-    prefix:   /user
+_main:
+    resource: routing.yml
