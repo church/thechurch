@@ -1,0 +1,7 @@
+parameters:
+    church_user.verify_email.class: Church\Bundle\UserBundle\Service\VerifyEmail
+
+services:
+    church_user.verify_email:
+        class: %church_user.verify_email.class%
+        arguments: [@hip_mandrill.dispatcher, @doctrine.orm.entity_manager, @router]
