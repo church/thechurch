@@ -12,6 +12,27 @@ use Church\Bundle\UserBundle\Form\Model\Registration;
 
 class DefaultController extends Controller
 {
+
+    public function loginRegisterAction()
+    {
+
+      $login = $this->forward('ChurchUserBundle:Security:login');
+
+      $register = $this->forward('ChurchUserBundle:Registration:email');
+
+      // print '<pre>'.print_r($register->getContent(), TRUE).'</pre>';
+      // exit;
+
+      return $this->render(
+          'ChurchUserBundle:Default:login-register.html.twig',
+          array(
+            'login' => $login->getContent(),
+            'register' => $register->getContent(),
+          )
+      );
+
+    }
+
     public function registerAction(Request $request)
     {
 

@@ -1,0 +1,15 @@
+{% extends 'ChurchUserBundle::layout.html.twig' %}
+
+{% block body_class %}login-register{% endblock %}
+
+{% block content %}
+
+  <div class="login">
+    {{ login|raw }}
+  </div>
+
+  <div class="register">
+    {{ register|raw }}
+  </div>
+
+{% endblock %}

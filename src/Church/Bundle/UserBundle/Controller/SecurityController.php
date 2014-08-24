@@ -27,8 +27,25 @@ class SecurityController extends Controller
             $error = $request->attributes->get(
                 SecurityContext::AUTHENTICATION_ERROR
             );
+
+            $this->get('session')->getFlashBag()->add(
+              'error',
+              SecurityContext::AUTHENTICATION_ERROR
+            );
+
         } else {
+
             $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
+
+            if ($error) {
+
+              $this->get('session')->getFlashBag()->add(
+                'error',
+                $error->getMessage()
+              );
+
+            }
+
             $session->remove(SecurityContext::AUTHENTICATION_ERROR);
         }
 
@@ -38,7 +55,6 @@ class SecurityController extends Controller
                 // last username entered by the user
                 'session' => $name,
                 'last_username' => $session->get(SecurityContext::LAST_USERNAME),
-                'error'         => $error,
             )
         );
     }
