@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% stylesheets '../app/Resources/public/scss/*' filter='compass' %}
-          <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body class="{% block body_class %}{% endblock %}">
-        {% if error.message is defined %}
-          <div class="error">
-            {{ error.message }}
+  <head>
+      <meta charset="UTF-8" />
+      <title>{% block title %}Welcome!{% endblock %}</title>
+      {% stylesheets '../app/Resources/public/scss/*' filter='compass' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+      {% endstylesheets %}
+      {% block stylesheets %}{% endblock %}
+      <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
+
+    {% if app.session.flashbag.peekall %}
+      <div class="messages">
+        {% for type, messages in app.session.flashbag.all %}
+          <div class="{{ type }}">
+            {% for message in messages %}
+              <div class="message">
+                {{ message }}
+              </div>
+            {% endfor %}
           </div>
-        {% endif %}
-        {% block body %}
-          <div class="content">
-            {% block content %}{% endblock %}
-          </div>
-        {% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block body %}
+      <div class="content">
+        {% block content %}{% endblock %}
+      </div>
+    {% endblock %}
+    
+    {% block javascripts %}{% endblock %}
+  </body>
 </html>
