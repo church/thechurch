@@ -3,10 +3,18 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
+        {% stylesheets '../app/Resources/public/scss/*' filter='compass' %}
+          <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
-    <body>
+    <body class="{% block body_class %}{% endblock %}">
+        {% if error.message is defined %}
+          <div class="error">
+            {{ error.message }}
+          </div>
+        {% endif %}
         {% block body %}
           <div class="content">
             {% block content %}{% endblock %}
