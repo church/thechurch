@@ -1,17 +1,23 @@
-{% if error %}
-    <div>{{ error.message }}</div>
-{% endif %}
-<pre>
-{{ session }}
-</pre>
-<form action="{{ path('church_user_login_check') }}" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="_username" value="{{ last_username }}" />
+{% extends 'ChurchUserBundle::layout.html.twig' %}
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="_password" />  
+{% block body_class %}login-register{% endblock %}
 
-    <input type="submit" value="Login" />
-</form>
+{% block content %}
 
-{{ render(controller("ChurchUserBundle:Default:register")) }}
+  <div class="login">
+    <form action="{{ path('church_user_login_check') }}" method="post">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="_password" />
+
+        <input type="submit" value="Login" />
+    </form>
+  </div>
+
+  <div class="register">
+    {{ render(controller("ChurchUserBundle:Registration:email")) }}
+  </div>
+
+{% endblock %}
