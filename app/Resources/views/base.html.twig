@@ -11,6 +11,14 @@
   </head>
   <body class="{% block body_class %}{% endblock %}">
 
+    <header>
+
+      {% image '../app/Resources/public/images/logo.png' %}
+          <img src="{{ asset_url }}" alt="thechur.ch"/>
+      {% endimage %}
+
+    </header>
+
     {% if app.session.flashbag.peekall %}
       <div class="messages">
         {% for type, messages in app.session.flashbag.all %}
@@ -30,7 +38,7 @@
         {% block content %}{% endblock %}
       </div>
     {% endblock %}
-    
+
     {% block javascripts %}{% endblock %}
   </body>
 </html>
