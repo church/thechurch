@@ -11,6 +11,7 @@ class SecurityController extends Controller
     {
         $request = $this->getRequest();
         $session = $request->getSession();
+        $error = NULL;
 
         $user = $this->getUser();
 
