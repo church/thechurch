@@ -33,7 +33,7 @@ The only biblical church divisions found in scripture are geographical. The majo
 ## Project
 [thechur.ch](https://thechur.ch) exists as a tool to help unify the global and local church. The goal is to build an online tool that can facilitate communication for the one church of each city, so that the church may be united.
 
-![thechur.ch City Feed Mockup](https://docs.google.com/uc?id=0By6fCOSDOhkvUlIzVzFMWGtJWU0)
+![thechur.ch City Feed Mockup](https://docs.google.com/uc?id=0By6fCOSDOhkvT3RDWGdjdUpUZjg)
 
 ## Contributing
 
