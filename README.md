@@ -50,8 +50,6 @@ After forking and cloning the repository. You’ll need the following items:
 7. Ensure that Apache is pointed to the`web` directory.
 
 ### Installation
-Create a 
-
 Run the following command inside the repository:
 ```
 composer install
