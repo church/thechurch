@@ -1,7 +1,7 @@
 ![the.church](https://thechur.ch/bundles/churchteaser/images/logo2.png)
 
 ## Mission
-By the sacrifice and love of Jesus Christ our Lord, according to His eternal purpose, thechur.ch exists to promote the unity of His church locally and globally, the literal priesthood of all believers, and the individual and corporate spiritual growth of the church.
+By the sacrifice and love of Jesus Christ our Lord, according to His eternal purpose, [thechur.ch](https://thechur.ch) exists to promote the unity of His church locally and globally, the literal priesthood of all believers, and the individual and corporate spiritual growth of the church.
 
 > “Now I urge you, brothers, in the name of our Lord Jesus Christ, that all of you agree in what you say, that there be **no divisions among you**, and that you **be united** with the same understanding and the same conviction.” (1 Corinthians 1:10)
 
