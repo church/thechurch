@@ -10,33 +10,23 @@ The only biblical church divisions found in scripture are geographical. The majo
 
 > “To all who are in **Rome**, loved by God, called as saints. Grace to you and peace from God our Father and the Lord Jesus Christ.” (Romans 1:7)
 
-
 > “To God’s church at **Corinth**, to those who are sanctified in Christ Jesus and called as saints, with all those in every place who call on the name of Jesus Christ our Lord—both their Lord and ours.” (1 Corinthians 1:2)
-
 
 > “Paul, an apostle of Christ Jesus by God’s will, and Timothy our brother: To God’s church at **Corinth**, with all the saints who are throughout Achaia.” (2 Corinthians 1:1)
 
-
 > “Paul, an apostle—not from men or by man, but by Jesus Christ and God the Father who raised Him from the dead—and all the brothers who are with me: To the churches of **Galatia**.” (Galatians 1:1-2)
-
 
 > “Paul, an apostle of Christ Jesus by God’s will: To the faithful saints in Christ Jesus at **Ephesus**.” (Ephesians 1:1)
 
-
 > “Paul and Timothy, slaves of Christ Jesus: To all the saints in Christ Jesus who are in **Philippi**, including the overseers and deacons.” (Philippians 1:1)
-
 
 > “To the saints in Christ at **Colossae**, who are faithful brothers. Grace to you and peace from God our Father.” (Colossians 1:2)
 
-
 > “Paul, Silvanus, and Timothy: To the church of the **Thessalonians** in God the Father and the Lord Jesus Christ. Grace to you and peace.” (1 Thessalonians 1:1)
-
 
 > “Paul, Silvanus, and Timothy: To the church of the **Thessalonians** in God our Father and the Lord Jesus Christ.” (2 Thessalonians 1:1)
 
-
 > “John: To the seven churches in Asia. Grace and peace to you from the One who is, who was, and who is coming; from the seven spirits before His throne; and from Jesus Christ, the faithful witness, the firstborn from the dead and the ruler of the kings of the earth.” (Revelation 1:4-5)
-
 
 > “I was in the Spirit on the Lord’s day, and I heard a loud voice behind me like a trumpet saying, 'Write on a scroll what you see and send it to the seven churches: **Ephesus**, **Smyrna**, **Pergamum**, **Thyatira**, **Sardis**, **Philadelphia**, and **Laodicea**.'” (Revelation 10:11)
 
