@@ -31,7 +31,7 @@ The only biblical church divisions found in scripture are geographical. The majo
 > “I was in the Spirit on the Lord’s day, and I heard a loud voice behind me like a trumpet saying, 'Write on a scroll what you see and send it to the seven churches: **Ephesus**, **Smyrna**, **Pergamum**, **Thyatira**, **Sardis**, **Philadelphia**, and **Laodicea**.'” (Revelation 10:11)
 
 ## Project
-[thechur.ch](https://thechur.ch) exists as a tool to help unify the global and local church. The goal is to build an online tool that can facilitate communication for the one church of each city, so that the church may be united.
+[thechur.ch](https://thechur.ch) exists as a tool to help unify the global and local church. The goal is to build an online tool that can facilitate communication for the one church of each city, so that the church may be united. The goal is not to replace existing social networks (like [Facebook](https://www.facebook.com) & [Twitter](https://twitter.com)), but instead augment the exerience. [thechur.ch](https://thechur.ch) is not made up of friends & followers, but rather people in cities.
 
 ![thechur.ch City Feed Mockup](https://docs.google.com/uc?id=0By6fCOSDOhkvT3RDWGdjdUpUZjg)
 
