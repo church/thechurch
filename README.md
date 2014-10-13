@@ -38,7 +38,7 @@ The only biblical church divisions found in scripture are geographical. The majo
 ## Contributing
 
 ### Requirements
-After forking and cloning the repository. You’ll need the following items:
+After forking and cloning the repository, you will need the following items:
 
 1. [Yahoo! BOSS Geo](https://developer.yahoo.com/boss/geo/) API Credentials.
 2. [Yahoo! GeoPlanet](https://developer.yahoo.com/geo/geoplanet/) API Credientials.
@@ -55,7 +55,7 @@ Run the following command inside the repository:
 composer install
 ```
 
-This will install all the php dependencies. Once the the dependencies are installed, you’ll be asked a series of questions in order to generate an `app/config/parameters.yml` file. You can adjust the configuration at any time by changing the values in this file. See [app/config/parameters.yml.dist](https://github.com/church/thechurch/blob/develop/app/config/parameters.yml.dist) for a sample configuration file.
+This will install all the php dependencies. Once the the dependencies are installed, you will be asked a series of questions in order to generate an `app/config/parameters.yml` file. You can adjust the configuration at any time by changing the values in this file. See [app/config/parameters.yml.dist](https://github.com/church/thechurch/blob/develop/app/config/parameters.yml.dist) for a sample configuration file.
 
 Install the ruby dependencies by executing the following command in the root of the repository:
 ```
