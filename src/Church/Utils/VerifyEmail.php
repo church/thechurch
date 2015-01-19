@@ -36,7 +36,7 @@ class VerifyEmail {
       $message->setSubject('Confirm Your Email');
       // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
       $text = "Please visit the following location to verify your email.\n";
-      $text .= $this->getRouter()->generate('church_user_verify_email', $params, true);
+      $text .= $this->getRouter()->generate('verify_email', $params, true);
       $message->setText($text);
 
       // Send the Message using Async.

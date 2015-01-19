@@ -29,17 +29,21 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    form:
+      resources: ['bootstrap_3_layout.html.twig']
 
 # Assetic Configuration
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
     bundles:        [ ]
+    write_to:       "%kernel.root_dir%/../web/compiled"
     #java: /usr/bin/java
     filters:
         cssrewrite: ~
         sass:    ~
-        compass: ~
+        compass:
+          plugins: ['bootstrap-sass']
 
 # Doctrine Configuration
 doctrine:

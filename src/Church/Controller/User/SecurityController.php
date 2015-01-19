@@ -7,6 +7,9 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Church\Form\Type\LoginType;
+use Church\Form\Model\Login;
+
 class SecurityController extends Controller
 {
     /**
@@ -15,6 +18,10 @@ class SecurityController extends Controller
      */
     public function loginAction()
     {
+
+        // Build the Login Form
+        $form = $this->createForm(new LoginType(), new Login());
+
         $request = $this->getRequest();
         $session = $request->getSession();
         $error = NULL;
@@ -59,6 +66,7 @@ class SecurityController extends Controller
             'user/login.html.twig',
             array(
                 // last username entered by the user
+                'form' => $form->createView(), 
                 'session' => $name,
                 'last_username' => $session->get(SecurityContext::LAST_USERNAME),
             )

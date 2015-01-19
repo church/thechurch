@@ -11,31 +11,48 @@
   </head>
   <body class="{% block body_class %}{% endblock %}">
 
-    <header>
-
-      <!-- <img src="{{ asset('img/logo.png') }}" alt="thechur.ch"/> -->
-
-    </header>
-
-    {% if app.session.flashbag.peekall %}
-      <div class="messages">
-        {% for type, messages in app.session.flashbag.all %}
-          <div class="{{ type }}">
-            {% for message in messages %}
-              <div class="message">
-                {{ message }}
-              </div>
-            {% endfor %}
-          </div>
-        {% endfor %}
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+          <header>
+            <img src="{{ asset('img/logo.png') }}" alt="thechur.ch"/>
+          </header>
+        </div>
       </div>
-    {% endif %}
 
-    {% block body %}
-      <div class="content">
-        {% block content %}{% endblock %}
+      <div class="row">
+        <div class="col-xs-12">
+
+          {% if app.session.flashbag.peekall %}
+            <div class="messages">
+              {% for type, messages in app.session.flashbag.all %}
+                <div class="{{ type }}">
+                  {% for message in messages %}
+                    <div class="message">
+                      {{ message }}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+        </div>
       </div>
-    {% endblock %}
+
+      <div class="row">
+        <div class="col-xs-12">
+
+          {% block body %}
+            <div class="content">
+              {% block content %}{% endblock %}
+            </div>
+          {% endblock %}
+
+        </div>
+      </div>
+
+    </div>
 
     {% block javascripts %}{% endblock %}
   </body>
