@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Service\Utils;
+namespace Church\Utils;
 
 use Hip\MandrillBundle\Message;
 use Hip\MandrillBundle\Dispatcher;
