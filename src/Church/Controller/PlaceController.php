@@ -1,17 +1,22 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Controller;
+namespace Church\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Church\Bundle\PlaceBundle\Entity\City;
+use Church\Entity\City;
+use Church\Entity\Place;
 
-class DefaultController extends Controller
+class PlaceController extends Controller
 {
+
+    /**
+     * @Route("/{slug}", name="place_city")
+     */
     public function cityAction($slug)
     {
 
-        $repositry = $this->getDoctrine()->getRepository('ChurchPlaceBundle:City');
+        $repositry = $this->getDoctrine()->getRepository('Church:City');
 
         $city = $repositry->findCityBySlug($slug);
 
@@ -21,7 +26,7 @@ class DefaultController extends Controller
 
         $city = $city->getPlace();
 
-        $repositry = $this->getDoctrine()->getRepository('ChurchPlaceBundle:Place');
+        $repositry = $this->getDoctrine()->getRepository('Church:Place');
 
         $state = $repositry->findState($city->getID());
 
@@ -33,7 +38,8 @@ class DefaultController extends Controller
           'country' => $country,
         );
 
-        return $this->render('ChurchPlaceBundle:Default:city.html.twig', $variables);
+        return $this->render('place/city.html.twig', $variables);
 
     }
+
 }

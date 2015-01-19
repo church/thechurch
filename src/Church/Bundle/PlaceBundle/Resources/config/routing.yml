@@ -1,3 +1,0 @@
-church_place_city:
-    pattern:  /{slug}
-    defaults: { _controller: ChurchPlaceBundle:Default:city }

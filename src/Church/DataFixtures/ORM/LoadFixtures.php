@@ -1,14 +1,14 @@
 <?php
 
-namespace Church\Budnle\PlaceBundle\DataFixtures\ORM;
+namespace Church\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Church\Bundle\PlaceBundle\Entity\PlaceType;
+use Church\Entity\PlaceType;
 
-class LoadPlaceType implements FixtureInterface, ContainerAwareInterface
+class LoadFixtures implements FixtureInterface, ContainerAwareInterface
 {
     /**
      * @var ContainerInterface

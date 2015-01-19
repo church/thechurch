@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Service;
+namespace Church\Utils\Service;
 
 use Guzzle\Http\Client;
 use Guzzle\Plugin\Oauth\OauthPlugin;
@@ -8,10 +8,10 @@ use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Plugin\Backoff\BackoffPlugin;
 use Doctrine\ORM\EntityManager;
 
-use Church\Bundle\PlaceBundle\Entity\Place;
-use Church\Bundle\PlaceBundle\Entity\PlaceName;
-use Church\Bundle\PlaceBundle\Entity\PlaceType;
-use Church\Bundle\PlaceBundle\Entity\City;
+use Church\Entity\Place;
+use Church\Entity\PlaceName;
+use Church\Entity\PlaceType;
+use Church\Entity\City;
 
 class PlaceFinder {
 

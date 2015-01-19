@@ -1,10 +1,10 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Listener;
+namespace Church\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Church\Bundle\PlaceBundle\Entity\Place;
-use Church\Budnle\PlaceBundle\Entity\PlaceTree;
+use Church\Entity\Place;
+use Church\Entity\PlaceTree;
 
 class TreeMaker
 {
@@ -15,7 +15,7 @@ class TreeMaker
         if ($entity instanceof Place) {
 
           $em = $args->getEntityManager();
-          $repository = $em->getRepository('ChurchPlaceBundle:PlaceTree');
+          $repository = $em->getRepository('Church:PlaceTree');
 
           $tree = new PlaceTree();
           $tree->setAncestor($entity);
@@ -50,7 +50,7 @@ class TreeMaker
       if ($entity instanceof Place) {
 
         $em = $args->getEntityManager();
-        $repository = $em->getRepository('ChurchPlaceBundle:Place');
+        $repository = $em->getRepository('Church:Place');
 
         $original = $repository->find($entity->getId());
 
@@ -63,7 +63,7 @@ class TreeMaker
         // Make sure there was a change in Parents before proceeding.
         if ($original_parent_id != $new_parent_id ) {
 
-          $repository = $em->getRepository('ChurchPlaceBundle:PlaceTree');
+          $repository = $em->getRepository('Church:PlaceTree');
 
           // First Get the comment's tree below itself.
           $descendants = $repository->findByAncestor($entity->getID());

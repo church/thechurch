@@ -1,9 +1,19 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
-#    parameter_name: value
+  church_place.consumer_key: ~
+  church_place.consumer_secret: ~
+  church_place.generic_appid: ~
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+  church.tree_maker:
+     class: Church\Bundle\PlaceBundle\Listener\TreeMaker
+     tags:
+         - { name: doctrine.event_listener, event: postPersist }
+         - { name: doctrine.event_listener, event: preUpdate }
+         - { name: doctrine.event_listener, event: preRemove }
+  church.place_filder:
+    class: Church\Utils\PlaceFinder
+    church_place.consumer_key: ~
+    church_place.consumer_secret: ~
+    church_place.generic_appid: ~
