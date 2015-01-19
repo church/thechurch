@@ -1,17 +1,25 @@
+# you can read more about security in the related section of the documentation
+# http://symfony.com/doc/current/book/security.html
 security:
+    # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password
     encoders:
         Church\Bundle\UserBundle\Entity\User:
           algorithm: bcrypt
 
+    # http://symfony.com/doc/current/book/security.html#hierarchical-roles
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         main:
             entity: { class: ChurchUserBundle:User }
 
+    # the main part of the security, where you can set up firewalls
+    # for specific sections of your app
     firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -20,15 +28,18 @@ security:
             pattern:    ^/
             anonymous: ~
             form_login:
-                login_path:  /user/login-register
-                check_path:  /user/login_check
+                check_path: _demo_security_check
+                login_path: _demo_login
             logout:
-                path:   /user/logout
-                target: /
+                path:   _demo_logout
+                target: _demo
             #anonymous: ~
             #http_basic:
             #    realm: "Secured Demo Area"
 
+    # with these settings you can restrict or allow access for different parts
+    # of your application based on roles, ip, host or methods
+    # http://symfony.com/doc/current/cookbook/security/access_control.html
     access_control:
         #- { path: ^/user/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY}
