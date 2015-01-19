@@ -21,9 +21,9 @@ class UserController extends Controller
     public function loginRegisterAction()
     {
 
-      $login = $this->forward('Church:Security:login');
+      $login = $this->forward('Church:User\Security:login');
 
-      $register = $this->forward('Church:Registration:email');
+      $register = $this->forward('Church:User\Registration:email');
 
       // print '<pre>'.print_r($register->getContent(), TRUE).'</pre>';
       // exit;
