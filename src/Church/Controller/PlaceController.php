@@ -3,6 +3,9 @@
 namespace Church\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+use Doctrine\ORM\NoResultException;
 
 use Church\Entity\City;
 use Church\Entity\Place;
@@ -18,10 +21,10 @@ class PlaceController extends Controller
 
         $repositry = $this->getDoctrine()->getRepository('Church:City');
 
-        $city = $repositry->findCityBySlug($slug);
-
-        if (!$city) {
-           throw $this->createNotFoundException("The City doesn't exist yet...");
+        try {
+          $city = $repositry->findCityBySlug($slug);
+        } catch (NoResultException $e) {
+          throw $this->createNotFoundException("The City doesn't exist yet...");
         }
 
         $city = $city->getPlace();
