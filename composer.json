@@ -22,7 +22,7 @@
         "ircmaxell/password-compat": "~1.0.3",
         "doctrine/doctrine-fixtures-bundle": "2.2.*",
         "guzzle/guzzle": "3.1.*",
-        "hipaway-travel/mandrill-bundle": "dev-master"
+        "hipaway-travel/mandrill-bundle": "~1.0"
      },
      "require-dev": {
        "sensio/generator-bundle": "~2.3"

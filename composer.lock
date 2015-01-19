@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "32e6f960ba358abec587fb6ec6884df2",
+    "hash": "a71d170a552d6152a4d70c9eb7d000d8",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -928,7 +928,7 @@
         },
         {
             "name": "hipaway-travel/mandrill-bundle",
-            "version": "dev-master",
+            "version": "v1.0.3",
             "target-dir": "Hip/MandrillBundle",
             "source": {
                 "type": "git",
@@ -2008,12 +2008,10 @@
             "time": "2015-01-14 10:15:49"
         }
     ],
-    "packages-dev": null,
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "hipaway-travel/mandrill-bundle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
