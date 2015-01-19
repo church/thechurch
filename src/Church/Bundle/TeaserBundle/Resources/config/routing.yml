@@ -1,3 +1,0 @@
-ChurchTeaserBundle_homepage:
-    pattern:  /{slug}
-    defaults: { _controller: ChurchTeaserBundle:Default:index, slug: none }

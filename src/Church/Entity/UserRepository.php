@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Entity;
+namespace Church\Entity;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -25,7 +25,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface
             $user = $query->getQuery()->getSingleResult();
         } catch (NoResultException $e) {
             $message = sprintf(
-                'Unable to find an active admin ChurchUserBundle:User object identified by "%s".',
+                'Unable to find an active admin Church:User object identified by "%s".',
                 $username
             );
             throw new UsernameNotFoundException($message, 0, $e);

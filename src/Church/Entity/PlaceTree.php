@@ -1,10 +1,10 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Church\Bundle\PlaceBundle\Entity\Place;
+use Church\Entity\Place;
 
 /**
  * @ORM\Entity

@@ -1,17 +1,17 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-use Church\Bundle\UserBundle\Entity\User;
-use Church\Bundle\UserBundle\Entity\EmailVerify;
+use Church\Entity\User;
+use Church\Entity\EmailVerify;
 
 /**
- * Church\Bundle\UserBundle\Entity\Email
+ * Church\Entity\Email
  *
  * @ORM\Table(name="users_email")
  * @ORM\Entity

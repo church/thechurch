@@ -1,11 +1,11 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Church\Bundle\PlaceBundle\Entity\CityRepository
+ * Church\Entity\CityRepository
  *
  */
 class CityRepository extends EntityRepository

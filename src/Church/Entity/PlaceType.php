@@ -1,11 +1,11 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Church\Bundle\PlaceBundle\Entity\PlaceTitle
+ * Church\Entity\PlaceTitle
  *
  * @ORM\Entity
  * @ORM\Table(name="place_type")

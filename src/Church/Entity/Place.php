@@ -1,22 +1,22 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Church\Bundle\PlaceBundle\Entity\PlaceName;
-use Church\Bundle\PlaceBundle\Entity\PlaceTree;
-use Church\Bundle\PlaceBundle\Entity\Place;
-use Church\Bundle\PlaceBundle\Entity\City;
+use Church\Entity\PlaceName;
+use Church\Entity\PlaceTree;
+use Church\Entity\Place;
+use Church\Entity\City;
 
 /**
- * Church\Bundle\PlaceBundle\Entity\Place
+ * Church\Entity\Place
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="place")
- * @ORM\Entity(repositoryClass="Church\Bundle\PlaceBundle\Entity\PlaceRepository")
+ * @ORM\Entity(repositoryClass="Church\Entity\PlaceRepository")
  */
 class Place
 {

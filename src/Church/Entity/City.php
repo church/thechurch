@@ -1,16 +1,16 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-use Church\Bundle\PlaceBundle\Entity\Place;
+use Church\Entity\Place;
 
 /**
- * Church\Bundle\PlaceBundle\Entity\City
+ * Church\Entity\City
  *
- * @ORM\Entity(repositoryClass="Church\Bundle\PlaceBundle\Entity\CityRepository")
+ * @ORM\Entity(repositoryClass="Church\Entity\CityRepository")
  * @ORM\Table(name="city")
  * @UniqueEntity("slug")
  */

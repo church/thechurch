@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -8,12 +8,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\Util\SecureRandom;
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Church\Bundle\UserBundle\Entity\User;
-use Church\Bundle\UserBundle\Entity\Email;
+use Church\Entity\User;
+use Church\Entity\Email;
 
 
 /**
- * Church\Bundle\UserBundle\Entity\EmailVerify
+ * Church\Entity\EmailVerify
  *
  * @ORM\Table(name="users_email_verify")
  * @ORM\Entity

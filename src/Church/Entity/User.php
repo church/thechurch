@@ -1,20 +1,20 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Serializable;
-use Church\Bundle\UserBundle\Entity\Email;
-use Church\Bundle\PlaceBundle\Entity\Place;
+use Church\Entity\Email;
+use Church\Entity\Place;
 
 /**
- * Church\Bundle\UserBundle\Entity\User
+ * Church\Entity\User
  *
  * @ORM\Table(name="users")
- * @ORM\Entity(repositoryClass="Church\Bundle\UserBundle\Entity\UserRepository")
+ * @ORM\Entity(repositoryClass="Church\Entity\UserRepository")
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("username")
  * @UniqueEntity("primary_email")
@@ -68,7 +68,7 @@ class User implements UserInterface, Serializable
     private $address;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Church\Bundle\PlaceBundle\Entity\Place")
+     * @ORM\ManyToOne(targetEntity="Church\Entity\Place")
      * @ORM\JoinColumn(name="place_id", referencedColumnName="place_id")
      */
     private $place;

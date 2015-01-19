@@ -1,11 +1,11 @@
 <?php
 
-namespace Church\Bundle\PlaceBundle\Entity;
+namespace Church\Entity;
 
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Church\Bundle\PlaceBundle\Entity\PlaceRepository
+ * Church\Entity\PlaceRepository
  *
  */
 class PlaceRepository extends EntityRepository
@@ -14,7 +14,7 @@ class PlaceRepository extends EntityRepository
   public function findState($place_id)
   {
       $em = $this->getEntityManager();
-      $query = $em->createQuery('SELECT p FROM ChurchPlaceBundle:Place p JOIN p.descendant t WHERE t.descendant = :place_id  AND p.type = 8')
+      $query = $em->createQuery('SELECT p FROM Church:Place p JOIN p.descendant t WHERE t.descendant = :place_id  AND p.type = 8')
       ->setParameter('place_id', $place_id);
 
       return $query->getSingleResult();
@@ -23,7 +23,7 @@ class PlaceRepository extends EntityRepository
   public function findCountry($place_id)
   {
       $em = $this->getEntityManager();
-      $query = $em->createQuery('SELECT p FROM ChurchPlaceBundle:Place p JOIN p.descendant t WHERE t.descendant = :place_id AND p.type = 12')
+      $query = $em->createQuery('SELECT p FROM Church:Place p JOIN p.descendant t WHERE t.descendant = :place_id AND p.type = 12')
       ->setParameter('place_id', $place_id);
 
       return $query->getSingleResult();
