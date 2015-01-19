@@ -1,12 +1,18 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Controller;
+namespace Church\Controller\User;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class SecurityController extends Controller
 {
+    /**
+     * @Route("/user/login", name="login")
+     * @Method("POST")
+     */
     public function loginAction()
     {
         $request = $this->getRequest();
@@ -50,7 +56,7 @@ class SecurityController extends Controller
         }
 
         return $this->render(
-            'ChurchUserBundle:Security:login.html.twig',
+            'user/login.html.twig',
             array(
                 // last username entered by the user
                 'session' => $name,

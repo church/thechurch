@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Form\Model;
+namespace Church\Form\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -17,3 +17,6 @@ services:
     church_place.consumer_key: ~
     church_place.consumer_secret: ~
     church_place.generic_appid: ~
+  church.verify_email:
+      class: Church\Utils\VerifyEmail
+      arguments: [@hip_mandrill.dispatcher, @doctrine.orm.entity_manager, @router]

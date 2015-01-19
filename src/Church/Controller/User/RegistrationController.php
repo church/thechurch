@@ -1,19 +1,25 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Controller;
+namespace Church\Controller\User;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Church\Bundle\UserBundle\Entity\User;
-use Church\Bundle\UserBundle\Entity\Email;
-use Church\Bundle\UserBundle\Entity\EmailVerify;
-use Church\Bundle\UserBundle\Form\Type\RegistrationEmailType;
-use Church\Bundle\UserBundle\Form\Model\RegistrationEmail;
+use Church\Entity\User;
+use Church\Entity\Email;
+use Church\Entity\EmailVerify;
+use Church\Form\Type\RegistrationEmailType;
+use Church\Form\Model\RegistrationEmail;
 
 class RegistrationController extends Controller
 {
+    /**
+     * @Route("/user/register/email", name="register_email")
+     * @Method("POST")
+     */
     public function emailAction(Request $request)
     {
 
@@ -30,8 +36,8 @@ class RegistrationController extends Controller
         	if ($form->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-            $email_repository = $this->getDoctrine()->getRepository('ChurchUserBundle:Email');
-            $verify_repository = $this->getDoctrine()->getRepository('ChurchUserBundle:EmailVerify');
+            $email_repository = $this->getDoctrine()->getRepository('Church:Email');
+            $verify_repository = $this->getDoctrine()->getRepository('Church:EmailVerify');
 
         	  // Get the form data
         	  $register = $form->getData();
@@ -76,13 +82,13 @@ class RegistrationController extends Controller
             $em->flush();
 
             // Get the Dispatcher Service.
-            $verify_email = $this->get('church_user.verify_email');
+            $verify_email = $this->get('church.verify_email');
 
             // Send the Verification Email.
             $verify_email->sendVerification($verify);
 
 	        	// Redirect the User
-	        	return $this->render('ChurchUserBundle:Registration:email.html.twig', array(
+	        	return $this->render('user/email.html.twig', array(
   	            'form' => $form->createView(),
   	        ));
 	        	// return $this->redirect($this->generateUrl('church_user_register'));
@@ -93,7 +99,7 @@ class RegistrationController extends Controller
         // If the form hasn't yet been completed
         else {
 
-	        return $this->render('ChurchUserBundle:Registration:email.html.twig', array(
+	        return $this->render('user/email.html.twig', array(
 	            'form' => $form->createView(),
 	        ));
 

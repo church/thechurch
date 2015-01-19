@@ -1,30 +1,35 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Controller;
+namespace Church\Controller\User;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Church\Bundle\UserBundle\Entity\User;
-use Church\Bundle\UserBundle\Entity\Email;
-use Church\Bundle\UserBundle\Form\Type\RegistrationType;
-use Church\Bundle\UserBundle\Form\Model\Registration;
+use Church\Entity\User;
+use Church\Entity\Email;
+use Church\Form\Type\RegistrationType;
+use Church\Form\Model\Registration;
 
-class DefaultController extends Controller
+class UserController extends Controller
 {
 
+    /**
+     * @Route("/user/login-register", name="login_register")
+     */
     public function loginRegisterAction()
     {
 
-      $login = $this->forward('ChurchUserBundle:Security:login');
+      $login = $this->forward('Church:Security:login');
 
-      $register = $this->forward('ChurchUserBundle:Registration:email');
+      $register = $this->forward('Church:Registration:email');
 
       // print '<pre>'.print_r($register->getContent(), TRUE).'</pre>';
       // exit;
 
       return $this->render(
-          'ChurchUserBundle:Default:login-register.html.twig',
+          'user/login-register.html.twig',
           array(
             'login' => $login->getContent(),
             'register' => $register->getContent(),
@@ -33,6 +38,10 @@ class DefaultController extends Controller
 
     }
 
+    /**
+     * @Route("/user/register", name="register")
+     * @Method("POST")
+     */
     public function registerAction(Request $request)
     {
 
@@ -64,11 +73,11 @@ class DefaultController extends Controller
 
         		// Find the User's Place
         		$em = $this->getDoctrine()->getManager();
-        		$finder = $this->get('church_place.place_finder');
+        		$finder = $this->get('church.place_finder');
         		$place = $finder->findSavePlace($register->getAddress());
 
         		// Before setting the Place to the user, get it from the Database
-      		  $repository = $this->getDoctrine()->getRepository('Church\Bundle\PlaceBundle\Entity\Place');
+      		  $repository = $this->getDoctrine()->getRepository('Church\Entity\Place');
       		  $place = $repository->find($place['woeid']);
 
         		if (!empty($place)) {
@@ -96,7 +105,7 @@ class DefaultController extends Controller
 
 
 	        	// Redirect the User
-	        	return $this->render('ChurchUserBundle:Default:register.html.twig', array(
+	        	return $this->render('user/register.html.twig', array(
   	            'form' => $form->createView(),
   	        ));
 	        	// return $this->redirect($this->generateUrl('church_user_register'));
@@ -106,7 +115,7 @@ class DefaultController extends Controller
         }
         // If the form hasn't yet been completed
         else {
-	        return $this->render('ChurchUserBundle:Default:register.html.twig', array(
+	        return $this->render('user/register.html.twig', array(
 	            'form' => $form->createView(),
 	        ));
         }

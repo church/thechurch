@@ -1,12 +1,12 @@
 <?php
 
-namespace Church\Bundle\UserBundle\Service;
+namespace Church\Service\Utils;
 
 use Hip\MandrillBundle\Message;
 use Hip\MandrillBundle\Dispatcher;
 use Doctrine\ORM\EntityManager;
 
-use Church\Bundle\UserBundle\Entity\EmailVerify;
+use Church\Entity\EmailVerify;
 
 class VerifyEmail {
 
