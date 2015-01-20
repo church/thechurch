@@ -6,17 +6,33 @@ parameters:
   church_place.generic_appid: ~
 
 services:
+
   church.tree_maker:
      class: Church\EventListener\TreeMaker
      tags:
          - { name: doctrine.event_listener, event: postPersist }
          - { name: doctrine.event_listener, event: preUpdate }
          - { name: doctrine.event_listener, event: preRemove }
+
   church.place_finder:
     class: Church\Utils\PlaceFinder
     church_place.consumer_key: ~
     church_place.consumer_secret: ~
     church_place.generic_appid: ~
+
   church.verify_email:
       class: Church\Utils\VerifyEmail
       arguments: [@hip_mandrill.dispatcher, @doctrine.orm.entity_manager, @router]
+
+  church.validator.login:
+        class: Church\Validator\Constraints\LoginValidator
+        arguments: [@egulias.email_validator, @giggsey.phone_validator]
+        tags:
+            - { name: validator.constraint_validator, alias: valid_login }
+
+  egulias.email_validator:
+        class: Egulias\EmailValidator\EmailValidator
+
+  giggsey.phone_validator:
+        class: libphonenumber\PhoneNumberUtil
+        factory: [libphonenumber\PhoneNumberUtil, getInstance]

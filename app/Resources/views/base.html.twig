@@ -12,13 +12,14 @@
   <body class="{% block body_class %}{% endblock %}">
 
     <div class="container">
-      <div class="row">
+
+      <header class="row">
         <div class="col-xs-8 col-xs-offset-2">
-          <header>
-            <img src="{{ asset('img/logo.png') }}" alt="thechur.ch"/>
-          </header>
+            <img src="{{ asset('img/logo.png') }}"
+                 class="img-responsive"
+                 alt="thechur.ch" />
         </div>
-      </div>
+      </header>
 
       <div class="row">
         <div class="col-xs-12">
@@ -26,7 +27,7 @@
           {% if app.session.flashbag.peekall %}
             <div class="messages">
               {% for type, messages in app.session.flashbag.all %}
-                <div class="{{ type }}">
+                <div class="bg-{{ type }}">
                   {% for message in messages %}
                     <div class="message">
                       {{ message }}

@@ -3,41 +3,27 @@
 namespace Church\Form\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Church\Validator\Constraints as ChurchAssert;
 
 class Login
 {
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\MaxLength(255)
+     * @ChurchAssert\Login
+     * @Assert\Length(
+     *      max = "255"
+     * )
      */
-    protected $_username;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\MaxLength(255)
-     */
-    protected $_password;
+    protected $username;
 
     public function setUsername($username)
     {
-        $this->_username = $username;
+        $this->username = $username;
     }
 
     public function getUsername()
     {
-        return $this->_username;
-    }
-
-    public function setPassword($password)
-    {
-        $this->_password = $password;
-    }
-
-    public function getPassword()
-    {
-        return $this->_password;
+        return $this->username;
     }
 
 }
