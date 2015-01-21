@@ -26,24 +26,47 @@ class LoginValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
 
-        if (!$this->getEmail()->isValid($value)) {
+        if (!$this->isEmail($value)) {
 
-          try {
-            $number = $this->getPhone()->parse($value, 'US');
-          }
-          catch (NumberParseException $e) {
-            return $this->context->buildViolation($constraint->message)
-                                 ->addViolation();
-          }
-
-          if (!$this->getPhone()->isValidNumber($number)) {
+          if (!$this->isPhone($value)) {
 
             return $this->context->buildViolation($constraint->message)
                                  ->addViolation();
-
+                                 
           }
 
         }
+
+    }
+
+    /**
+     * Determine if value is an email.
+     *
+     * @param string $value String to test if is an email.
+     *
+     * @return bool
+     */
+    public function isEmail($value) {
+      return $this->getEmail()->isValid($value);
+    }
+
+    /**
+     * Determine if value is phone number.
+     *
+     * @param string $value String to test if is an phone.
+     *
+     * @return bool
+     */
+    public function isPhone($value) {
+
+      try {
+        $number = $this->getPhone()->parse($value, 'US');
+      }
+      catch (NumberParseException $e) {
+        return FALSE;
+      }
+
+      return $this->getPhone()->isValidNumber($number);
 
     }
 

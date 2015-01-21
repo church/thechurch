@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Utils\Service;
+namespace Church\Utils;
 
 use Guzzle\Http\Client;
 use Guzzle\Plugin\Oauth\OauthPlugin;

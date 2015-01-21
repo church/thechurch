@@ -29,7 +29,7 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
     public function load(ObjectManager $manager)
     {
 
-        $placefinder = $this->container->get('church_place.placefinder');
+        $placefinder = $this->container->get('church.place_finder');
 
         $types = $placefinder->getTypes();
         $placefinder->saveTypes($types);

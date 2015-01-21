@@ -24,12 +24,25 @@ class UserController extends Controller
         // Build the Registration Form
         $form = $this->createForm(new LoginType(), new Login());
 
-
+        // Handle the Form Request.
         $form->handleRequest($request);
 
         // If this Form has been completed
         if ($form->isSubmitted() && $form->isValid()) {
 
+          // Get the form data
+          $login = $form->getData();
+
+          $validator = $this->get('church.validator.login');
+
+          if ($validator->isEmail($login->getPhoneEmail())) {
+            // Send an Email Verifier.
+          }
+          elseif ($validator->isPhone($login->getPhoneEmail())) {
+            // Send a Phone Verifier.
+          }
+
+          /*
           $em = $this->getDoctrine()->getManager();
           $email_repository = $this->getDoctrine()->getRepository('Church:Email');
           $verify_repository = $this->getDoctrine()->getRepository('Church:EmailVerify');
@@ -81,6 +94,7 @@ class UserController extends Controller
 
           // Send the Verification Email.
           $verify_email->sendVerification($verify);
+          */
 
           // Redirect the User
           return $this->render('user/register.html.twig', array(
@@ -93,7 +107,7 @@ class UserController extends Controller
         return $this->render('user/login.html.twig', array(
             'form' => $form->createView(),
         ));
-        
+
     }
 
     /**

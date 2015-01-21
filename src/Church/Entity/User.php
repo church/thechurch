@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Serializable;
 use Church\Entity\Email;
+use Church\Entity\Phone;
 use Church\Entity\Place;
 
 /**
@@ -18,6 +19,7 @@ use Church\Entity\Place;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("username")
  * @UniqueEntity("primary_email")
+ * @UniqueEntity("primary_phone")
  */
 class User implements UserInterface, Serializable
 {
@@ -63,6 +65,18 @@ class User implements UserInterface, Serializable
     private $primary_email;
 
     /**
+     * @ORM\OneToMany(targetEntity="Phone", mappedBy="user",  cascade={"all"})
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
+     */
+    private $phones;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Phone", mappedBy="phone", cascade={"all"})
+     * @ORM\JoinColumn(name="primary_phone", referencedColumnName="phone")
+     */
+    private $primary_phone;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $address;
@@ -97,6 +111,7 @@ class User implements UserInterface, Serializable
     {
         $this->isActive = TRUE;
         $this->email = new ArrayCollection();
+        $this->phone = new ArrayCollection();
     }
 
     /**
@@ -313,6 +328,63 @@ class User implements UserInterface, Serializable
     }
 
     /**
+     * Add phones
+     *
+     * @param Phone $phone
+     * @return User
+     */
+    public function addPhone(Phone $phone)
+    {
+        $this->phones[] = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Remove phones
+     *
+     * @param Phone $phone
+     */
+    public function removePhone(Phone $phone)
+    {
+        $this->phones->removeElement($phone);
+    }
+
+    /**
+     * Get phones
+     *
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function getPhones()
+    {
+        return $this->phones;
+    }
+
+
+    /**
+     * Set primary_phone
+     *
+     * @param Phone $primaryPhone
+     * @return User
+     */
+    public function setPrimaryPhone(Phone $primaryPhone = null)
+    {
+        $this->primary_phone = $primaryPhone;
+
+        return $this;
+    }
+
+    /**
+     * Get primary_phone
+     *
+     * @return Phone
+     */
+    public function getPrimaryPhone()
+    {
+        return $this->primary_phone;
+    }
+
+    /**
      * Set address
      *
      * @param string $address
@@ -409,7 +481,7 @@ class User implements UserInterface, Serializable
      * Set created
      *
      * @param \DateTime $verified
-     * @return Email
+     * @return User
      */
     public function setCreated($created)
     {

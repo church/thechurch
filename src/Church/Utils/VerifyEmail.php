@@ -2,9 +2,10 @@
 
 namespace Church\Utils;
 
+use Symfony\Component\Routing\RouterInterface;
 use Hip\MandrillBundle\Message;
 use Hip\MandrillBundle\Dispatcher;
-use Doctrine\ORM\EntityManager;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Church\Entity\EmailVerify;
 
@@ -12,17 +13,25 @@ class VerifyEmail {
 
     private $dispatcher;
 
-    private $em;
+    private $doctrine;
 
-    public function __construct(Dispatcher $dispatcher, EntityManager $em, $router) {
+    private $router;
 
-        $this->setDispatcher($dispatcher);
-        $this->setEntityManager($em);
-        $this->setRouter($router);
+    public function __construct(Dispatcher $dispatcher,
+                                RegistryInterface $doctrine,
+                                RouterInterface $router)
+    {
+        $this->dispatcher = $dispatcher;
+        $this->doctrine = $doctrine;
+        $this->router = $router;
+    }
+
+    public function createVerification($email) {
 
     }
 
-    public function sendVerification($verify) {
+    public function sendVerification(EmailVerify $verify)
+    {
 
       $message = new Message();
 
@@ -44,33 +53,37 @@ class VerifyEmail {
 
     }
 
-    public function setDispatcher($dispatcher) {
+    public function setDispatcher($dispatcher)
+    {
       $this->dispatcher = $dispatcher;
 
       return $this;
     }
 
-    public function getDispatcher() {
+    public function getDispatcher()
+    {
       return $this->dispatcher;
     }
 
-    public function setEntityManager($em) {
-      $this->em = $em;
-
+    public function setDoctrine($doctrine)
+    {
+      $this->doctrine = $doctrine;
       return $this;
     }
 
-    public function getEntityManager() {
-      return $this->em;
+    public function getDoctrine()
+    {
+      return $this->doctrine;
     }
 
-    public function setRouter($router) {
+    public function setRouter($router)
+    {
       $this->router = $router;
-
       return $this;
     }
 
-    public function getRouter() {
+    public function getRouter()
+    {
       return $this->router;
     }
 
