@@ -20,12 +20,13 @@
         "sensio/generator-bundle": "~2.3",
         "incenteev/composer-parameter-handler": "~2.0",
         "ircmaxell/password-compat": "~1.0.3",
-        "ircmaxell/random-lib": "~1.0", 
+        "ircmaxell/random-lib": "~1.0",
         "doctrine/doctrine-fixtures-bundle": "2.2.*",
         "guzzle/guzzle": "3.1.*",
         "hipaway-travel/mandrill-bundle": "~1.0",
         "egulias/email-validator": "~1.0",
-        "giggsey/libphonenumber-for-php": "~7.0"
+        "giggsey/libphonenumber-for-php": "~7.0",
+        "prawnsalad/nexmo": "dev-master"
      },
      "require-dev": {
        "sensio/generator-bundle": "~2.3"

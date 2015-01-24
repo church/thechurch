@@ -4,8 +4,9 @@ namespace Church\Utils;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Church\Entity\User;
-use Church\Entity\Email;
+use Church\Entity\User\User;
+use Church\Entity\User\Email;
+use Church\Entity\User\Phone;
 
 class UserCreate {
 
@@ -19,7 +20,7 @@ class UserCreate {
     /**
      * Create a new User from an Email.
      *
-     * @param string $email_address Valid email address.
+     * @param Email $email Valid email object.
      *
      * @return User Newly created user object.
      */
@@ -29,11 +30,7 @@ class UserCreate {
       $em = $this->getDoctrine()->getManager();
 
       // Create a new stub user.
-      $user = new User();
-
-      // Save the User
-      $em->persist($user);
-      $em->flush();
+      $user = $this->createStub();
 
       // Set the Email
       $email->setUser($user);
@@ -41,6 +38,55 @@ class UserCreate {
 
       // Save the Email
       $em->persist($email);
+      $em->persist($user);
+      $em->flush();
+
+      return $user;
+
+    }
+
+    /**
+     * Create a new User from a Phone.
+     *
+     * @param Phone $phone Valid phone object.
+     *
+     * @return User Newly created user object.
+     */
+    public function createFromPhone(Phone $phone)
+    {
+
+      $em = $this->getDoctrine()->getManager();
+
+      // Create a new stub user.
+      $user = $this->createStub();
+
+      // Set the Phone
+      $phone->setUser($user);
+      $user->setPrimaryPhone($phone);
+
+      // Save the phone.
+      $em->persist($phone);
+      $em->persist($user);
+      $em->flush();
+
+      return $user;
+
+    }
+
+    /**
+     * Create a stub User.
+     *
+     * @return User Newly created user object.
+     */
+    private function createStub()
+    {
+
+      $em = $this->getDoctrine()->getManager();
+
+      // Create a new stub user.
+      $user = new User();
+
+      // Save the User
       $em->persist($user);
       $em->flush();
 

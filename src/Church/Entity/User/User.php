@@ -1,21 +1,22 @@
 <?php
 
-namespace Church\Entity;
+namespace Church\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Serializable;
-use Church\Entity\Email;
-use Church\Entity\Phone;
+
 use Church\Entity\Place;
+use Church\Entity\User\Email;
+use Church\Entity\User\Phone;
 
 /**
- * Church\Entity\User
+ * Church\Entity\User\User
  *
  * @ORM\Table(name="users")
- * @ORM\Entity(repositoryClass="Church\Entity\UserRepository")
+ * @ORM\Entity(repositoryClass="Church\Entity\User\UserRepository")
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("username")
  * @UniqueEntity("primary_email")

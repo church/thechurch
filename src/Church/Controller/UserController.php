@@ -8,8 +8,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Church\Entity\EmailVerify;
-use Church\Entity\User;
+use Church\Entity\User\User;
+use Church\Entity\User\EmailVerify;
 use Church\Form\Type\LoginType;
 use Church\Form\Model\Login;
 
@@ -37,14 +37,24 @@ class UserController extends Controller
           $validator = $this->get('church.validator.login');
 
           if ($validator->isEmail($login->getUsername())) {
+
+            // Create the Verification.
             $verify = $this->get('church.verify_create')
                            ->createEmail($login->getUsername());
 
-            $verify = $this->get('church.verify_send')
-                           ->sendEmail($verify);
+            // Send the Verification.
+            $this->get('church.verify_send')->sendEmail($verify);
+
           }
           elseif ($validator->isPhone($login->getUsername())) {
-            // Send a Phone Verifier.
+
+            // Create the Verification.
+            $verify = $this->get('church.verify_create')
+                           ->createPhone($login->getUsername());
+
+            // Send the Verification.
+            $this->get('church.verify_send')->sendSMS($verify);
+
           }
 
           // Redirect the User
@@ -65,7 +75,7 @@ class UserController extends Controller
      * @Route("/u/{user_id}/v/e/{token}", name="user_verify_email")
      * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
      */
-    public function verifyemailAction(Request $request, User $user, EmailVerify $verify)
+    public function verifyEmailAction(Request $request, User $user,  $token = NULL)
     {
 
       return;

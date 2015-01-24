@@ -2,21 +2,30 @@
 
 namespace Church\Utils;
 
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\RouterInterface as Router;
 use Hip\MandrillBundle\Message;
-use Hip\MandrillBundle\Dispatcher;
+use Hip\MandrillBundle\Dispatcher as Mandrill;
 
-use Church\Entity\EmailVerify;
+// @TODO Fiture out what the namespacing should be.
+use PrawnSalad\Nexmo\NexmoMessage as Nexmo;
+
+use Church\Entity\User\EmailVerify;
+use Church\Message\Email as EmailMessage;
 
 class VerifySend {
 
-    private $dispatcher;
+    private $mandrill;
+
+    private $nexmo;
 
     private $router;
 
-    public function __construct(Dispatcher $dispatcher, RouterInterface $router)
+    public function __construct(Mandrill $mandrill,
+                                Nexmo $nexmo,
+                                Router $router)
     {
-        $this->dispatcher = $dispatcher;
+        $this->mandrill = $mandrill;
+        $this->nexmo = $nexmo;
         $this->router = $router;
     }
 
@@ -24,10 +33,9 @@ class VerifySend {
     public function sendEmail(EmailVerify $verify)
     {
 
-      $message = new Message();
+      $message = new EmailMessage();
 
       $params = array(
-        'type' => 'e',
         'token' => $verify->getToken(),
         'user_id' => $verify->getEmail()->getUser()->getID(),
       );
@@ -35,26 +43,64 @@ class VerifySend {
       // Build the Message.
       $message->addTo($verify->getEmail()->getEmail());
       $message->setSubject('Confirm Your Email');
+
       // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
       $text = "Please visit the following location to verify your email.\n";
-      $text .= $this->getRouter()->generate('user_verify', $params, true);
+      $text .= $this->getRouter()->generate('user_verify_email', $params, TRUE);
+
       $message->setText($text);
 
       // Send the Message using Async.
-      return $this->getDispatcher()->send($message, '', array(), TRUE);
+      return $this->getMandrill()->send($message, '', array(), TRUE);
 
     }
 
-    public function setDispatcher($dispatcher)
+    public function sendSMS(PhoneVerify $verify)
     {
-      $this->dispatcher = $dispatcher;
+
+      $params = array(
+        'token' => $verify->getToken(),
+        'user_id' => $verify->getEmail()->getUser()->getID(),
+      );
+
+      $link = $this->getRouter()->generate('user_verify_email', $params, TRUE);
+
+      $message = array(
+        'Login Code: '.$verify->getToken(),
+        $link,
+      );
+
+      $message = implode("\n", $message);
+
+      $to = $verify->getPhone()->getPhone();
+      $from = 'thechur.ch';
+
+      return $this->getNexmo()->sendText($to, $from, $message);
+
+    }
+
+    public function setMandrill($mandrill)
+    {
+      $this->mandrill = $mandrill;
 
       return $this;
     }
 
-    public function getDispatcher()
+    public function getMandrill()
     {
-      return $this->dispatcher;
+      return $this->mandrill;
+    }
+
+    public function setNexmo($nexmo)
+    {
+      $this->nexmo = $nexmo;
+
+      return $this;
+    }
+
+    public function getNexmo()
+    {
+      return $this->nexmo;
     }
 
     public function setRouter($router)

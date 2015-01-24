@@ -4,6 +4,8 @@ parameters:
   church_place.consumer_key: ~
   church_place.consumer_secret: ~
   church_place.generic_appid: ~
+  nexmo_api_key: ~
+  nexmo_api_secret: ~
 
 services:
 
@@ -37,7 +39,7 @@ services:
 
   church.verify_send:
       class: Church\Utils\VerifySend
-      arguments: [@hip_mandrill.dispatcher, @router]
+      arguments: [@hip_mandrill.dispatcher, @prawnsalad.nexmo, @router]
 
   egulias.email_validator:
         class: Egulias\EmailValidator\EmailValidator
@@ -52,3 +54,8 @@ services:
   ircmaxell.random:
         class: RandomLib\Generator
         factory: ["@ircmaxell.random_factory", getMediumStrengthGenerator]
+
+  # @TODO Figure out how to define this as a service.
+  prawnsalad.nexmo:
+        class: PrawnSalad\Nexmo\NexmoMessage
+        arguments: [%nexmo_api_key%, %nexmo_api_secret%]

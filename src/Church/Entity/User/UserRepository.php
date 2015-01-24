@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Entity;
+namespace Church\Entity\User;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;

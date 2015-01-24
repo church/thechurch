@@ -1,35 +1,34 @@
 <?php
 
-namespace Church\Entity;
+namespace Church\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-use Church\Entity\User;
-use Church\Entity\EmailVerify;
+use Church\Entity\User\User;
+use Church\Entity\User\PhoneVerify;
 
 /**
- * Church\Entity\Email
+ * Church\Entity\User\Phone
  *
- * @ORM\Table(name="users_email")
+ * @ORM\Table(name="users_phone")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("primary_email")
+ * @UniqueEntity("primary_phone")
  */
-class Email
+class Phone
 {
 
     /**
      * @ORM\Id
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Email()
+     * @ORM\Column(type="string", length=35)
      */
-    private $email;
+    private $phone;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="emails")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="phones")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
     private $user;
@@ -40,7 +39,7 @@ class Email
     private $created;
 
     /**
-     * @ORM\OneToOne(targetEntity="EmailVerify", mappedBy="email")
+     * @ORM\OneToOne(targetEntity="PhoneVerify", mappedBy="phone")
      **/
     private $verify;
 
@@ -59,26 +58,26 @@ class Email
     }
 
     /**
-     * Set email
+     * Set phone
      *
-     * @param string $email
+     * @param string $phone
      * @return Email
      */
-    public function setEmail($email)
+    public function setPhone($phone)
     {
-        $this->email = $email;
+        $this->phone = $phone;
 
         return $this;
     }
 
     /**
-     * Get email
+     * Get phone
      *
      * @return string
      */
-    public function getEmail()
+    public function getPhone()
     {
-        return $this->email;
+        return $this->phone;
     }
 
     /**
@@ -154,10 +153,10 @@ class Email
     /**
      * Set verify
      *
-     * @param EmailVerify $verify
-     * @return Email
+     * @param PhoneVerify $verify
+     * @return Phone
      */
-    public function setVerify(EmailVerify $verify = null)
+    public function setVerify(PhoneVerify $verify = null)
     {
         $this->verify = $verify;
 
@@ -167,7 +166,7 @@ class Email
     /**
      * Get verify
      *
-     * @return EmailVerify
+     * @return PhoneVerify
      */
     public function getVerify()
     {

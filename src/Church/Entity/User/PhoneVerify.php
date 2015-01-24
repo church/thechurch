@@ -1,33 +1,33 @@
 <?php
 
-namespace Church\Entity;
+namespace Church\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\Util\SecureRandom;
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Church\Entity\User;
-use Church\Entity\Email;
+use Church\Entity\User\User;
+use Church\Entity\User\Phone;
 
 
 /**
- * Church\Entity\EmailVerify
+ * Church\Entity\User\PhoneVerify
  *
- * @ORM\Table(name="users_email_verify")
+ * @ORM\Table(name="users_phone_verify")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
-class EmailVerify
+class PhoneVerify
 {
 
     /**
      * @ORM\Id
-     * @ORM\OneToOne(targetEntity="Email", inversedBy="verify")
-     * @ORM\JoinColumn(name="email", referencedColumnName="email")
-     * @Assert\Email()
+     * @ORM\OneToOne(targetEntity="Phone", inversedBy="verify")
+     * @ORM\JoinColumn(name="phone", referencedColumnName="phone")
      */
-    private $email;
+    private $phone;
 
     /**
      * @ORM\Column(type="string", length=16, unique=true)
@@ -40,6 +40,16 @@ class EmailVerify
     private $created;
 
     /**
+     * Construct
+     */
+    public function __construct()
+    {
+        $generator = new SecureRandom();
+        $token = mb_convert_encoding($generator->nextBytes(16), 'UTF-8');
+        $this->setToken($token);
+    }
+
+    /**
      * @ORM\PrePersist
      */
     public function setCreatedValue()
@@ -48,26 +58,26 @@ class EmailVerify
     }
 
     /**
-     * Set email
+     * Set phone
      *
-     * @param Email $email
-     * @return EmailVerify
+     * @param Phone $phone
+     * @return PhoneVerify
      */
-    public function setEmail(Email $email)
+    public function setPhone(Phone $phone)
     {
-        $this->email = $email;
+        $this->phone = $phone;
 
         return $this;
     }
 
     /**
-     * Get email
+     * Get phone
      *
-     * @return Email
+     * @return Phone
      */
-    public function getEmail()
+    public function getPhone()
     {
-        return $this->email;
+        return $this->phone;
     }
 
     /**
@@ -78,9 +88,7 @@ class EmailVerify
      */
     public function setToken($token)
     {
-      
-        // Ensure that token is at least 6 characters.
-        $this->token = str_pad($token, 6, '0', STR_PAD_LEFT);
+        $this->token = $token;
 
         return $this;
     }

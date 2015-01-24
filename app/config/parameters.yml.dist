@@ -23,3 +23,6 @@ parameters:
       consumer_key: ~
       consumer_secret: ~
       generic_appid: ~
+
+    nexmo_api_key: ~
+    nexmo_api_secret: ~
