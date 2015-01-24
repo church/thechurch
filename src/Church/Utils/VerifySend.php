@@ -5,11 +5,10 @@ namespace Church\Utils;
 use Symfony\Component\Routing\RouterInterface as Router;
 use Hip\MandrillBundle\Message;
 use Hip\MandrillBundle\Dispatcher as Mandrill;
-
-// @TODO Fiture out what the namespacing should be.
-use PrawnSalad\Nexmo\NexmoMessage as Nexmo;
+use NexmoMessage as Nexmo;
 
 use Church\Entity\User\EmailVerify;
+use Church\Entity\User\PhoneVerify;
 use Church\Message\Email as EmailMessage;
 
 class VerifySend {
@@ -60,7 +59,7 @@ class VerifySend {
 
       $params = array(
         'token' => $verify->getToken(),
-        'user_id' => $verify->getEmail()->getUser()->getID(),
+        'user_id' => $verify->getPhone()->getUser()->getID(),
       );
 
       $link = $this->getRouter()->generate('user_verify_email', $params, TRUE);

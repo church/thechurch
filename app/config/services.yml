@@ -55,7 +55,6 @@ services:
         class: RandomLib\Generator
         factory: ["@ircmaxell.random_factory", getMediumStrengthGenerator]
 
-  # @TODO Figure out how to define this as a service.
   prawnsalad.nexmo:
-        class: PrawnSalad\Nexmo\NexmoMessage
+        class: NexmoMessage
         arguments: [%nexmo_api_key%, %nexmo_api_secret%]

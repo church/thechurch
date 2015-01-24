@@ -4,7 +4,13 @@
     "license": "AGPL-3.0",
     "type": "project",
     "autoload": {
-        "psr-0": { "": "src/", "SymfonyStandard": "app/" }
+        "psr-0": {
+          "": "src/",
+          "SymfonyStandard": "app/"
+        },
+        "classmap": [
+          "vendor/prawnsalad/nexmo/src"
+        ]
     },
     "require": {
         "php": ">=5.3.3",
