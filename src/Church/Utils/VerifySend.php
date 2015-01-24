@@ -5,37 +5,29 @@ namespace Church\Utils;
 use Symfony\Component\Routing\RouterInterface;
 use Hip\MandrillBundle\Message;
 use Hip\MandrillBundle\Dispatcher;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Church\Entity\EmailVerify;
 
-class VerifyEmail {
+class VerifySend {
 
     private $dispatcher;
 
-    private $doctrine;
-
     private $router;
 
-    public function __construct(Dispatcher $dispatcher,
-                                RegistryInterface $doctrine,
-                                RouterInterface $router)
+    public function __construct(Dispatcher $dispatcher, RouterInterface $router)
     {
         $this->dispatcher = $dispatcher;
-        $this->doctrine = $doctrine;
         $this->router = $router;
     }
 
-    public function createVerification($email) {
 
-    }
-
-    public function sendVerification(EmailVerify $verify)
+    public function sendEmail(EmailVerify $verify)
     {
 
       $message = new Message();
 
       $params = array(
+        'type' => 'e',
         'token' => $verify->getToken(),
         'user_id' => $verify->getEmail()->getUser()->getID(),
       );
@@ -45,7 +37,7 @@ class VerifyEmail {
       $message->setSubject('Confirm Your Email');
       // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
       $text = "Please visit the following location to verify your email.\n";
-      $text .= $this->getRouter()->generate('verify_email', $params, true);
+      $text .= $this->getRouter()->generate('user_verify', $params, true);
       $message->setText($text);
 
       // Send the Message using Async.
@@ -63,17 +55,6 @@ class VerifyEmail {
     public function getDispatcher()
     {
       return $this->dispatcher;
-    }
-
-    public function setDoctrine($doctrine)
-    {
-      $this->doctrine = $doctrine;
-      return $this;
-    }
-
-    public function getDoctrine()
-    {
-      return $this->doctrine;
     }
 
     public function setRouter($router)

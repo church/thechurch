@@ -21,15 +21,23 @@ services:
     church_place.consumer_secret: ~
     church_place.generic_appid: ~
 
-  church.verify_email:
-      class: Church\Utils\VerifyEmail
-      arguments: [@hip_mandrill.dispatcher, @doctrine, @router]
-
   church.validator.login:
         class: Church\Validator\Constraints\LoginValidator
         arguments: [@egulias.email_validator, @giggsey.phone_validator]
         tags:
             - { name: validator.constraint_validator, alias: valid_login }
+
+  church.user_create:
+      class: Church\Utils\UserCreate
+      arguments: [@doctrine]
+
+  church.verify_create:
+      class: Church\Utils\VerifyCreate
+      arguments: [@doctrine, @ircmaxell.random, @church.user_create]
+
+  church.verify_send:
+      class: Church\Utils\VerifySend
+      arguments: [@hip_mandrill.dispatcher, @router]
 
   egulias.email_validator:
         class: Egulias\EmailValidator\EmailValidator
@@ -37,3 +45,10 @@ services:
   giggsey.phone_validator:
         class: libphonenumber\PhoneNumberUtil
         factory: [libphonenumber\PhoneNumberUtil, getInstance]
+
+  ircmaxell.random_factory:
+        class: RandomLib\Factory
+
+  ircmaxell.random:
+        class: RandomLib\Generator
+        factory: ["@ircmaxell.random_factory", getMediumStrengthGenerator]

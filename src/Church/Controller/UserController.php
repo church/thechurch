@@ -5,10 +5,11 @@ namespace Church\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Church\Entity\EmailVerify;
 use Church\Entity\User;
-use Church\Entity\Email;
 use Church\Form\Type\LoginType;
 use Church\Form\Model\Login;
 
@@ -16,7 +17,7 @@ class UserController extends Controller
 {
 
     /**
-     * @Route("/user/login", name="login")
+     * @Route("/u/login", name="user_login")
      */
     public function loginAction(Request $request)
     {
@@ -35,69 +36,19 @@ class UserController extends Controller
 
           $validator = $this->get('church.validator.login');
 
-          if ($validator->isEmail($login->getPhoneEmail())) {
-            // Send an Email Verifier.
+          if ($validator->isEmail($login->getUsername())) {
+            $verify = $this->get('church.verify_create')
+                           ->createEmail($login->getUsername());
+
+            $verify = $this->get('church.verify_send')
+                           ->sendEmail($verify);
           }
-          elseif ($validator->isPhone($login->getPhoneEmail())) {
+          elseif ($validator->isPhone($login->getUsername())) {
             // Send a Phone Verifier.
           }
 
-          /*
-          $em = $this->getDoctrine()->getManager();
-          $email_repository = $this->getDoctrine()->getRepository('Church:Email');
-          $verify_repository = $this->getDoctrine()->getRepository('Church:EmailVerify');
-
-          // Get the form data
-          $register = $form->getData();
-
-          if ($verify = $verify_repository->findOneByEmail($register->getEmail())) {
-
-            // Delete the verification.
-            $em->remove($verify);
-            $em->flush();
-
-            $email = $email_repository->findOneByEmail($register->getEmail());
-
-          }
-          else {
-
-            $user = new User();
-
-            // Save the User
-            $em->persist($user);
-            $em->flush();
-
-            // Create the Email
-            $email = new Email();
-            $email->setUser($user);
-            $email->setEmail($register->getEmail());
-            $user->setPrimaryEmail($email);
-
-            // Save the Email
-            $em->persist($email);
-            $em->persist($user);
-            $em->flush();
-
-          }
-
-
-          $verify = new EmailVerify();
-          $verify->setEmail($email);
-
-          // Save the Verification.
-          $em->refresh($email);
-          $em->persist($verify);
-          $em->flush();
-
-          // Get the Dispatcher Service.
-          $verify_email = $this->get('church.verify_email');
-
-          // Send the Verification Email.
-          $verify_email->sendVerification($verify);
-          */
-
           // Redirect the User
-          return $this->render('user/register.html.twig', array(
+          return $this->render('user/login.html.twig', array(
               'form' => $form->createView(),
           ));
           // return $this->redirect($this->generateUrl('church_user_register'));
@@ -107,6 +58,17 @@ class UserController extends Controller
         return $this->render('user/login.html.twig', array(
             'form' => $form->createView(),
         ));
+
+    }
+
+    /**
+     * @Route("/u/{user_id}/v/e/{token}", name="user_verify_email")
+     * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
+     */
+    public function verifyemailAction(Request $request, User $user, EmailVerify $verify)
+    {
+
+      return;
 
     }
 

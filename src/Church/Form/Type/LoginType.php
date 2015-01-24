@@ -12,7 +12,7 @@ class LoginType extends AbstractType
     {
 
         $builder->add('username', 'text', array(
-          'label' => 'Phone or Email'
+          'label' => 'Email or Phone'
         ));
     }
 

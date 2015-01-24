@@ -1,7 +1,7 @@
 {% extends '::user/layout.html.twig' %}
 
 {% block content %}
-  <form action="{{ path('login') }}" method="post" {{ form_enctype(form) }}>
+  <form action="{{ path('user_login') }}" method="post" {{ form_enctype(form) }}>
       {{ form_widget(form) }}
 
       <input type="submit" class="btn btn-default btn-block" value="Continue" />

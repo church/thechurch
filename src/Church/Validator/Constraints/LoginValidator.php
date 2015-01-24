@@ -32,7 +32,7 @@ class LoginValidator extends ConstraintValidator
 
             return $this->context->buildViolation($constraint->message)
                                  ->addViolation();
-                                 
+
           }
 
         }

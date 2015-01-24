@@ -5,7 +5,6 @@ namespace Church\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\Util\SecureRandom;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Church\Entity\User;
@@ -39,16 +38,6 @@ class EmailVerify
      * @ORM\Column(type="datetime")
      */
     private $created;
-
-    /**
-     * Construct
-     */
-    public function __construct()
-    {
-        $generator = new SecureRandom();
-        $token = mb_convert_encoding($generator->nextBytes(16), 'UTF-8');
-        $this->setToken($token);
-    }
 
     /**
      * @ORM\PrePersist
@@ -89,7 +78,9 @@ class EmailVerify
      */
     public function setToken($token)
     {
-        $this->token = $token;
+      
+        // Ensure that token is at least 6 characters.
+        $this->token = str_pad($token, 6, '0', STR_PAD_LEFT);
 
         return $this;
     }
