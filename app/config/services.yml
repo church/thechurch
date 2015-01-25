@@ -1,11 +1,6 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
-parameters:
-  church_place.consumer_key: ~
-  church_place.consumer_secret: ~
-  church_place.generic_appid: ~
-  nexmo_api_key: ~
-  nexmo_api_secret: ~
+#parameters:
 
 services:
 
@@ -35,7 +30,7 @@ services:
 
   church.verify_create:
       class: Church\Utils\VerifyCreate
-      arguments: [@doctrine, @ircmaxell.random, @church.user_create]
+      arguments: [@doctrine, @ircmaxell.random, @church.validator.login, @church.user_create]
 
   church.verify_send:
       class: Church\Utils\VerifySend

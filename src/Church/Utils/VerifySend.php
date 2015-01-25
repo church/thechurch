@@ -64,17 +64,30 @@ class VerifySend {
 
       $link = $this->getRouter()->generate('user_verify_email', $params, TRUE);
 
+      // @TODO Move the message portion into a class and make an abstraction
+      //       for the sender so we can set the phone number in the paramaters.
       $message = array(
+        'thechur.ch',
         'Login Code: '.$verify->getToken(),
+        '',
         $link,
       );
 
       $message = implode("\n", $message);
 
       $to = $verify->getPhone()->getPhone();
-      $from = 'thechur.ch';
+      $from = '12243109152';
 
-      return $this->getNexmo()->sendText($to, $from, $message);
+      $result = $this->getNexmo()->sendText($to, $from, $message);
+
+      if (!empty($result->messages)) {
+        $error = $result->messages[0];
+        if (!empty($error->errortext)) {
+          throw new \Exception($error->errortext);
+        }
+      }
+
+      return $result;
 
     }
 

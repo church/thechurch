@@ -10,6 +10,8 @@ use Church\Entity\User\Email;
 use Church\Entity\User\EmailVerify;
 use Church\Entity\User\Phone;
 use Church\Entity\User\PhoneVerify;
+use Church\Validator\Constraints\LoginValidator as Validator;
+
 
 class VerifyCreate {
 
@@ -17,14 +19,18 @@ class VerifyCreate {
 
     private $random;
 
+    private $validator;
+
     private $user_create;
 
     public function __construct(Doctrine $doctrine,
                                 RandomGenerator $random,
+                                Validator $validator,
                                 UserCreate $user_create)
     {
         $this->doctrine = $doctrine;
         $this->random = $random;
+        $this->validator = $validator;
         $this->user_create = $user_create;
     }
 
@@ -77,6 +83,10 @@ class VerifyCreate {
     {
 
       $em = $this->getDoctrine()->getManager();
+
+      $parsed = $this->getValidator()->getPhone()->parse($phone_number, 'US');
+
+      $phone_number = $parsed->getCountryCode().$parsed->getNationalNumber();
 
       // Get the existig email from the database.
       $phone = $this->findExistingPhone($phone_number);
@@ -196,6 +206,17 @@ class VerifyCreate {
     public function getRandom()
     {
       return $this->random;
+    }
+
+    public function setValidator($validator)
+    {
+      $this->validator = $validator;
+      return $this;
+    }
+
+    public function getValidator()
+    {
+      return $this->validator;
     }
 
     public function setUserCreate($user_create)
