@@ -1,0 +1,9 @@
+{% extends '::user/layout.html.twig' %}
+
+{% block content %}
+  <form action="{{ path('user_verify', {'user_id': user.id, 'type': type}) }}" method="post" {{ form_enctype(form) }}>
+      {{ form_widget(form) }}
+
+      <input type="submit" class="btn btn-default btn-block" value="Continue" />
+  </form>
+{% endblock %}
