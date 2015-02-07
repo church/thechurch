@@ -26,3 +26,4 @@ parameters:
 
     nexmo_api_key: ~
     nexmo_api_secret: ~
+    nexmo_sender: ~

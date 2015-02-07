@@ -3,28 +3,28 @@
 namespace Church\Utils;
 
 use Symfony\Component\Routing\RouterInterface as Router;
-use Hip\MandrillBundle\Message;
-use Hip\MandrillBundle\Dispatcher as Mandrill;
-use NexmoMessage as Nexmo;
 
 use Church\Entity\User\EmailVerify;
 use Church\Entity\User\PhoneVerify;
+use Church\Utils\Dispatcher\Email as EmailDispatcher;
+use Church\Utils\Dispatcher\SMS as SMSDispatcher;
 use Church\Message\Email as EmailMessage;
+use Church\Message\SMS as SMSMessage;
 
 class VerifySend {
 
-    private $mandrill;
-
-    private $nexmo;
+    private $dispatcher;
 
     private $router;
 
-    public function __construct(Mandrill $mandrill,
-                                Nexmo $nexmo,
+    public function __construct(EmailDispatcher $email,
+                                SMSDispatcher $sms,
                                 Router $router)
     {
-        $this->mandrill = $mandrill;
-        $this->nexmo = $nexmo;
+        $this->dispatcher = array(
+          'email' => $email,
+          'sms' => $sms,
+        );
         $this->router = $router;
     }
 
@@ -50,77 +50,48 @@ class VerifySend {
       $message->setText($text);
 
       // Send the Message using Async.
-      return $this->getMandrill()->send($message, '', array(), TRUE);
+      return $this->getDispatcher('email')->send($message);
 
     }
 
     public function sendSMS(PhoneVerify $verify)
     {
 
+      $message = new SMSMessage();
+
       $params = array(
         'token' => $verify->getToken(),
         'user_id' => $verify->getPhone()->getUser()->getID(),
       );
 
-      $link = $this->getRouter()->generate('user_verify_email', $params, TRUE);
+      $link = $this->getRouter()->generate('user_verify_phone', $params, TRUE);
 
-      // @TODO Move the message portion into a class and make an abstraction
-      //       for the sender so we can set the phone number in the paramaters.
-      $message = array(
-        'thechur.ch',
-        'Login Code: '.$verify->getToken(),
-        '',
-        $link,
-      );
+      $message->setTo($verify->getPhone()->getPhone());
 
-      $message = implode("\n", $message);
+      $message->addTextLine('thechur.ch');
+      $message->addTextLine('Login Code: '.$verify->getToken());
+      $message->addTextLine('');
+      $message->addTextLine($link);
 
-      $to = $verify->getPhone()->getPhone();
-      $from = '12243109152';
-
-      $result = $this->getNexmo()->sendText($to, $from, $message);
-
-      if (!empty($result->messages)) {
-        $error = $result->messages[0];
-        if (!empty($error->errortext)) {
-          throw new \Exception($error->errortext);
-        }
-      }
-
-      return $result;
+      return $this->getDispatcher('sms')->send($message);
 
     }
 
-    public function setMandrill($mandrill)
+    /**
+     * Get specificed dispatcher.
+     *
+     * @return object
+     */
+    public function getDispatcher($dispatcher)
     {
-      $this->mandrill = $mandrill;
-
-      return $this;
+      return $this->dispatcher[$dispatcher];
     }
 
-    public function getMandrill()
-    {
-      return $this->mandrill;
-    }
-
-    public function setNexmo($nexmo)
-    {
-      $this->nexmo = $nexmo;
-
-      return $this;
-    }
-
-    public function getNexmo()
-    {
-      return $this->nexmo;
-    }
-
-    public function setRouter($router)
-    {
-      $this->router = $router;
-      return $this;
-    }
-
+    /**
+     * Get the Router.
+     *
+     * @return Router
+     */
     public function getRouter()
     {
       return $this->router;

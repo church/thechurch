@@ -75,7 +75,7 @@ class UserController extends Controller
      * @Route("/u/{user_id}/v/e/{token}", name="user_verify_email")
      * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
      */
-    public function verifyEmailAction(Request $request, User $user,  $token = NULL)
+    public function verifyEmailAction(Request $request, User $user, $token = NULL)
     {
 
       return;
@@ -83,9 +83,17 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/user/register_old", name="register_old")
-     * @Method("POST")
+     * @Route("/u/{user_id}/v/p/{token}", name="user_verify_phone")
+     * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
      */
+    public function verifyPhoneAction(Request $request, User $user, $token = NULL)
+    {
+
+      return;
+
+    }
+
+    /*
     public function registerAction(Request $request)
     {
 
@@ -164,4 +172,5 @@ class UserController extends Controller
 	        ));
         }
     }
+    */
 }
