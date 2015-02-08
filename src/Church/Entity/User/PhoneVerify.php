@@ -30,24 +30,19 @@ class PhoneVerify
     private $phone;
 
     /**
-     * @ORM\Column(type="string", length=16, unique=true)
+     * @ORM\Column(type="string", length=6, unique=true)
      */
     private $token;
+
+    /**
+     * @ORM\Column(type="string", length=6, unique=true)
+     */
+    private $code;
 
     /**
      * @ORM\Column(type="datetime")
      */
     private $created;
-
-    /**
-     * Construct
-     */
-    public function __construct()
-    {
-        $generator = new SecureRandom();
-        $token = mb_convert_encoding($generator->nextBytes(16), 'UTF-8');
-        $this->setToken($token);
-    }
 
     /**
      * @ORM\PrePersist
@@ -88,9 +83,32 @@ class PhoneVerify
      */
     public function setToken($token)
     {
-        $this->token = $token;
+      $this->token = $token;
 
-        return $this;
+      return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string $code
+     * @return EmailVerify
+     */
+    public function setCode($code)
+    {
+      $this->code = $code;
+
+      return $this;
     }
 
     /**

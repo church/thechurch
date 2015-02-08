@@ -36,7 +36,7 @@ class VerifySend {
 
       $params = array(
         'token' => $verify->getToken(),
-        'user_id' => $verify->getEmail()->getUser()->getID(),
+        'code' => $verify->getCode(),
       );
 
       // Build the Message.
@@ -61,7 +61,7 @@ class VerifySend {
 
       $params = array(
         'token' => $verify->getToken(),
-        'user_id' => $verify->getPhone()->getUser()->getID(),
+        'code' => $verify->getCode(),
       );
 
       $link = $this->getRouter()->generate('user_verify_phone', $params, TRUE);
@@ -69,7 +69,7 @@ class VerifySend {
       $message->setTo($verify->getPhone()->getPhone());
 
       $message->addTextLine('thechur.ch');
-      $message->addTextLine('Login Code: '.$verify->getToken());
+      $message->addTextLine('Login Code: '.$verify->getCode());
       $message->addTextLine('');
       $message->addTextLine($link);
 

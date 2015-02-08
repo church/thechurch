@@ -50,7 +50,7 @@ class UserController extends Controller
 
             $url = $this->generateUrl('user_verify', array(
               'type' => 'e',
-              'user_id' => $verify->getEmail()->getUser()->getID(),
+              'token' => $verify->getToken(),
             ));
 
             return $this->redirect($url);
@@ -67,7 +67,7 @@ class UserController extends Controller
 
             $url = $this->generateUrl('user_verify', array(
               'type' => 'p',
-              'user_id' => $verify->getPhone()->getUser()->getID()
+              'token' => $verify->getToken(),
             ));
 
             return $this->redirect($url);
@@ -83,10 +83,9 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/u/{user_id}/{type}", name="user_verify")
-     * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
+     * @Route("/u/v/{type}/{token}", name="user_verify")
      */
-    public function verifyAction(Request $request, User $user, $type)
+    public function verifyAction(Request $request, $type, $token)
     {
 
       // Build the Verification Form
@@ -106,8 +105,8 @@ class UserController extends Controller
           // @TODO Forward the request rather than redirecting it here.
           //       It will be redirected in the verification.
           $url = $this->generateUrl('user_verify_email', array(
-            'token' => $verify->getToken(),
-            'user_id' => $user->getID(),
+            'token' => $token,
+            'code' => $verify->getCode(),
           ));
 
           return $this->redirect($url);
@@ -118,8 +117,8 @@ class UserController extends Controller
           // @TODO Forward the request rather than redirecting it here.
           //       It will be redirected in the verification.
           $url = $this->generateUrl('user_verify_phone', array(
-            'token' => $verify->getToken(),
-            'user_id' => $user->getID(),
+            'token' => $token,
+            'code' => $verify->getCode(),
           ));
 
           return $this->redirect($url);
@@ -129,19 +128,18 @@ class UserController extends Controller
       }
 
       return $this->render('user/verify.html.twig', array(
-          'user' => $user,
           'type' => $type,
+          'token' => $token,
           'form' => $form->createView(),
       ));
 
     }
 
     /**
-     * @Route("/u/{user_id}/v/e/{token}", name="user_verify_email")
-     * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
+     * @Route("/u/v/e/{token}/{code}", name="user_verify_email")
      * @ParamConverter("verify", options={"mapping": {"token": "token"}})
      */
-    public function verifyEmailAction(User $user, EmailVerify $verify)
+    public function verifyEmailAction(EmailVerify $verify, $code)
     {
 
       return;
@@ -149,11 +147,10 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/u/{user_id}/v/p/{token}", name="user_verify_phone")
-     * @ParamConverter("user", options={"mapping": {"user_id": "id"}})
+     * @Route("/u/v/p/{token}/{code}", name="user_verify_phone")
      * @ParamConverter("verify", options={"mapping": {"token": "token"}})
      */
-    public function verifyPhoneAction(User $user, PhoneVerify $verify)
+    public function verifyPhoneAction(PhoneVerify $verify, $code)
     {
 
       return;

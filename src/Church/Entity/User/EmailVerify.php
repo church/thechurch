@@ -30,9 +30,14 @@ class EmailVerify
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=16, unique=true)
+     * @ORM\Column(type="string", length=6, unique=true)
      */
     private $token;
+
+    /**
+     * @ORM\Column(type="string", length=6, unique=true)
+     */
+    private $code;
 
     /**
      * @ORM\Column(type="datetime")
@@ -78,9 +83,7 @@ class EmailVerify
      */
     public function setToken($token)
     {
-
-        // Ensure that token is at least 6 characters.
-        $this->token = str_pad($token, 6, '0', STR_PAD_LEFT);
+        $this->token = $token;
 
         return $this;
     }
@@ -93,6 +96,29 @@ class EmailVerify
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     * @return EmailVerify
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
     }
 
     /**

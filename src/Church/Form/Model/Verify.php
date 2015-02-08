@@ -14,18 +14,18 @@ class Verify
      * )
      * @Assert\Type(type="numeric")
      */
-    protected $token;
+    protected $code;
 
-    public function setToken($token)
+    public function setCode($code)
     {
-        $this->token = $token;
+        $this->code = $code;
 
         return $this;
     }
 
-    public function getToken()
+    public function getCode()
     {
-        return $this->token;
+        return $this->code;
     }
 
 }

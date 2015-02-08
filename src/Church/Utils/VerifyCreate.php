@@ -60,7 +60,9 @@ class VerifyCreate {
       }
 
       $verify = new EmailVerify();
-      $verify->setToken($this->getRandom()->generateInt(0, 999999));
+
+      $verify->setToken($this->getUniqueToken('Church\Entity\User\EmailVerify'));
+      $verify->setCode($this->getUniqueCode('Church\Entity\User\EmailVerify'));
       $verify->setEmail($email);
       $email->setVerify($verify);
 
@@ -102,7 +104,9 @@ class VerifyCreate {
       }
 
       $verify = new PhoneVerify();
-      $verify->setToken($this->getRandom()->generateInt(0, 999999));
+      $random = $this->getRandom();
+      $verify->setToken($this->getUniqueToken('Church\Entity\User\PhoneVerify'));
+      $verify->setCode($this->getUniqueCode('Church\Entity\User\PhoneVerify'));
       $verify->setPhone($phone);
       $phone->setVerify($verify);
 
@@ -183,6 +187,46 @@ class VerifyCreate {
       }
 
       return $phone;
+
+    }
+
+    /**
+     * Gets a Unique Token
+     *
+     * @param string $entity Doctrine entity to search against.
+     *
+     * @return string A unique token.
+     */
+    private function getUniqueToken($entity)
+    {
+      $repository = $this->getDoctrine()->getRepository($entity);
+      $random = $this->getRandom();
+
+      do {
+        $token = $random->generateString(6, $random::CHAR_ALNUM);
+      } while ($repository->findOneByToken($token));
+
+      return $token;
+
+    }
+
+    /**
+     * Gets a Unique Code
+     *
+     * @param string $entity Doctrine entity to search against.
+     *
+     * @return string A unique code.
+     */
+    private function getUniqueCode($entity)
+    {
+      $repository = $this->getDoctrine()->getRepository($entity);
+      $random = $this->getRandom();
+
+      do {
+        $code = $random->generateString(6, $random::CHAR_DIGITS);
+      } while ($repository->findOneByCode($code));
+
+      return $code;
 
     }
 

@@ -11,7 +11,7 @@ class VerifyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-        $builder->add('token', 'number', array(
+        $builder->add('code', 'number', array(
           'label' => 'Validation Code'
         ));
     }
