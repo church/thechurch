@@ -35,8 +35,6 @@ class CodeAuthenticator implements SimplePreAuthenticatorInterface,
 
     $http = $this->getHTTP();
 
-    print '<h1>hello!</h1>';
-
     // Only Create a Token when on a verify path and get the type.
     if ($http->checkRequestPath($request, 'user_verify_email')) {
       $type = 'email';
