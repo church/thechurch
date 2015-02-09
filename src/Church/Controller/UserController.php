@@ -4,6 +4,7 @@ namespace Church\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -137,23 +138,41 @@ class UserController extends Controller
 
     /**
      * @Route("/u/v/e/{token}/{code}", name="user_verify_email")
-     * @ParamConverter("verify", options={"mapping": {"token": "token"}})
      */
-    public function verifyEmailAction(EmailVerify $verify, $code)
+    public function verifyEmailAction($token, $code)
     {
 
-      return;
+      return new Response('Authenticated?');
+
+      $doctrine = $this->getDoctrine();
+      $em = $doctrine->getManager();
+      $repository = $doctrine->getRepository('Church:User\EmailVerify');
+
+      if ($verify = $repository->findOneByToken($token)) {
+        $em->remove($verify);
+        $em->flush();
+      }
+
+      return $this->redirect($this->generateUrl('place_nearby'));
 
     }
 
     /**
      * @Route("/u/v/p/{token}/{code}", name="user_verify_phone")
-     * @ParamConverter("verify", options={"mapping": {"token": "token"}})
      */
-    public function verifyPhoneAction(PhoneVerify $verify, $code)
+    public function verifyPhoneAction($token, $code)
     {
 
-      return;
+      $doctrine = $this->getDoctrine();
+      $em = $doctrine->getManager();
+      $repository = $doctrine->getRepository('Church:User\PhoneVerify');
+
+      if ($verify = $repository->findOneByToken($token)) {
+        $em->remove($verify);
+        $em->flush();
+      }
+
+      return $this->redirect($this->generateUrl('place_nearby'));
 
     }
 

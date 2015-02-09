@@ -15,6 +15,8 @@ security:
     providers:
         main:
             entity: { class: Church:User\User }
+        api_key_user_provider:
+            id: church.code_user_provider
 
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
@@ -27,13 +29,14 @@ security:
         secured_area:
             pattern:    ^/
             anonymous: ~
-            form_login:
-                check_path: _demo_security_check
-                login_path: _demo_login
-            logout:
-                path:   _demo_logout
-                target: _demo
-            #anonymous: ~
+            simple_preauth:
+                authenticator: church.code_authenticator
+            #form_login:
+                #check_path: _demo_security_check
+                #login_path: _demo_login
+            #logout:
+                #path:   _demo_logout
+                #target: _demo
             #http_basic:
             #    realm: "Secured Demo Area"
 

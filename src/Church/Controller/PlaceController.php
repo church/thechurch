@@ -4,6 +4,7 @@ namespace Church\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 use Doctrine\ORM\NoResultException;
 
@@ -12,6 +13,14 @@ use Church\Entity\Place;
 
 class PlaceController extends Controller
 {
+
+    /**
+     * @Route("/nearby", name="place_nearby")
+     */
+    public function nearbyAction()
+    {
+      return new Response('Nearby!');
+    }
 
     /**
      * @Route("/{slug}", name="place_city")

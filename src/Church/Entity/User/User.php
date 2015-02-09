@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Serializable;
 
 use Church\Entity\Place;
@@ -22,7 +23,7 @@ use Church\Entity\User\Phone;
  * @UniqueEntity("primary_email")
  * @UniqueEntity("primary_phone")
  */
-class User implements UserInterface, Serializable
+class User implements UserInterface, Serializable, EquatableInterface
 {
     /**
      * @var integer $id
@@ -184,7 +185,9 @@ class User implements UserInterface, Serializable
     public function serialize()
     {
         return serialize(array(
-            $this->id,
+          $this->id,
+          isset($this->username) ? $this->username : NULL,
+          isset($this->password) ? $this->username : NULL,
         ));
     }
 
@@ -192,10 +195,41 @@ class User implements UserInterface, Serializable
      * @see \Serializable::unserialize()
      */
     public function unserialize($serialized)
-    {
+    {           
         list (
-            $this->id,
+          $this->id,
+          $this->username,
+          $this->password
         ) = unserialize($serialized);
+    }
+
+    /**
+     * Only check for username, salt, and password, if they exist.
+     *
+     * @see EquatableInterface::isEqualTo()
+     *
+     * @link http://symfony.com/doc/current/cookbook/security/entity_provider.html
+     *
+     */
+    public function isEqualTo(UserInterface $user)
+    {
+        if ($this->getUsername()) {
+          if ($this->getUsername() !== $user->getUsername()) {
+            return FALSE;
+          }
+        }
+
+        if ($this->getPassword()) {
+          if ($this->getPassword() !== $user->getPassword()) {
+            return FALSE;
+          }
+        }
+
+        if ($this->getID() !== $user->getID()) {
+          return FALSE;
+        }
+
+        return TRUE;
     }
 
     /**

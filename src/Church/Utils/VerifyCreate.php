@@ -61,8 +61,8 @@ class VerifyCreate {
 
       $verify = new EmailVerify();
 
-      $verify->setToken($this->getUniqueToken('Church\Entity\User\EmailVerify'));
-      $verify->setCode($this->getUniqueCode('Church\Entity\User\EmailVerify'));
+      $verify->setToken($this->getUniqueToken('Church:User\EmailVerify'));
+      $verify->setCode($this->getUniqueCode('Church:User\EmailVerify'));
       $verify->setEmail($email);
       $email->setVerify($verify);
 
@@ -105,8 +105,8 @@ class VerifyCreate {
 
       $verify = new PhoneVerify();
       $random = $this->getRandom();
-      $verify->setToken($this->getUniqueToken('Church\Entity\User\PhoneVerify'));
-      $verify->setCode($this->getUniqueCode('Church\Entity\User\PhoneVerify'));
+      $verify->setToken($this->getUniqueToken('Church:User\PhoneVerify'));
+      $verify->setCode($this->getUniqueCode('Church:User\PhoneVerify'));
       $verify->setPhone($phone);
       $phone->setVerify($verify);
 

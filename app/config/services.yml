@@ -28,6 +28,14 @@ services:
       class: Church\Utils\UserCreate
       arguments: [@doctrine]
 
+  church.code_authenticator:
+        class:     Church\Security\CodeAuthenticator
+        arguments: [@doctrine, @security.http_utils]
+
+  church.code_user_provider:
+        class: Church\Security\CodeAuthenticatorUserProvider
+        arguments: [@doctrine]
+
   church.verify_create:
       class: Church\Utils\VerifyCreate
       arguments: [@doctrine, @ircmaxell.random, @church.validator.login, @church.user_create]
