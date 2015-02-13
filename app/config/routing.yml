@@ -1,3 +1,11 @@
-app:
-    resource: @Church/Controller/
+user:
+    resource: @Church/Controller/UserController.php
+    type:     annotation
+
+place:
+    resource: @Church/Controller/PlaceController.php
+    type:     annotation
+
+default:
+    resource: @Church/Controller/DefaultController.php
     type:     annotation

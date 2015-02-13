@@ -17,11 +17,14 @@ use Church\Form\Model\Login;
 use Church\Form\Type\VerifyType;
 use Church\Form\Model\Verify;
 
+/**
+ * @Route("/u")
+ */
 class UserController extends Controller
 {
 
     /**
-     * @Route("/u/login", name="user_login")
+     * @Route("/login", name="user_login")
      */
     public function loginAction(Request $request)
     {
@@ -84,7 +87,7 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/u/v/{type}/{token}", name="user_verify")
+     * @Route("/v/{type}/{token}", name="user_verify")
      */
     public function verifyAction(Request $request, $type, $token)
     {
@@ -137,18 +140,22 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/u/v/e/{token}/{code}", name="user_verify_email")
+     * @Route("/v/e/{token}/{code}", name="user_verify_email")
      */
     public function verifyEmailAction($token, $code)
     {
-
-      return new Response('Authenticated?');
 
       $doctrine = $this->getDoctrine();
       $em = $doctrine->getManager();
       $repository = $doctrine->getRepository('Church:User\EmailVerify');
 
       if ($verify = $repository->findOneByToken($token)) {
+
+        $email = $verify->getEmail();
+
+        $email->setVerified(new \DateTime());
+
+        $em->persist($email);
         $em->remove($verify);
         $em->flush();
       }
@@ -158,7 +165,7 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/u/v/p/{token}/{code}", name="user_verify_phone")
+     * @Route("/v/p/{token}/{code}", name="user_verify_phone")
      */
     public function verifyPhoneAction($token, $code)
     {
@@ -168,6 +175,12 @@ class UserController extends Controller
       $repository = $doctrine->getRepository('Church:User\PhoneVerify');
 
       if ($verify = $repository->findOneByToken($token)) {
+
+        $phone = $verify->getPhone();
+
+        $phone->setVerified(new \DateTime());
+
+        $em->persist($phone);
         $em->remove($verify);
         $em->flush();
       }
