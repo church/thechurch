@@ -100,6 +100,11 @@ class User implements UserInterface, Serializable, EquatableInterface
     private $longitude;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $faith;
+
+    /**
      * @ORM\Column(type="datetime")
      */
     private $created;
@@ -168,7 +173,43 @@ class User implements UserInterface, Serializable, EquatableInterface
      */
     public function getRoles()
     {
-        return array('ROLE_USER');
+        $roles = array(
+          'ROLE_USER',
+        );
+
+        if ($this->getPassword()) {
+          $roles[] = 'ROLE_PASSWORD';
+        }
+
+        if ($this->getUsername()) {
+          $roles[] = 'ROLE_USERNAME';
+        }
+
+        if ($this->getFaith()) {
+          $roles[] = 'ROLE_FAITH';
+        }
+
+        if ($this->getFirstName() && $this->getLastName()) {
+          $roles[] = 'ROLE_NAME';
+        }
+
+        if ($email = $this->getPrimaryEmail()) {
+
+          if ($email->getVerified()) {
+            $roles[] = 'ROLE_EMAIL';
+          }
+
+        }
+        else if ($phone = $this->getPrimaryPhone()) {
+
+          if ($phone->getVerified()) {
+            $roles[] = 'ROLE_PHONE';
+          }
+
+        }
+
+        return $roles;
+
     }
 
     /**
@@ -195,7 +236,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @see \Serializable::unserialize()
      */
     public function unserialize($serialized)
-    {           
+    {
         list (
           $this->id,
           $this->username,
@@ -510,6 +551,29 @@ class User implements UserInterface, Serializable, EquatableInterface
     public function getLongitude()
     {
         return $this->longitude;
+    }
+
+    /**
+     * Set faith
+     *
+     * @param bool $faith
+     * @return User
+     */
+    public function setFaith($faith)
+    {
+        $this->faith = $faith;
+
+        return $this;
+    }
+
+    /**
+     * Get faith
+     *
+     * @return bool
+     */
+    public function getFaith()
+    {
+        return $this->faith;
     }
 
     /**

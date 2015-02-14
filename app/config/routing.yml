@@ -2,6 +2,9 @@ user:
     resource: @Church/Controller/UserController.php
     type:     annotation
 
+user_logout:
+    path: /u/logout
+
 place:
     resource: @Church/Controller/PlaceController.php
     type:     annotation

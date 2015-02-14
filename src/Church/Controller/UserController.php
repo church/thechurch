@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use Church\Entity\User\User;
 use Church\Entity\User\EmailVerify;
@@ -25,6 +26,7 @@ class UserController extends Controller
 
     /**
      * @Route("/login", name="user_login")
+     * @Security("!has_role('ROLE_USER')")
      */
     public function loginAction(Request $request)
     {
@@ -88,6 +90,7 @@ class UserController extends Controller
 
     /**
      * @Route("/v/{type}/{token}", name="user_verify")
+     * @Security("!has_role('ROLE_USER')")
      */
     public function verifyAction(Request $request, $type, $token)
     {
@@ -106,8 +109,7 @@ class UserController extends Controller
 
         if ($type == 'e') {
 
-          // @TODO Forward the request rather than redirecting it here.
-          //       It will be redirected in the verification.
+          // Redirect is required to login the user.
           $url = $this->generateUrl('user_verify_email', array(
             'token' => $token,
             'code' => $verify->getCode(),
@@ -118,8 +120,7 @@ class UserController extends Controller
         }
         else if ($type == 'p') {
 
-          // @TODO Forward the request rather than redirecting it here.
-          //       It will be redirected in the verification.
+          // Redirect is required to login the user.
           $url = $this->generateUrl('user_verify_phone', array(
             'token' => $token,
             'code' => $verify->getCode(),
@@ -141,6 +142,7 @@ class UserController extends Controller
 
     /**
      * @Route("/v/e/{token}/{code}", name="user_verify_email")
+     * @Security("has_role('ROLE_USER')")
      */
     public function verifyEmailAction($token, $code)
     {
@@ -158,6 +160,19 @@ class UserController extends Controller
         $em->persist($email);
         $em->remove($verify);
         $em->flush();
+
+        $repository = $doctrine->getRepository('Church:User\User');
+
+        $repository->refreshUser($this->getUser());
+
+      }
+
+      $auth = $this->get('security.authorization_checker');
+      if (!$auth->isGranted('ROLE_NAME')) {
+        return $this->redirect($this->generateUrl('user_name'));
+      }
+      elseif (!$auth->isGranted('ROLE_FAITH')) {
+        return $this->redirect($this->generateUrl('user_faith'));
       }
 
       return $this->redirect($this->generateUrl('place_nearby'));
@@ -166,6 +181,7 @@ class UserController extends Controller
 
     /**
      * @Route("/v/p/{token}/{code}", name="user_verify_phone")
+     * @Security("has_role('ROLE_USER')")
      */
     public function verifyPhoneAction($token, $code)
     {
@@ -183,10 +199,41 @@ class UserController extends Controller
         $em->persist($phone);
         $em->remove($verify);
         $em->flush();
+
+        $repository = $doctrine->getRepository('Church:User\User');
+
+        $repository->refreshUser($this->getUser());
+
+      }
+
+      $auth = $this->get('security.authorization_checker');
+      if (!$auth->isGranted('ROLE_NAME')) {
+        return $this->redirect($this->generateUrl('user_name'));
+      }
+      elseif (!$auth->isGranted('ROLE_FAITH')) {
+        return $this->redirect($this->generateUrl('user_faith'));
       }
 
       return $this->redirect($this->generateUrl('place_nearby'));
 
+    }
+
+    /**
+     * @Route("/name", name="user_name")
+     * @Security("!has_role('ROLE_NAME') and (has_role('ROLE_EMAIL') or has_role('ROLE_PHONE'))")
+     */
+    public function nameAction()
+    {
+      return new Response('Name!');
+    }
+
+    /**
+     * @Route("/faith", name="user_faith")
+     * @Security("has_role('ROLE_NAME')")
+     */
+    public function faithAction()
+    {
+      return new Response('Faith!');
     }
 
     /*

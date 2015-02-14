@@ -4,6 +4,7 @@ namespace Church\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
 
 use Doctrine\ORM\NoResultException;
@@ -16,14 +17,17 @@ class PlaceController extends Controller
 
     /**
      * @Route("/nearby", name="place_nearby")
+     * @Security("has_role('ROLE_FAITH')")
      */
     public function nearbyAction()
     {
-      return new Response('Nearby!');
+      $user = $this->getUser();
+      return new Response('Nearby! '.$user->getID());
     }
 
     /**
      * @Route("/{slug}", name="place_city")
+     * @Security("has_role('ROLE_FAITH')")
      */
     public function cityAction($slug)
     {

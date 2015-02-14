@@ -15,8 +15,6 @@ security:
     providers:
         main:
             entity: { class: Church:User\User }
-        api_key_user_provider:
-            id: church.code_user_provider
 
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
@@ -34,9 +32,9 @@ security:
             #form_login:
                 #check_path: _demo_security_check
                 #login_path: _demo_login
-            #logout:
-                #path:   _demo_logout
-                #target: _demo
+            logout:
+                path: user_logout
+                target: user_login
             #http_basic:
             #    realm: "Secured Demo Area"
 
@@ -44,6 +42,6 @@ security:
     # of your application based on roles, ip, host or methods
     # http://symfony.com/doc/current/cookbook/security/access_control.html
     access_control:
-        #- { path: ^/user/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        # - { path: ^/u/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        # - { path: ^/nearby, roles: ROLE_FAITH}
         - { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
