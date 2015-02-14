@@ -9,11 +9,24 @@ class DefaultController extends Controller
 {
 
     /**
-     * @Route("/{slug}", name="teaser", defaults={"slug" = "none"})
+     * @Route("/", name="index")
      */
-    public function indexAction($slug)
+    public function indexAction()
     {
-        return $this->render('default/index.html.twig', array('slug' => $slug));
+
+      $auth = $this->get('security.authorization_checker');
+      if ($auth->isGranted('ROLE_FAITH')) {
+        return $this->forward('Church:Place:nearby');
+      }
+      else if (!$auth->isGranted('ROLE_NAME')) {
+        return $this->redirect($this->generateUrl('user_name'));
+      }
+      else if (!$auth->isGranted('ROLE_FAITH')) {
+        return $this->redirect($this->generateUrl('user_faith'));
+      }
+
+      return $this->forward('Church:User:login');
+
     }
 
 }

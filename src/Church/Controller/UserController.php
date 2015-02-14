@@ -17,6 +17,10 @@ use Church\Form\Type\LoginType;
 use Church\Form\Model\Login;
 use Church\Form\Type\VerifyType;
 use Church\Form\Model\Verify;
+use Church\Form\Type\NameType;
+use Church\Form\Model\Name;
+use Church\Form\Type\FaithType;
+use Church\Form\Model\Faith;
 
 /**
  * @Route("/u")
@@ -161,21 +165,11 @@ class UserController extends Controller
         $em->remove($verify);
         $em->flush();
 
-        $repository = $doctrine->getRepository('Church:User\User');
-
-        $repository->refreshUser($this->getUser());
+        $this->get('security.context')->getToken()->setAuthenticated(FALSE);
 
       }
 
-      $auth = $this->get('security.authorization_checker');
-      if (!$auth->isGranted('ROLE_NAME')) {
-        return $this->redirect($this->generateUrl('user_name'));
-      }
-      elseif (!$auth->isGranted('ROLE_FAITH')) {
-        return $this->redirect($this->generateUrl('user_faith'));
-      }
-
-      return $this->redirect($this->generateUrl('place_nearby'));
+      return $this->redirect($this->generateUrl('index'));
 
     }
 
@@ -200,21 +194,11 @@ class UserController extends Controller
         $em->remove($verify);
         $em->flush();
 
-        $repository = $doctrine->getRepository('Church:User\User');
-
-        $repository->refreshUser($this->getUser());
+        $this->get('security.context')->getToken()->setAuthenticated(FALSE);
 
       }
 
-      $auth = $this->get('security.authorization_checker');
-      if (!$auth->isGranted('ROLE_NAME')) {
-        return $this->redirect($this->generateUrl('user_name'));
-      }
-      elseif (!$auth->isGranted('ROLE_FAITH')) {
-        return $this->redirect($this->generateUrl('user_faith'));
-      }
-
-      return $this->redirect($this->generateUrl('place_nearby'));
+      return $this->redirect($this->generateUrl('index'));
 
     }
 
@@ -222,18 +206,82 @@ class UserController extends Controller
      * @Route("/name", name="user_name")
      * @Security("!has_role('ROLE_NAME') and (has_role('ROLE_EMAIL') or has_role('ROLE_PHONE'))")
      */
-    public function nameAction()
+    public function nameAction(Request $request)
     {
-      return new Response('Name!');
+
+      // Build the Verification Form
+      $form = $this->createForm(new NameType(), new Name());
+
+      // Handle the Form Request.
+      $form->handleRequest($request);
+
+      // If this Form has been completed
+      if ($form->isSubmitted() && $form->isValid()) {
+
+        // Get the form data
+        $name = $form->getData();
+
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getEntityManager();
+
+        $user = $this->getUser();
+        $user->setFirstName($name->getFirstName());
+        $user->setLastName($name->getLastName());
+
+        $em->persist($user);
+        $em->flush();
+
+        $this->get('security.context')->getToken()->setAuthenticated(FALSE);
+
+        return $this->redirect($this->generateUrl('index'));
+
+      }
+
+      return $this->render('user/name.html.twig', array(
+          'form' => $form->createView(),
+      ));
+
     }
 
     /**
      * @Route("/faith", name="user_faith")
      * @Security("has_role('ROLE_NAME')")
      */
-    public function faithAction()
+    public function faithAction(Request $request)
     {
-      return new Response('Faith!');
+
+      // Build the Verification Form
+      $form = $this->createForm(new FaithType(), new Faith());
+
+      // Handle the Form Request.
+      $form->handleRequest($request);
+
+      // If this Form has been completed
+      if ($form->isSubmitted() && $form->isValid()) {
+
+        // Get the form data
+        $faith = $form->getData();
+
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getEntityManager();
+
+        $user = $this->getUser();
+        $user->setFaith($faith->getFaith());
+
+        $em->persist($user);
+        $em->flush();
+
+        $this->get('security.context')->getToken()->setAuthenticated(FALSE);
+
+        return $this->redirect($this->generateUrl('index'));
+
+      }
+
+      return $this->render('user/faith.html.twig', array(
+          'user' => $this->getUser(),
+          'form' => $form->createView(),
+      ));
+
     }
 
     /*
