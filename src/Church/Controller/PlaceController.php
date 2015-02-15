@@ -21,8 +21,7 @@ class PlaceController extends Controller
      */
     public function nearbyAction()
     {
-      $user = $this->getUser();
-      return new Response('Nearby! '.$user->getID());
+      return $this->render('place/nearby.html.twig');
     }
 
     /**

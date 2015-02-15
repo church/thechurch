@@ -1,5 +1,6 @@
+{% import "angular.html.twig" as ng %}
 <!DOCTYPE html>
-<html>
+<html ng-app="churchApp">
   <head>
       <meta charset="UTF-8" />
       <title>{% block title %}Welcome!{% endblock %}</title>
@@ -55,6 +56,10 @@
 
     </div>
 
+    <script
+      src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.js">
+    </script>
+    <script src="{{ asset('js/controllers.js') }}"></script>
     {% block javascripts %}{% endblock %}
   </body>
 </html>
