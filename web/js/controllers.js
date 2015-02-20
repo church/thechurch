@@ -4,17 +4,19 @@ church.controller('NearbyController', function ($scope, geolocation, $http) {
 
 	geolocation.getLocation().then(function(data) {
 
-		// @TODO: We need to get the route rather than use an absolute path,
-		// otherwise this will never work. :/
-		$http.get('/nearby/'+data.coords.latitude+'/'+data.coords.longitude).
-		success(function(data, status, headers, config) {
-			$scope.hello = data.hello;
-		}).
-		error(function(data, status, headers, config) {
-			$scope.error = 'Something went wrong...';
-		});
+		var route = Routing.generate('place_nearby_location', {
+			'latitude': data.coords.latitude,
+			'longitude': data.coords.longitude
+		})
 
-		console.log(data);
+		$http.get(route).
+			success(function(data, status, headers, config) {
+				$scope.hello = data.hello;
+			}).
+			error(function(data, status, headers, config) {
+				$scope.error = 'Something went wrong...';
+			});
+
 	},
 	function(error) {
 		$scope.error = error;

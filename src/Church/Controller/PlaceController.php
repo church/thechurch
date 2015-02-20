@@ -26,7 +26,13 @@ class PlaceController extends Controller
     }
 
     /**
-     * @Route("/nearby/{latitude}/{longitude}", name="place_nearby_location")
+     * @Route(
+     *   "/nearby/{latitude}/{longitude}",
+     *   name="place_nearby_location",
+     *   options={
+     *     "expose"=true
+     *   }
+     * )
      * @Security("has_role('ROLE_FAITH')")
      */
     public function nearbyLocationAction($latitude, $longitude)

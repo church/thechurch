@@ -24,6 +24,8 @@ class PlaceFinder {
 
     public function __construct(EntityManager $em, $settings)
     {
+
+        // @TODO oh dear god.. this is such a bad class... what was I thinking?
         $this->em = $em;
 
         $this->boss = new Client('http://yboss.yahooapis.com');

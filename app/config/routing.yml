@@ -12,3 +12,7 @@ place:
 default:
     resource: @Church/Controller/DefaultController.php
     type:     annotation
+
+# Moves the Routes into Javascript.
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"

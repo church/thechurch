@@ -56,6 +56,8 @@
 
     </div>
     {# @TODO: compile these into a single JS file? #}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
     <script src="{{ asset('components/angular/angular.min.js') }}"></script>
     <script src="{{ asset('components/angularjs-geolocation/src/geolocation.js') }}"></script>
     <script src="{{ asset('js/controllers.js') }}"></script>

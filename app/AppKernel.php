@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Church\Church(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Hip\MandrillBundle\HipMandrillBundle(),
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

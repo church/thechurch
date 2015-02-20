@@ -5,6 +5,7 @@
     <div ng-show="error" class="alert alert-danger ng-hide" role="alert">
       {{ ng.curly('error') }}
     </div>
-    <h1>{{ ng.curly('hello') }}</h1>
+    {# @TODO Display some default "Waiting for response..." text #}
+    <h1 ng-show="hello" class="ng-hide">{{ ng.curly('hello') }}</h1>
   </div>
 {% endblock %}
