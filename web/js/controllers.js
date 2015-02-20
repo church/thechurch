@@ -1,43 +1,23 @@
-var church = angular.module('churchApp', []);
+var church = angular.module('churchApp', ['geolocation']);
 
-church.controller('NearbyController', ['$scope', function ($scope) {
+church.controller('NearbyController', function ($scope, geolocation, $http) {
 
-	if ("geolocation" in navigator) {
+	geolocation.getLocation().then(function(data) {
 
-		navigator.geolocation.getCurrentPosition(
-			function(position) {
+		// @TODO: We need to get the route rather than use an absolute path,
+		// otherwise this will never work. :/
+		$http.get('/nearby/'+data.coords.latitude+'/'+data.coords.longitude).
+		success(function(data, status, headers, config) {
+			$scope.hello = data.hello;
+		}).
+		error(function(data, status, headers, config) {
+			$scope.error = 'Something went wrong...';
+		});
 
-				console.log(position);
+		console.log(data);
+	},
+	function(error) {
+		$scope.error = error;
+	});
 
-			},
-			function(error) {
-
-				console.log(error);
-
-				// Saying "Not Now" doesn't throw any kind of error at all. :(
-				// Not sure how to deal with that.
-
-				// @TODO you can't set $scope here. :/
-				if (error.code == error.PERMISSION_DENIED) {
-					$scope.error = 'You must give location permission to view this page.';
-				}
-				else if (error.code == error.POSITION_UNAVAILABLE) {
-					$scope.error = 'There was an error determining your location, please try again later.';
-				}
-				else if (error.code == error.TIMEOUT) {
-					$scope.error = 'It took too long to determine your location, please try again later.';
-				}
-				else {
-					$scope.error = 'There was an error determining your location.';
-				}
-
-			}
-		);
-
-	} else {
-		$scope.error = 'Your Browser does not support Geolocation, please try a different web browser.';
-	}
-
-	$scope.hello = 'hello world!';
-
-}]);
+});

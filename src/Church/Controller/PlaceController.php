@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Doctrine\ORM\NoResultException;
 
@@ -22,6 +23,19 @@ class PlaceController extends Controller
     public function nearbyAction()
     {
       return $this->render('place/nearby.html.twig');
+    }
+
+    /**
+     * @Route("/nearby/{latitude}/{longitude}", name="place_nearby_location")
+     * @Security("has_role('ROLE_FAITH')")
+     */
+    public function nearbyLocationAction($latitude, $longitude)
+    {
+      $data = array();
+
+      $data['hello'] = 'Hello '.$latitude.' '.$longitude;
+
+      return new JsonResponse($data);
     }
 
     /**

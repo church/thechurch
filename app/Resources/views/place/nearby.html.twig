@@ -1,10 +1,10 @@
 {% extends '::place/layout.html.twig' %}
 
-{% set agular = true %}
-
 {% block content %}
   <div ng-controller="NearbyController">
-    {{ ng.curly('hello') }}<br />
-    {{ ng.curly('error') }}
+    <div ng-show="error" class="alert alert-danger ng-hide" role="alert">
+      {{ ng.curly('error') }}
+    </div>
+    <h1>{{ ng.curly('hello') }}</h1>
   </div>
 {% endblock %}
