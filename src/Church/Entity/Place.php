@@ -9,6 +9,7 @@ use Church\Entity\PlaceName;
 use Church\Entity\PlaceTree;
 use Church\Entity\Place;
 use Church\Entity\City;
+use Church\Entity\Location;
 
 /**
  * Church\Entity\Place
@@ -63,6 +64,12 @@ class Place
     private $city;
 
     /**
+     * @ORM\OneToMany(targetEntity="Location", mappedBy="place",  cascade={"all"})
+     * @ORM\JoinColumn(name="place_id", referencedColumnName="place_id")
+     */
+    private $locations;
+
+    /**
      * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
      */
     private $latitude;
@@ -86,6 +93,7 @@ class Place
         $this->name = new ArrayCollection();
         $this->ancestor = new ArrayCollection();
         $this->descendant = new ArrayCollection();
+        $this->locations = new ArrayCollection();
     }
 
     /**
@@ -286,6 +294,39 @@ class Place
     public function getCity()
     {
         return $this->city;
+    }
+
+    /**
+     * Add locations
+     *
+     * @param Location $location
+     * @return Place
+     */
+    public function addLocation(Location $location)
+    {
+        $this->locations[] = $locations;
+
+        return $this;
+    }
+
+    /**
+     * Remove locations
+     *
+     * @param Location $location
+     */
+    public function removeLocation(Location $location)
+    {
+        $this->locations->removeElement($location);
+    }
+
+    /**
+     * Get locations
+     *
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function getLocations()
+    {
+        return $this->locations;
     }
 
     /**

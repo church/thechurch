@@ -26,17 +26,31 @@ class PlaceFinder {
     {
 
         // @TODO oh dear god.. this is such a bad class... what was I thinking?
+        // instead of injecting a settings array, instead inject
+        // ready-to-go services.
+
+        // @TODO This is correct, but do we need it?
         $this->em = $em;
 
+        // @TODO this is aweful... we should create a new service, but should that
+        // service inject the Client or extend it?
         $this->boss = new Client('http://yboss.yahooapis.com');
+
+        // @TODO We'll need a factory to handle the oAuth...
         $oauth = new OauthPlugin(array(
             'consumer_key'    => $settings['consumer_key'],
             'consumer_secret' => $settings['consumer_secret'],
         ));
         $this->boss->addSubscriber($oauth);
+
+        // @TODO I don't think this is needed in the newest version of Guzzle.
         $backoff = BackoffPlugin::getExponentialBackoff();
         $this->boss->addSubscriber($backoff);
 
+        // @TODO this is aweful... we should create a new service, but should that
+        // service inject the Client or extend it?
+        // ... I'm going to say we should inject it, and we should add methods
+        // as needed.
         $this->geo = new Client('http://where.yahooapis.com/v1?format=json&appid='.$settings['generic_appid']);
 
     }
@@ -58,6 +72,9 @@ class PlaceFinder {
       $city_repository = $this->em->getRepository('Church\Bundle\PlaceBundle\Entity\City');
       $type_repository = $this->em->getRepository('Church\Bundle\PlaceBundle\Entity\PlaceType');
 
+      // @TODO maybe there is no need to access the client directly unless needed?
+      // i.e. the class could have a "query" method that just accepts the query
+      // string.
       $request = $this->boss->get('geo/placefinder?count=1&flags=J&q='.$query);
 
       try {

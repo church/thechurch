@@ -39,6 +39,12 @@ class PlaceController extends Controller
     {
       $data = array();
 
+      // @TODO The first thing we need to do is get all the location data from
+      // either the database or Yahoo! from there we can save all the data in
+      // the database (if needed). At the end of the day, we need to get a
+      // WOEID the user is closest to. The posts that are returned will be from
+      // that WOEID.
+
       $data['hello'] = 'Hello '.$latitude.' '.$longitude;
 
       return new JsonResponse($data);
