@@ -11,13 +11,6 @@ services:
          - { name: doctrine.event_listener, event: preUpdate }
          - { name: doctrine.event_listener, event: preRemove }
 
-  church.place_finder:
-    class: Church\Utils\PlaceFinder
-    arguments: [@doctrine.orm.entity_manager, %place_finder%]
-    church_place.consumer_key: ~
-    church_place.consumer_secret: ~
-    church_place.generic_appid: ~
-
   church.validator.login:
         class: Church\Validator\Constraints\LoginValidator
         arguments: [@egulias.email_validator, @giggsey.phone_validator]
@@ -34,7 +27,11 @@ services:
 
   church.verify_create:
       class: Church\Utils\VerifyCreate
-      arguments: [@doctrine, @ircmaxell.random, @church.validator.login, @church.user_create]
+      arguments:
+        - @doctrine
+        - @ircmaxell.random
+        - @church.validator.login
+        - @church.user_create
 
   church.verify_send:
       class: Church\Utils\VerifySend
@@ -47,6 +44,17 @@ services:
   church.dispatcher_sms:
       class: Church\Utils\Dispatcher\SMS
       arguments: [@prawnsalad.nexmo, %nexmo_sender%]
+
+  church.place_finder:
+    class: Church\Utils\PlaceFinder
+    arguments: [@doctrine, @church.client_yahoo_geoplanet]
+    #church_place.consumer_key: ~
+    #church_place.consumer_secret: ~
+    #church_place.generic_appid: ~
+
+  church.client_yahoo_geoplanet:
+      class: Church\Client\Yahoo\GeoPlanet
+      arguments: [@guzzlehttp.client_yahoo_geoplanet, @guzzlehttp.oauth_yahoo]
 
   egulias.email_validator:
         class: Egulias\EmailValidator\EmailValidator
@@ -65,3 +73,20 @@ services:
   prawnsalad.nexmo:
         class: NexmoMessage
         arguments: [%nexmo_api_key%, %nexmo_api_secret%]
+
+  guzzlehttp.client_yahoo_geoplanet:
+       class: GuzzleHttp\Client
+       arguments:
+         -
+           base_url: http://where.yahooapis.com/v1/
+           defaults:
+             query:
+               format: json
+               appid: %yahoo_consumer_key%
+
+  guzzlehttp.oauth_yahoo:
+      class: GuzzleHttp\Subscriber\Oauth\Oauth1
+      arguments:
+        -
+          consumer_key: %yahoo_consumer_key%
+          consumer_secret: %yahoo_consumer_secret%

@@ -2,12 +2,9 @@
 
 namespace Church\Utils;
 
-use Guzzle\Http\Client;
-use Guzzle\Plugin\Oauth\OauthPlugin;
-use Guzzle\Http\Exception\BadResponseException;
-use Guzzle\Plugin\Backoff\BackoffPlugin;
-use Doctrine\ORM\EntityManager;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Church\Client\Yahoo\GeoPlanet;
 use Church\Entity\Place;
 use Church\Entity\PlaceName;
 use Church\Entity\PlaceType;
@@ -15,32 +12,44 @@ use Church\Entity\City;
 
 class PlaceFinder {
 
-    protected $em;
+    protected $doctrine;
 
     protected $boss;
 
     protected $geo;
 
 
-    public function __construct(EntityManager $em, $settings)
+    public function __construct(RegistryInterface $doctrine,
+                                GeoPlanet $geo)
     {
 
         // @TODO oh dear god.. this is such a bad class... what was I thinking?
         // instead of injecting a settings array, instead inject
         // ready-to-go services.
 
-        // @TODO This is correct, but do we need it?
-        $this->em = $em;
+        // @TODO we've made a little progress on this class, it's less aweful
+        //       than it used to be.
 
+        // @TODO This is correct, but do we need it?
+        // I guess at the end of the day we should return an entity object,
+        // and regardless, it should be from the database.
+        $this->doctrine = $doctrine;
+
+        $this->geo = $geo;
+        /*
         // @TODO this is aweful... we should create a new service, but should that
         // service inject the Client or extend it?
         $this->boss = new Client('http://yboss.yahooapis.com');
 
         // @TODO We'll need a factory to handle the oAuth...
+                 actually a new service should do the trick.
         $oauth = new OauthPlugin(array(
             'consumer_key'    => $settings['consumer_key'],
             'consumer_secret' => $settings['consumer_secret'],
         ));
+
+        // @TODO but this is the part that is weird... I wonder if this should
+                 happen in a factory or it's ok to happen in the constructor.
         $this->boss->addSubscriber($oauth);
 
         // @TODO I don't think this is needed in the newest version of Guzzle.
@@ -52,9 +61,29 @@ class PlaceFinder {
         // ... I'm going to say we should inject it, and we should add methods
         // as needed.
         $this->geo = new Client('http://where.yahooapis.com/v1?format=json&appid='.$settings['generic_appid']);
+        */
 
     }
 
+    /**
+     * Get Doctrine
+     *
+     * @return RegistryInterface
+     */
+    public function getDoctrine() {
+      return $this->doctrine;
+    }
+
+    /**
+     * Get GeoPlanet
+     *
+     * @return GeoPlanet
+     */
+    public function getGeoPlanet() {
+      return $this->geo;
+    }
+
+    /*
     public function findSavePlace($query) {
 
       $result = $this->findPlace($query);
@@ -254,40 +283,53 @@ class PlaceFinder {
       $this->em->flush();
 
     }
+    */
 
-    public function getTypes()
+    /**
+     * Get all Place Types.
+     *
+     * @return array List of PlaceTypes
+     */
+    public function getPlaceTypes()
     {
 
-      $request = $this->geo->get('placetypes');
+      $em = $this->getDoctrine()->getManager();
+      $repository = $em->getRepository('Church\Entity\PlaceType');
 
-      $response = $request->send();
+      if ($types = $repository->findAll()) {
+        return $types;
+      }
 
-      $types = $response->json();
+      foreach ($this->getGeoPlanet()->getPlaceTypes() as $type) {
 
-      $types = !empty($types['placeTypes']['placeType']) ? $types['placeTypes']['placeType'] : array();
-
-      return $types;
-
-    }
-
-    public function saveTypes($types = array())
-    {
-
-       foreach ($types as $type) {
-        if (!empty($type['placeTypeName']) && !empty($type['placeTypeName attrs']['code'])) {
-          $place_type = new PlaceType();
-          $place_type->setID($type['placeTypeName attrs']['code']);
-          $place_type->setName($type['placeTypeName']);
-          $this->em->persist($place_type);
+        if (empty($type['placeTypeName'])) {
+          continue;
         }
-       }
 
-       $this->em->flush();
+        if (empty($type['placeTypeName attrs']['code'])) {
+          continue;
+        }
 
-       return TRUE;
+        $place_type = new PlaceType();
+        $place_type->setID($type['placeTypeName attrs']['code']);
+        $place_type->setName($type['placeTypeName']);
+        $em->persist($place_type);
+
+      }
+
+      $em->flush();
+
+      return $repository->findAll();
 
     }
 
+    /**
+     * Generate a Slug.
+     *
+     * @param string $str Name of a place to be slugged.
+     *
+     * @return string Ready to use slug.
+     */
     public function makeSlug($str)
     {
       $slug = trim($str);

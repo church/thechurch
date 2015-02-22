@@ -19,11 +19,9 @@ parameters:
     mandrill_sender: ~
     mandrill_sender_name: ~
 
-    place_finder:
-      consumer_key: ~
-      consumer_secret: ~
-      generic_appid: ~
-
     nexmo_api_key: ~
     nexmo_api_secret: ~
     nexmo_sender: ~
+
+    yahoo_consumer_key: ~
+    yahoo_consumer_secret: ~

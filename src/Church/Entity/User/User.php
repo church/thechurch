@@ -100,7 +100,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     private $longitude;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default" = 0})
      */
     private $faith;
 
@@ -119,6 +119,7 @@ class User implements UserInterface, Serializable, EquatableInterface
         $this->isActive = TRUE;
         $this->email = new ArrayCollection();
         $this->phone = new ArrayCollection();
+        $this->faith = FALSE;
     }
 
     /**

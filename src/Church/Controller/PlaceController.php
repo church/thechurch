@@ -54,6 +54,7 @@ class PlaceController extends Controller
      * @Route("/{slug}", name="place_city")
      * @Security("has_role('ROLE_FAITH')")
      */
+    /*
     public function cityAction($slug)
     {
 
@@ -82,5 +83,6 @@ class PlaceController extends Controller
         return $this->render('place/city.html.twig', $variables);
 
     }
+    */
 
 }
