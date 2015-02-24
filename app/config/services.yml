@@ -54,7 +54,14 @@ services:
 
   church.client_yahoo_geoplanet:
       class: Church\Client\Yahoo\GeoPlanet
-      arguments: [@guzzlehttp.client_yahoo_geoplanet, @guzzlehttp.oauth_yahoo]
+      arguments: [@guzzlehttp.client_yahoo_geoplanet]
+
+  church.client_yahoo_placefinder:
+      class: Church\Client\Yahoo\PlaceFinder
+      arguments:
+        - @guzzlehttp.client_yahoo_boss_placefinder
+        - @guzzlehttp.client_yahoo_yql_placefinder
+        - @guzzlehttp.oauth_yahoo
 
   egulias.email_validator:
         class: Egulias\EmailValidator\EmailValidator
@@ -90,3 +97,31 @@ services:
         -
           consumer_key: %yahoo_consumer_key%
           consumer_secret: %yahoo_consumer_secret%
+
+  guzzlehttp.client_yahoo_geoplanet:
+       class: GuzzleHttp\Client
+       arguments:
+         -
+           base_url: http://where.yahooapis.com/v1/
+           defaults:
+             query:
+               format: json
+               appid: %yahoo_consumer_key%
+
+  guzzlehttp.client_yahoo_boss_placefinder:
+       class: GuzzleHttp\Client
+       arguments:
+         -
+           base_url: https://yboss.yahooapis.com/geo/placefinder
+           defaults:
+             auth: oauth
+
+  guzzlehttp.client_yahoo_yql_placefinder:
+       class: GuzzleHttp\Client
+       arguments:
+         -
+           base_url: https://query.yahooapis.com/v1/public/yql
+           defaults:
+             auth: oauth
+             query:
+               format: json

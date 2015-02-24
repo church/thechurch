@@ -45,7 +45,10 @@ class PlaceController extends Controller
       // WOEID the user is closest to. The posts that are returned will be from
       // that WOEID.
 
-      $data['hello'] = 'Hello '.$latitude.' '.$longitude;
+      // @TODO Use the Church Place Finder service and return a Place object.
+      $response = $this->get('church.client_yahoo_placefinder')->findByLatitudeLongitude($latitude, $longitude);
+
+      $data['hello'] = print_r($response, TRUE);
 
       return new JsonResponse($data);
     }

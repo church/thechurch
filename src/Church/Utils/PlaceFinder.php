@@ -4,7 +4,8 @@ namespace Church\Utils;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Church\Client\Yahoo\GeoPlanet;
+use Church\Client\Yahoo\GeoPlanet as YahooGeoPlanet;
+use Church\Client\Yahoo\PlaceFinder as YahooPlaceFinder;
 use Church\Entity\Place;
 use Church\Entity\PlaceName;
 use Church\Entity\PlaceType;
@@ -14,54 +15,23 @@ class PlaceFinder {
 
     protected $doctrine;
 
-    protected $boss;
-
     protected $geo;
+
+    protected $finder;
 
 
     public function __construct(RegistryInterface $doctrine,
-                                GeoPlanet $geo)
+                                YahooGeoPlanet $geo
+                                YahooPlaceFinder $finder)
     {
 
         // @TODO oh dear god.. this is such a bad class... what was I thinking?
-        // instead of injecting a settings array, instead inject
-        // ready-to-go services.
 
-        // @TODO we've made a little progress on this class, it's less aweful
-        //       than it used to be.
-
-        // @TODO This is correct, but do we need it?
-        // I guess at the end of the day we should return an entity object,
-        // and regardless, it should be from the database.
         $this->doctrine = $doctrine;
 
         $this->geo = $geo;
-        /*
-        // @TODO this is aweful... we should create a new service, but should that
-        // service inject the Client or extend it?
-        $this->boss = new Client('http://yboss.yahooapis.com');
 
-        // @TODO We'll need a factory to handle the oAuth...
-                 actually a new service should do the trick.
-        $oauth = new OauthPlugin(array(
-            'consumer_key'    => $settings['consumer_key'],
-            'consumer_secret' => $settings['consumer_secret'],
-        ));
-
-        // @TODO but this is the part that is weird... I wonder if this should
-                 happen in a factory or it's ok to happen in the constructor.
-        $this->boss->addSubscriber($oauth);
-
-        // @TODO I don't think this is needed in the newest version of Guzzle.
-        $backoff = BackoffPlugin::getExponentialBackoff();
-        $this->boss->addSubscriber($backoff);
-
-        // @TODO this is aweful... we should create a new service, but should that
-        // service inject the Client or extend it?
-        // ... I'm going to say we should inject it, and we should add methods
-        // as needed.
-        $this->geo = new Client('http://where.yahooapis.com/v1?format=json&appid='.$settings['generic_appid']);
-        */
+        $this->finder = $finder;
 
     }
 
@@ -77,10 +47,19 @@ class PlaceFinder {
     /**
      * Get GeoPlanet
      *
-     * @return GeoPlanet
+     * @return YahooGeoPlanet
      */
     public function getGeoPlanet() {
       return $this->geo;
+    }
+
+    /**
+     * Get Finder
+     *
+     * @return YahooPlaceFinder
+     */
+    public function getFinder() {
+      return $this->finder;
     }
 
     /*
@@ -326,13 +305,13 @@ class PlaceFinder {
     /**
      * Generate a Slug.
      *
-     * @param string $str Name of a place to be slugged.
+     * @param string $name Name of a place to be slugged.
      *
      * @return string Ready to use slug.
      */
-    public function makeSlug($str)
+    public function makeSlug($name)
     {
-      $slug = trim($str);
+      $slug = trim($name);
       $slug = strtolower($slug);
       $slug = str_replace(' ', '-', $slug);
       $slug = str_replace('.', '', $slug);
