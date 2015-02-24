@@ -9,7 +9,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Serializable;
 
-use Church\Entity\Place;
+use Church\Entity\Location;
 use Church\Entity\User\Email;
 use Church\Entity\User\Phone;
 
@@ -84,20 +84,16 @@ class User implements UserInterface, Serializable, EquatableInterface
     private $address;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Church\Entity\Place")
-     * @ORM\JoinColumn(name="place_id", referencedColumnName="place_id")
+     * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
+     * @ORM\JoinColumn(name="location_static", referencedColumnName="location_id")
      */
-    private $place;
+    private $location_static;
 
     /**
-     * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
+     * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
+     * @ORM\JoinColumn(name="location_current", referencedColumnName="location_id")
      */
-    private $latitude;
-
-    /**
-     * @ORM\Column(type="decimal", precision=9, scale=6, nullable=true)
-     */
-    private $longitude;
+    private $location_current;
 
     /**
      * @ORM\Column(type="boolean", options={"default" = 0})
@@ -484,74 +480,51 @@ class User implements UserInterface, Serializable, EquatableInterface
         return $this->address;
     }
 
-
     /**
-     * Set place
+     * Set static location
      *
-     * @param lace $place
+     * @param Location $location
      * @return User
      */
-    public function setPlace(Place $place = null)
+    public function setLocationStatic(Location $location)
     {
-        $this->place = $place;
+        $this->location_static = $location;
 
         return $this;
     }
 
     /**
-     * Get place
+     * Get static location
      *
-     * @return Place
+     * @return Location
      */
-    public function getPlace()
+    public function getLocationStatic()
     {
-        return $this->place;
+        return $this->location_static;
     }
 
+
     /**
-     * Set latitude
+     * Set current location
      *
-     * @param float $latitude
+     * @param Location $location
      * @return User
      */
-    public function setLatitude($latitude)
+    public function setLocationCurrent(Location $location)
     {
-        $this->latitude = $latitude;
+        $this->location_current = $location;
 
         return $this;
     }
 
     /**
-     * Get latitude
+     * Get current location
      *
-     * @return float
+     * @return Location
      */
-    public function getLatitude()
+    public function getLocationCurrent()
     {
-        return $this->latitude;
-    }
-
-    /**
-     * Set longitude
-     *
-     * @param float $longitude
-     * @return User
-     */
-    public function setLongitude($longitude)
-    {
-        $this->longitude = $longitude;
-
-        return $this;
-    }
-
-    /**
-     * Get longitude
-     *
-     * @return float
-     */
-    public function getLongitude()
-    {
-        return $this->longitude;
+        return $this->location_current;
     }
 
     /**
