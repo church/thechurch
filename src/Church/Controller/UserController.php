@@ -161,7 +161,7 @@ class UserController extends Controller
             $em->remove($verify);
             $em->flush();
 
-            $this->get('security.context')->getToken()->setAuthenticated(false);å
+            $this->get('security.context')->getToken()->setAuthenticated(false);
         }
 
         return $this->redirect($this->generateUrl('index'));
