@@ -3,6 +3,7 @@
 namespace Church\Utils;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Patchwork\Utf8;
 
 use Church\Client\Yahoo\GeoPlanet as YahooGeoPlanet;
 use Church\Client\Yahoo\PlaceFinder as YahooPlaceFinder;
@@ -20,11 +21,14 @@ class PlaceFinder
 
     protected $finder;
 
+    protected $slug;
+
 
     public function __construct(
         RegistryInterface $doctrine,
         YahooGeoPlanet $geo
-        YahooPlaceFinder $finder
+        YahooPlaceFinder $finder,
+        Slug $slug
     ) {
 
         // @TODO oh dear god.. this is such a bad class... what was I thinking?
@@ -34,6 +38,8 @@ class PlaceFinder
         $this->geo = $geo;
 
         $this->finder = $finder;
+
+        $this->slug = $slug;
 
     }
 
@@ -65,6 +71,16 @@ class PlaceFinder
     public function getFinder()
     {
         return $this->finder;
+    }
+
+    /**
+     * Get Slug
+     *
+     * @return Slug
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 
     /*
@@ -232,14 +248,14 @@ class PlaceFinder
           $city->setPlace($place);
 
           // Prepare the Name.
-          $slug = $this->makeSlug($item['name']);
+          $slug = $this->getSlug()->create($item['name']);
 
           // If the City slug already exists, create a new one
           if ($city_repository->findOneBySlug($slug)) {
 
             if ($state = $repository->findState($place->getID())) {
               if ($state_name = $state->getName()->first()->getName()) {
-                $slug .= '-'.$this->makeSlug($state_name);
+                $slug .= '-'.$this->getSlug()->create($state_name);
               }
             }
 
@@ -250,7 +266,7 @@ class PlaceFinder
 
             if ($country = $repository->findCountry($place->getID())) {
               if ($country_name = $country->getName()->first()->getName()) {
-                $slug .= '-'.$this->makeSlug($country_name);
+                $slug .= '-'.$this->getSlug()->create($country_name);
               }
             }
 
@@ -303,22 +319,5 @@ class PlaceFinder
 
         return $repository->findAll();
 
-    }
-
-    /**
-     * Generate a Slug.
-     *
-     * @param string $name Name of a place to be slugged.
-     *
-     * @return string Ready to use slug.
-     */
-    public function makeSlug($name)
-    {
-        $slug = trim($name);
-        $slug = mb_strtolower($slug);
-        $slug = str_replace(' ', '-', $slug);
-        $slug = str_replace('.', '', $slug);
-
-        return $slug;
     }
 }
