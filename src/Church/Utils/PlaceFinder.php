@@ -314,9 +314,8 @@ class PlaceFinder
      */
     public function makeSlug($name)
     {
-        // @TODO replace with mb_* functions.
         $slug = trim($name);
-        $slug = strtolower($slug);
+        $slug = mb_strtolower($slug);
         $slug = str_replace(' ', '-', $slug);
         $slug = str_replace('.', '', $slug);
 
