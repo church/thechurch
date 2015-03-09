@@ -15,7 +15,11 @@ class DefaultController extends Controller
     {
 
       $auth = $this->get('security.authorization_checker');
-      if ($auth->isGranted('ROLE_FAITH')) {
+
+      if (!$auth->isGranted('IS_AUTHENTICATED_FULLY')) {
+        return $this->forward('Church:User:login');
+      }
+      else if ($auth->isGranted('ROLE_FAITH')) {
         return $this->forward('Church:Place:nearby');
       }
       else if (!$auth->isGranted('ROLE_NAME')) {
@@ -25,7 +29,6 @@ class DefaultController extends Controller
         return $this->redirect($this->generateUrl('user_faith'));
       }
 
-      return $this->forward('Church:User:login');
 
     }
 
