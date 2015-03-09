@@ -22,7 +22,7 @@ class PlaceController extends Controller
      */
     public function nearbyAction()
     {
-      return $this->render('place/nearby.html.twig');
+        return $this->render('place/nearby.html.twig');
     }
 
     /**
@@ -37,22 +37,21 @@ class PlaceController extends Controller
      */
     public function nearbyLocationAction($latitude, $longitude)
     {
-      $data = array();
+        $data = array();
 
-      // @TODO The first thing we need to do is get all the location data from
-      // either the database or Yahoo! from there we can save all the data in
-      // the database (if needed). At the end of the day, we need to get a
-      // WOEID the user is closest to. The posts that are returned will be from
-      // that WOEID.
+        // @TODO The first thing we need to do is get all the location data from
+        // either the database or Yahoo! from there we can save all the data in
+        // the database (if needed). At the end of the day, we need to get a
+        // WOEID the user is closest to. The posts that are returned will be from
+        // that WOEID.
 
-      // @TODO Use the Church Place Finder service and return a Place object.
-      $response = $this->get('church.client_yahoo_placefinder')->findByLatitudeLongitude($latitude, $longitude);
+        // @TODO Use the Church Place Finder service and return a Place object.
+        $response = $this->get('church.client_yahoo_placefinder')->findByLatitudeLongitude($latitude, $longitude);
 
-      $data['hello'] = print_r($response, TRUE);
+        $data['hello'] = print_r($response, true);
 
-      return new JsonResponse($data);
+        return new JsonResponse($data);
     }
-
     /**
      * @Route("/{slug}", name="place_city")
      * @Security("has_role('ROLE_FAITH')")
@@ -87,5 +86,4 @@ class PlaceController extends Controller
 
     }
     */
-
 }

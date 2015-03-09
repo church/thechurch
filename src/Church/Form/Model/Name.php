@@ -46,5 +46,4 @@ class Name
     {
         return $this->last_name;
     }
-
 }

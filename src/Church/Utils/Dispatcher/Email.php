@@ -5,7 +5,8 @@ namespace Church\Utils\Dispatcher;
 use Hip\MandrillBundle\Dispatcher as Mandrill;
 use Church\Message\Email as Message;
 
-class Email {
+class Email
+{
 
     private $mandrill;
 
@@ -23,8 +24,8 @@ class Email {
     public function send(Message $message)
     {
 
-      // Send the Message using Async.
-      return $this->mandrill->send($message, '', array(), TRUE);
+        // Send the Message using Async.
+        return $this->mandrill->send($message, '', array(), true);
 
     }
 
@@ -33,7 +34,6 @@ class Email {
      */
     public function getMandrill()
     {
-      return $this->mandrill;
+        return $this->mandrill;
     }
-
 }

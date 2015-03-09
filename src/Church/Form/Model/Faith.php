@@ -23,5 +23,4 @@ class Faith
     {
         return $this->faith;
     }
-
 }

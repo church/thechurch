@@ -131,5 +131,4 @@ class PlaceName
     {
         return $this->name;
     }
-
 }

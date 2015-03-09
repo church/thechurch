@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Church\Entity\User\User;
 use Church\Entity\User\Email;
 
-
 /**
  * Church\Entity\User\EmailVerify
  *
@@ -143,5 +142,4 @@ class EmailVerify
     {
         return $this->created;
     }
-
 }

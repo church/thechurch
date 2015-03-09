@@ -70,5 +70,4 @@ class PlaceType
     {
         return $this->name;
     }
-
 }

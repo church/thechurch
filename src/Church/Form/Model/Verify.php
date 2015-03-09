@@ -27,5 +27,4 @@ class Verify
     {
         return $this->code;
     }
-
 }

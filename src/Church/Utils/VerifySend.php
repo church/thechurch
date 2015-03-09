@@ -11,16 +11,18 @@ use Church\Utils\Dispatcher\SMS as SMSDispatcher;
 use Church\Message\Email as EmailMessage;
 use Church\Message\SMS as SMSMessage;
 
-class VerifySend {
+class VerifySend
+{
 
     private $dispatcher;
 
     private $router;
 
-    public function __construct(EmailDispatcher $email,
-                                SMSDispatcher $sms,
-                                Router $router)
-    {
+    public function __construct(
+        EmailDispatcher $email,
+        SMSDispatcher $sms,
+        Router $router
+    ) {
         $this->dispatcher = array(
           'email' => $email,
           'sms' => $sms,
@@ -31,50 +33,46 @@ class VerifySend {
 
     public function sendEmail(EmailVerify $verify)
     {
+        $message = new EmailMessage();
 
-      $message = new EmailMessage();
+        $params = array(
+          'token' => $verify->getToken(),
+          'code' => $verify->getCode(),
+        );
 
-      $params = array(
-        'token' => $verify->getToken(),
-        'code' => $verify->getCode(),
-      );
+        // Build the Message.
+        $message->addTo($verify->getEmail()->getEmail());
+        $message->setSubject('Confirm Your Email');
 
-      // Build the Message.
-      $message->addTo($verify->getEmail()->getEmail());
-      $message->setSubject('Confirm Your Email');
+        // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
+        $text = "Please visit the following location to verify your email.\n";
+        $text .= $this->getRouter()->generate('user_verify_email', $params, true);
 
-      // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
-      $text = "Please visit the following location to verify your email.\n";
-      $text .= $this->getRouter()->generate('user_verify_email', $params, TRUE);
+        $message->setText($text);
 
-      $message->setText($text);
-
-      // Send the Message using Async.
-      return $this->getDispatcher('email')->send($message);
-
+        // Send the Message using Async.
+        return $this->getDispatcher('email')->send($message);
     }
 
     public function sendSMS(PhoneVerify $verify)
     {
+        $message = new SMSMessage();
 
-      $message = new SMSMessage();
+        $params = array(
+          'token' => $verify->getToken(),
+          'code' => $verify->getCode(),
+        );
 
-      $params = array(
-        'token' => $verify->getToken(),
-        'code' => $verify->getCode(),
-      );
+        $link = $this->getRouter()->generate('user_verify_phone', $params, true);
 
-      $link = $this->getRouter()->generate('user_verify_phone', $params, TRUE);
+        $message->setTo($verify->getPhone()->getPhone());
 
-      $message->setTo($verify->getPhone()->getPhone());
+        $message->addTextLine('thechur.ch');
+        $message->addTextLine('Login Code: '.$verify->getCode());
+        $message->addTextLine('');
+        $message->addTextLine($link);
 
-      $message->addTextLine('thechur.ch');
-      $message->addTextLine('Login Code: '.$verify->getCode());
-      $message->addTextLine('');
-      $message->addTextLine($link);
-
-      return $this->getDispatcher('sms')->send($message);
-
+        return $this->getDispatcher('sms')->send($message);
     }
 
     /**
@@ -84,7 +82,7 @@ class VerifySend {
      */
     public function getDispatcher($dispatcher)
     {
-      return $this->dispatcher[$dispatcher];
+        return $this->dispatcher[$dispatcher];
     }
 
     /**
@@ -94,7 +92,6 @@ class VerifySend {
      */
     public function getRouter()
     {
-      return $this->router;
+        return $this->router;
     }
-
 }

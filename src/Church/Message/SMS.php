@@ -2,7 +2,8 @@
 
 namespace Church\Message;
 
-class SMS {
+class SMS
+{
 
     private $to;
 
@@ -18,9 +19,9 @@ class SMS {
      */
     public function setTo($to)
     {
-      $this->to = $to;
+        $this->to = $to;
 
-      return $this;
+        return $this;
     }
 
     /**
@@ -30,7 +31,7 @@ class SMS {
      */
     public function getTo()
     {
-      return $this->to;
+        return $this->to;
     }
 
     /**
@@ -44,9 +45,9 @@ class SMS {
      */
     public function setText($text)
     {
-      $this->text = $text;
+        $this->text = $text;
 
-      return $this;
+        return $this;
     }
 
     /**
@@ -56,7 +57,7 @@ class SMS {
      */
     public function getText()
     {
-      return $this->text;
+        return $this->text;
     }
 
     /**
@@ -69,9 +70,9 @@ class SMS {
      */
     public function addTextLine($text)
     {
-      $this->text[] = $text;
+        $this->text[] = $text;
 
-      return $this;
+        return $this;
     }
 
     /**
@@ -81,7 +82,6 @@ class SMS {
      */
     public function getTextString()
     {
-      return implode("\n", $this->text);
+        return implode("\n", $this->text);
     }
-
 }

@@ -18,25 +18,21 @@ class LoginValidator extends ConstraintValidator
 
     private $phone;
 
-    public function __construct(EmailValidator $email, PhoneNumberUtil $phone) {
-      $this->email = $email;
-      $this->phone = $phone;
+    public function __construct(EmailValidator $email, PhoneNumberUtil $phone)
+    {
+        $this->email = $email;
+        $this->phone = $phone;
     }
 
     public function validate($value, Constraint $constraint)
     {
-
         if (!$this->isEmail($value)) {
+            if (!$this->isPhone($value)) {
+                return $this->context->buildViolation($constraint->message)
+                                     ->addViolation();
 
-          if (!$this->isPhone($value)) {
-
-            return $this->context->buildViolation($constraint->message)
-                                 ->addViolation();
-
-          }
-
+            }
         }
-
     }
 
     /**
@@ -46,8 +42,9 @@ class LoginValidator extends ConstraintValidator
      *
      * @return bool
      */
-    public function isEmail($value) {
-      return $this->getEmail()->isValid($value);
+    public function isEmail($value)
+    {
+        return $this->getEmail()->isValid($value);
     }
 
     /**
@@ -57,35 +54,36 @@ class LoginValidator extends ConstraintValidator
      *
      * @return bool
      */
-    public function isPhone($value) {
+    public function isPhone($value)
+    {
+        try {
+            $number = $this->getPhone()->parse($value, 'US');
+        } catch (NumberParseException $e) {
+            return false;
+        }
 
-      try {
-        $number = $this->getPhone()->parse($value, 'US');
-      }
-      catch (NumberParseException $e) {
-        return FALSE;
-      }
-
-      return $this->getPhone()->isValidNumber($number);
-
+        return $this->getPhone()->isValidNumber($number);
     }
 
-    public function setEmail($email) {
-      $this->email = $email;
-      return $this;
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
     }
 
-    public function getEmail() {
-      return $this->email;
+    public function getEmail()
+    {
+        return $this->email;
     }
 
-    public function setPhone($phone) {
-      $this->phone = $phone;
-      return $this;
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+        return $this;
     }
 
-    public function getPhone() {
-      return $this->phone;
+    public function getPhone()
+    {
+        return $this->phone;
     }
-
 }

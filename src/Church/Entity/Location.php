@@ -169,5 +169,4 @@ class Location
     {
         return $this->created;
     }
-
 }

@@ -11,7 +11,8 @@ use Church\Entity\PlaceName;
 use Church\Entity\PlaceType;
 use Church\Entity\City;
 
-class PlaceFinder {
+class PlaceFinder
+{
 
     protected $doctrine;
 
@@ -20,10 +21,11 @@ class PlaceFinder {
     protected $finder;
 
 
-    public function __construct(RegistryInterface $doctrine,
-                                YahooGeoPlanet $geo
-                                YahooPlaceFinder $finder)
-    {
+    public function __construct(
+        RegistryInterface $doctrine,
+        YahooGeoPlanet $geo
+        YahooPlaceFinder $finder
+    ) {
 
         // @TODO oh dear god.. this is such a bad class... what was I thinking?
 
@@ -40,8 +42,9 @@ class PlaceFinder {
      *
      * @return RegistryInterface
      */
-    public function getDoctrine() {
-      return $this->doctrine;
+    public function getDoctrine()
+    {
+        return $this->doctrine;
     }
 
     /**
@@ -49,8 +52,9 @@ class PlaceFinder {
      *
      * @return YahooGeoPlanet
      */
-    public function getGeoPlanet() {
-      return $this->geo;
+    public function getGeoPlanet()
+    {
+        return $this->geo;
     }
 
     /**
@@ -58,8 +62,9 @@ class PlaceFinder {
      *
      * @return YahooPlaceFinder
      */
-    public function getFinder() {
-      return $this->finder;
+    public function getFinder()
+    {
+        return $this->finder;
     }
 
     /*
@@ -272,33 +277,31 @@ class PlaceFinder {
     public function getPlaceTypes()
     {
 
-      $em = $this->getDoctrine()->getManager();
-      $repository = $em->getRepository('Church\Entity\PlaceType');
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository('Church\Entity\PlaceType');
 
-      if ($types = $repository->findAll()) {
-        return $types;
-      }
-
-      foreach ($this->getGeoPlanet()->getPlaceTypes() as $type) {
-
-        if (empty($type['placeTypeName'])) {
-          continue;
+        if ($types = $repository->findAll()) {
+            return $types;
         }
 
-        if (empty($type['placeTypeName attrs']['code'])) {
-          continue;
+        foreach ($this->getGeoPlanet()->getPlaceTypes() as $type) {
+            if (empty($type['placeTypeName'])) {
+                continue;
+            }
+
+            if (empty($type['placeTypeName attrs']['code'])) {
+                continue;
+            }
+
+            $place_type = new PlaceType();
+            $place_type->setID($type['placeTypeName attrs']['code']);
+            $place_type->setName($type['placeTypeName']);
+            $em->persist($place_type);
         }
 
-        $place_type = new PlaceType();
-        $place_type->setID($type['placeTypeName attrs']['code']);
-        $place_type->setName($type['placeTypeName']);
-        $em->persist($place_type);
+        $em->flush();
 
-      }
-
-      $em->flush();
-
-      return $repository->findAll();
+        return $repository->findAll();
 
     }
 
@@ -311,12 +314,12 @@ class PlaceFinder {
      */
     public function makeSlug($name)
     {
-      $slug = trim($name);
-      $slug = strtolower($slug);
-      $slug = str_replace(' ', '-', $slug);
-      $slug = str_replace('.', '', $slug);
+        // @TODO replace with mb_* functions.
+        $slug = trim($name);
+        $slug = strtolower($slug);
+        $slug = str_replace(' ', '-', $slug);
+        $slug = str_replace('.', '', $slug);
 
-      return $slug;
+        return $slug;
     }
-
 }

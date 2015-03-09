@@ -397,5 +397,4 @@ class Place
     {
         return $this->created;
     }
-
 }

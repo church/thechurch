@@ -16,144 +16,138 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Church\Entity\User\User;
 
-class CodeAuthenticator implements SimplePreAuthenticatorInterface,
-                                   AuthenticationFailureHandlerInterface
+class CodeAuthenticator implements
+    SimplePreAuthenticatorInterface,
+    AuthenticationFailureHandlerInterface
 {
-  protected $doctrine;
 
-  protected $http;
+    protected $doctrine;
 
-  public function __construct(Doctrine $doctrine,
-                              HttpUtils $http)
-  {
-    $this->doctrine = $doctrine;
-    $this->http = $http;
-  }
+    protected $http;
 
-  public function createToken(Request $request, $providerKey)
-  {
-
-    $http = $this->getHTTP();
-
-    // Only Create a Token when on a verify path and get the type.
-    if ($http->checkRequestPath($request, 'user_verify_email')) {
-      $type = 'email';
-    }
-    else if ($http->checkRequestPath($request, 'user_verify_phone')) {
-      $type = 'phone';
-    }
-    else {
-      return;
+    public function __construct(Doctrine $doctrine, HttpUtils $http)
+    {
+        $this->doctrine = $doctrine;
+        $this->http = $http;
     }
 
-    // Look for a Token & Code in the URL.
-    $token = $request->get('token');
-    $code = $request->get('code');
+    public function createToken(Request $request, $providerKey)
+    {
 
-    if (!$token || !$code) {
-      throw new BadCredentialsException('No Token or Code Found');
-    }
+        $http = $this->getHTTP();
 
-    $credentials = array(
-      'token' => $token,
-      'code' => $code,
-      'type' => $type,
-    );
+        // Only Create a Token when on a verify path and get the type.
+        if ($http->checkRequestPath($request, 'user_verify_email')) {
+            $type = 'email';
+        } elseif ($http->checkRequestPath($request, 'user_verify_phone')) {
+            $type = 'phone';
+        } else {
+            return;
+        }
 
-    return new PreAuthenticatedToken('anon.', $credentials, $providerKey);
+        // Look for a Token & Code in the URL.
+        $token = $request->get('token');
+        $code = $request->get('code');
 
-  }
+        if (!$token || !$code) {
+            throw new BadCredentialsException('No Token or Code Found');
+        }
 
-  public function authenticateToken(TokenInterface $token,
-                                    UserProviderInterface $userProvider,
-                                    $providerKey)
-  {
+        $credentials = array(
+            'token' => $token,
+            'code' => $code,
+            'type' => $type,
+        );
 
-    $credentials = $token->getCredentials();
-    $type = $credentials['type'];
-    $doctrine = $this->getDoctrine();
-    $em = $doctrine->getManager();
-
-    if ($type == 'email') {
-      $repository = $doctrine->getRepository('Church:User\EmailVerify');
-    }
-    else if ($type == 'phone') {
-      $repository = $doctrine->getRepository('Church:User\PhoneVerify');
-    }
-
-    // User is already in the session.
-    $user = $token->getUser();
-    if ($user instanceof User) {
-      return new PreAuthenticatedToken($user, $credentials, $providerKey, $user->getRoles());
-    }
-
-
-    if ($verify = $repository->findOneByToken($credentials['token'])) {
-
-      $created = clone $verify->getCreated();
-      $created->add(new \DateInterval('PT1H'));
-
-      $now = new \DateTime('now');
-
-      if ($created < $now) {
-
-        throw new AuthenticationException('Verification Code is older than 1 hour');
-
-      }
-
-      if ($verify->getCode() != $credentials['code']) {
-        throw new AuthenticationException('Token & Verification Code do not match');
-      }
+        return new PreAuthenticatedToken('anon.', $credentials, $providerKey);
 
     }
-    else {
-      throw new AuthenticationException('Token does not exist');
+
+    public function authenticateToken(
+        TokenInterface $token,
+        UserProviderInterface $userProvider,
+        $providerKey
+    ) {
+
+        $credentials = $token->getCredentials();
+        $type = $credentials['type'];
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
+
+        if ($type == 'email') {
+            $repository = $doctrine->getRepository('Church:User\EmailVerify');
+        } elseif ($type == 'phone') {
+            $repository = $doctrine->getRepository('Church:User\PhoneVerify');
+        }
+
+        // User is already in the session.
+        $user = $token->getUser();
+        if ($user instanceof User) {
+            return new PreAuthenticatedToken($user, $credentials, $providerKey, $user->getRoles());
+        }
+
+
+        if ($verify = $repository->findOneByToken($credentials['token'])) {
+            $created = clone $verify->getCreated();
+            $created->add(new \DateInterval('PT1H'));
+
+            $now = new \DateTime('now');
+
+            if ($created < $now) {
+                throw new AuthenticationException('Verification Code is older than 1 hour');
+            }
+
+            if ($verify->getCode() != $credentials['code']) {
+                throw new AuthenticationException('Token & Verification Code do not match');
+            }
+
+        } else {
+            throw new AuthenticationException('Token does not exist');
+        }
+
+        if ($type == 'email') {
+            $user = $verify->getEmail()->getUser();
+        } elseif ($type == 'phone') {
+            $user = $verify->getPhone()->getUser();
+        }
+
+        return new PreAuthenticatedToken($user, $credentials, $providerKey, $user->getRoles());
+
     }
 
-    if ($type == 'email') {
-      $user = $verify->getEmail()->getUser();
-    }
-    else if ($type == 'phone') {
-      $user = $verify->getPhone()->getUser();
+    public function supportsToken(TokenInterface $token, $providerKey)
+    {
+        return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
     }
 
-    return new PreAuthenticatedToken($user, $credentials, $providerKey, $user->getRoles());
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
 
-  }
+        $http = $this->getHTTP();
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
 
-  public function supportsToken(TokenInterface $token, $providerKey)
-  {
-    return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
-  }
+        if ($http->checkRequestPath($request, 'user_verify_email')) {
+            $repository = $doctrine->getRepository('Church:User\EmailVerify');
+        } elseif ($http->checkRequestPath($request, 'user_verify_phone')) {
+            $repository = $doctrine->getRepository('Church:User\PhoneVerify');
+        }
 
-  public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
-  {
+        if ($verify = $request->get('token')) {
+            $em->remove($verify);
+            $em->flush();
+        }
 
-    $http = $this->getHTTP();
-    $doctrine = $this->getDoctrine();
-    $em = $doctrine->getManager();
-
-    if ($http->checkRequestPath($request, 'user_verify_email')) {
-      $repository = $doctrine->getRepository('Church:User\EmailVerify');
-    }
-    else if ($http->checkRequestPath($request, 'user_verify_phone')) {
-      $repository = $doctrine->getRepository('Church:User\PhoneVerify');
+        return new Response("Authentication Failed.", 403);
     }
 
-    if ($verify = $request->get('token')) {
-      $em->remove($verify);
-      $em->flush();
+    public function getDoctrine()
+    {
+        return $this->doctrine;
     }
 
-    return new Response("Authentication Failed.", 403);
-  }
-
-  public function getDoctrine() {
-    return $this->doctrine;
-  }
-
-  public function getHTTP() {
-    return $this->http;
-  }
-
+    public function getHTTP()
+    {
+        return $this->http;
+    }
 }

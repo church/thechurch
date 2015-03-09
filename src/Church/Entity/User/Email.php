@@ -173,5 +173,4 @@ class Email
     {
         return $this->verify;
     }
-
 }

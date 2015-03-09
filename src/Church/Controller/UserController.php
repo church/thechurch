@@ -34,7 +34,6 @@ class UserController extends Controller
      */
     public function loginAction(Request $request)
     {
-
         // Build the Registration Form
         $form = $this->createForm(new LoginType(), new Login());
 
@@ -43,53 +42,41 @@ class UserController extends Controller
 
         // If this Form has been completed
         if ($form->isSubmitted() && $form->isValid()) {
+            $login = $form->getData();
 
-          // Get the form data
-          $login = $form->getData();
+            $validator = $this->get('church.validator.login');
 
-          $validator = $this->get('church.validator.login');
+            if ($validator->isEmail($login->getUsername())) {
+                $verify = $this->get('church.verify_create')
+                               ->createEmail($login->getUsername());
 
-          if ($validator->isEmail($login->getUsername())) {
+                // Send the Verification.
+                $this->get('church.verify_send')->sendEmail($verify);
 
-            // Create the Verification.
-            $verify = $this->get('church.verify_create')
-                           ->createEmail($login->getUsername());
+                return $this->redirect($this->generateUrl('user_verify', array(
+                    'type' => 'e',
+                    'token' => $verify->getToken(),
+                )));
 
-            // Send the Verification.
-            $this->get('church.verify_send')->sendEmail($verify);
+            } elseif ($validator->isPhone($login->getUsername())) {
+                $verify = $this->get('church.verify_create')
+                               ->createPhone($login->getUsername());
 
-            $url = $this->generateUrl('user_verify', array(
-              'type' => 'e',
-              'token' => $verify->getToken(),
-            ));
+                // Send the Verification.
+                $this->get('church.verify_send')->sendSMS($verify);
 
-            return $this->redirect($url);
+                return $this->redirect($this->generateUrl('user_verify', array(
+                    'type' => 'p',
+                    'token' => $verify->getToken(),
+                )));
 
-          }
-          elseif ($validator->isPhone($login->getUsername())) {
-
-            // Create the Verification.
-            $verify = $this->get('church.verify_create')
-                           ->createPhone($login->getUsername());
-
-            // Send the Verification.
-            $this->get('church.verify_send')->sendSMS($verify);
-
-            $url = $this->generateUrl('user_verify', array(
-              'type' => 'p',
-              'token' => $verify->getToken(),
-            ));
-
-            return $this->redirect($url);
-
-          }
+            }
 
         }
 
         return $this->render('user/login.html.twig', array(
             'form' => $form->createView(),
         ));
-
     }
 
     /**
@@ -98,50 +85,36 @@ class UserController extends Controller
      */
     public function verifyAction(Request $request, $type, $token)
     {
+        // Build the Verification Form
+        $form = $this->createForm(new VerifyType(), new Verify());
 
-      // Build the Verification Form
-      $form = $this->createForm(new VerifyType(), new Verify());
+        // Handle the Form Request.
+        $form->handleRequest($request);
 
-      // Handle the Form Request.
-      $form->handleRequest($request);
+        // If this Form has been completed
+        if ($form->isSubmitted() && $form->isValid()) {
+            $verify = $form->getData();
 
-      // If this Form has been completed
-      if ($form->isSubmitted() && $form->isValid()) {
+            if ($type == 'e') {
+                return $this->redirect($this->generateUrl('user_verify_email', array(
+                    'token' => $token,
+                    'code' => $verify->getCode(),
+                )));
 
-        // Get the form data
-        $verify = $form->getData();
+            } elseif ($type == 'p') {
+                return $this->redirect($this->generateUrl('user_verify_phone', array(
+                    'token' => $token,
+                    'code' => $verify->getCode(),
+                )));
 
-        if ($type == 'e') {
-
-          // Redirect is required to login the user.
-          $url = $this->generateUrl('user_verify_email', array(
-            'token' => $token,
-            'code' => $verify->getCode(),
-          ));
-
-          return $this->redirect($url);
-
-        }
-        else if ($type == 'p') {
-
-          // Redirect is required to login the user.
-          $url = $this->generateUrl('user_verify_phone', array(
-            'token' => $token,
-            'code' => $verify->getCode(),
-          ));
-
-          return $this->redirect($url);
-
+            }
         }
 
-      }
-
-      return $this->render('user/verify.html.twig', array(
-          'type' => $type,
-          'token' => $token,
-          'form' => $form->createView(),
-      ));
-
+        return $this->render('user/verify.html.twig', array(
+            'type' => $type,
+            'token' => $token,
+            'form' => $form->createView(),
+        ));
     }
 
     /**
@@ -150,27 +123,23 @@ class UserController extends Controller
      */
     public function verifyEmailAction($token, $code)
     {
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
+        $repository = $doctrine->getRepository('Church:User\EmailVerify');
 
-      $doctrine = $this->getDoctrine();
-      $em = $doctrine->getManager();
-      $repository = $doctrine->getRepository('Church:User\EmailVerify');
+        if ($verify = $repository->findOneByToken($token)) {
+            $email = $verify->getEmail();
 
-      if ($verify = $repository->findOneByToken($token)) {
+            $email->setVerified(new \DateTime());
 
-        $email = $verify->getEmail();
+            $em->persist($email);
+            $em->remove($verify);
+            $em->flush();
 
-        $email->setVerified(new \DateTime());
+            $this->get('security.context')->getToken()->setAuthenticated(false);
+        }
 
-        $em->persist($email);
-        $em->remove($verify);
-        $em->flush();
-
-        $this->get('security.context')->getToken()->setAuthenticated(FALSE);
-
-      }
-
-      return $this->redirect($this->generateUrl('index'));
-
+        return $this->redirect($this->generateUrl('index'));
     }
 
     /**
@@ -179,27 +148,23 @@ class UserController extends Controller
      */
     public function verifyPhoneAction($token, $code)
     {
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
+        $repository = $doctrine->getRepository('Church:User\PhoneVerify');
 
-      $doctrine = $this->getDoctrine();
-      $em = $doctrine->getManager();
-      $repository = $doctrine->getRepository('Church:User\PhoneVerify');
+        if ($verify = $repository->findOneByToken($token)) {
+            $phone = $verify->getPhone();
 
-      if ($verify = $repository->findOneByToken($token)) {
+            $phone->setVerified(new \DateTime());
 
-        $phone = $verify->getPhone();
+            $em->persist($phone);
+            $em->remove($verify);
+            $em->flush();
 
-        $phone->setVerified(new \DateTime());
+            $this->get('security.context')->getToken()->setAuthenticated(false);å
+        }
 
-        $em->persist($phone);
-        $em->remove($verify);
-        $em->flush();
-
-        $this->get('security.context')->getToken()->setAuthenticated(FALSE);
-
-      }
-
-      return $this->redirect($this->generateUrl('index'));
-
+        return $this->redirect($this->generateUrl('index'));
     }
 
     /**
@@ -208,39 +173,34 @@ class UserController extends Controller
      */
     public function nameAction(Request $request)
     {
+        // Build the Verification Form
+        $form = $this->createForm(new NameType(), new Name());
 
-      // Build the Verification Form
-      $form = $this->createForm(new NameType(), new Name());
+        // Handle the Form Request.
+        $form->handleRequest($request);
 
-      // Handle the Form Request.
-      $form->handleRequest($request);
+        // If this Form has been completed
+        if ($form->isSubmitted() && $form->isValid()) {
+            $name = $form->getData();
 
-      // If this Form has been completed
-      if ($form->isSubmitted() && $form->isValid()) {
+            $doctrine = $this->getDoctrine();
+            $em = $doctrine->getEntityManager();
 
-        // Get the form data
-        $name = $form->getData();
+            $user = $this->getUser();
+            $user->setFirstName($name->getFirstName());
+            $user->setLastName($name->getLastName());
 
-        $doctrine = $this->getDoctrine();
-        $em = $doctrine->getEntityManager();
+            $em->persist($user);
+            $em->flush();
 
-        $user = $this->getUser();
-        $user->setFirstName($name->getFirstName());
-        $user->setLastName($name->getLastName());
+            $this->get('security.context')->getToken()->setAuthenticated(false);
 
-        $em->persist($user);
-        $em->flush();
+            return $this->redirect($this->generateUrl('index'));
+        }
 
-        $this->get('security.context')->getToken()->setAuthenticated(FALSE);
-
-        return $this->redirect($this->generateUrl('index'));
-
-      }
-
-      return $this->render('user/name.html.twig', array(
-          'form' => $form->createView(),
-      ));
-
+        return $this->render('user/name.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 
     /**
@@ -249,41 +209,35 @@ class UserController extends Controller
      */
     public function faithAction(Request $request)
     {
+        // Build the Verification Form
+        $form = $this->createForm(new FaithType(), new Faith());
 
-      // Build the Verification Form
-      $form = $this->createForm(new FaithType(), new Faith());
+        // Handle the Form Request.
+        $form->handleRequest($request);
 
-      // Handle the Form Request.
-      $form->handleRequest($request);
+        // If this Form has been completed
+        if ($form->isSubmitted() && $form->isValid()) {
+            $faith = $form->getData();
 
-      // If this Form has been completed
-      if ($form->isSubmitted() && $form->isValid()) {
+            $doctrine = $this->getDoctrine();
+            $em = $doctrine->getEntityManager();
 
-        // Get the form data
-        $faith = $form->getData();
+            $user = $this->getUser();
+            $user->setFaith($faith->getFaith());
 
-        $doctrine = $this->getDoctrine();
-        $em = $doctrine->getEntityManager();
+            $em->persist($user);
+            $em->flush();
 
-        $user = $this->getUser();
-        $user->setFaith($faith->getFaith());
+            $this->get('security.context')->getToken()->setAuthenticated(false);
 
-        $em->persist($user);
-        $em->flush();
+            return $this->redirect($this->generateUrl('index'));
+        }
 
-        $this->get('security.context')->getToken()->setAuthenticated(FALSE);
-
-        return $this->redirect($this->generateUrl('index'));
-
-      }
-
-      return $this->render('user/faith.html.twig', array(
-          'user' => $this->getUser(),
-          'form' => $form->createView(),
-      ));
-
+        return $this->render('user/faith.html.twig', array(
+            'user' => $this->getUser(),
+            'form' => $form->createView(),
+        ));
     }
-
     /*
     public function registerAction(Request $request)
     {

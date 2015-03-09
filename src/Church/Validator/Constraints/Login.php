@@ -13,7 +13,6 @@ class Login extends Constraint
 
     public function validatedBy()
     {
-      return 'valid_login';
+        return 'valid_login';
     }
-
 }

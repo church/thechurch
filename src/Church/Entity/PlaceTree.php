@@ -13,25 +13,24 @@ use Church\Entity\Place;
 class PlaceTree
 {
 
-  /**
-   * @ORM\Id
-   * @ORM\JoinColumn(name="ancestor", referencedColumnName="place_id")
-   * @ORM\ManyToOne(targetEntity="Place")
-   */
-  private $ancestor;
+    /**
+     * @ORM\Id
+     * @ORM\JoinColumn(name="ancestor", referencedColumnName="place_id")
+     * @ORM\ManyToOne(targetEntity="Place")
+     */
+    private $ancestor;
 
-  /**
-   * @ORM\Id
-   * @ORM\JoinColumn(name="descendant", referencedColumnName="place_id")
-   * @ORM\ManyToOne(targetEntity="Place")
-   */
-  private $descendant;
+    /**
+     * @ORM\Id
+     * @ORM\JoinColumn(name="descendant", referencedColumnName="place_id")
+     * @ORM\ManyToOne(targetEntity="Place")
+     */
+    private $descendant;
 
-  /**
-   * @ORM\Column(type="integer")
-   */
-  private $depth;
-
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $depth;
 
     /**
      * Set depth

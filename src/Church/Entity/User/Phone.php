@@ -172,5 +172,4 @@ class Phone
     {
         return $this->verify;
     }
-
 }

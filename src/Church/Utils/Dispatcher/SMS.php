@@ -5,7 +5,8 @@ namespace Church\Utils\Dispatcher;
 use NexmoMessage as Nexmo;
 use Church\Message\SMS as Message;
 
-class SMS {
+class SMS
+{
 
     private $nexmo;
 
@@ -34,19 +35,21 @@ class SMS {
     public function send(Message $message)
     {
 
-      // Send the Message.
-      $result = $this->getNexmo()->sendText($message->getTo(),
-                                            $this->getFrom(),
-                                            $message->getTextString());
+        // Send the Message.
+        $result = $this->getNexmo()->sendText(
+            $message->getTo(),
+            $this->getFrom(),
+            $message->getTextString()
+        );
 
-      // Nexmo does not throw an exception when there was an error, so we'll
-      // throw one ourselves.
-      if (!empty($result->messages)) {
-        $error = $result->messages[0];
-        if (!empty($error->errortext)) {
-          throw new \Exception($error->errortext);
+        // Nexmo does not throw an exception when there was an error, so we'll
+        // throw one ourselves.
+        if (!empty($result->messages)) {
+            $error = $result->messages[0];
+            if (!empty($error->errortext)) {
+                throw new \Exception($error->errortext);
+            }
         }
-      }
 
     }
 
@@ -55,7 +58,7 @@ class SMS {
      */
     public function getNexmo()
     {
-      return $this->nexmo;
+        return $this->nexmo;
     }
 
     /**
@@ -63,7 +66,6 @@ class SMS {
      */
     public function getFrom()
     {
-      return $this->from;
+        return $this->from;
     }
-
 }

@@ -8,7 +8,8 @@ use Church\Entity\User\User;
 use Church\Entity\User\Email;
 use Church\Entity\User\Phone;
 
-class UserCreate {
+class UserCreate
+{
 
     private $doctrine;
 
@@ -26,23 +27,21 @@ class UserCreate {
      */
     public function createFromEmail(Email $email)
     {
+        $em = $this->getDoctrine()->getManager();
 
-      $em = $this->getDoctrine()->getManager();
+        // Create a new stub user.
+        $user = $this->createStub();
 
-      // Create a new stub user.
-      $user = $this->createStub();
+        // Set the Email
+        $email->setUser($user);
+        $user->setPrimaryEmail($email);
 
-      // Set the Email
-      $email->setUser($user);
-      $user->setPrimaryEmail($email);
+        // Save the Email
+        $em->persist($email);
+        $em->persist($user);
+        $em->flush();
 
-      // Save the Email
-      $em->persist($email);
-      $em->persist($user);
-      $em->flush();
-
-      return $user;
-
+        return $user;
     }
 
     /**
@@ -54,23 +53,21 @@ class UserCreate {
      */
     public function createFromPhone(Phone $phone)
     {
+        $em = $this->getDoctrine()->getManager();
 
-      $em = $this->getDoctrine()->getManager();
+        // Create a new stub user.
+        $user = $this->createStub();
 
-      // Create a new stub user.
-      $user = $this->createStub();
+        // Set the Phone
+        $phone->setUser($user);
+        $user->setPrimaryPhone($phone);
 
-      // Set the Phone
-      $phone->setUser($user);
-      $user->setPrimaryPhone($phone);
+        // Save the phone.
+        $em->persist($phone);
+        $em->persist($user);
+        $em->flush();
 
-      // Save the phone.
-      $em->persist($phone);
-      $em->persist($user);
-      $em->flush();
-
-      return $user;
-
+        return $user;
     }
 
     /**
@@ -80,30 +77,26 @@ class UserCreate {
      */
     private function createStub()
     {
+        $em = $this->getDoctrine()->getManager();
 
-      $em = $this->getDoctrine()->getManager();
+        // Create a new stub user.
+        $user = new User();
 
-      // Create a new stub user.
-      $user = new User();
+        // Save the User
+        $em->persist($user);
+        $em->flush();
 
-      // Save the User
-      $em->persist($user);
-      $em->flush();
-
-      return $user;
-
+        return $user;
     }
 
     public function setDoctrine($doctrine)
     {
-      $this->doctrine = $doctrine;
-      return $this;
+        $this->doctrine = $doctrine;
+        return $this;
     }
 
     public function getDoctrine()
     {
-      return $this->doctrine;
+        return $this->doctrine;
     }
-
-
 }

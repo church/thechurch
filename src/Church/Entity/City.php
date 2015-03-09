@@ -74,5 +74,4 @@ class City
     {
         return $this->slug;
     }
-
 }

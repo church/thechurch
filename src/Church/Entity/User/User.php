@@ -25,6 +25,7 @@ use Church\Entity\User\Phone;
  */
 class User implements UserInterface, Serializable, EquatableInterface
 {
+
     /**
      * @var integer $id
      *
@@ -112,10 +113,10 @@ class User implements UserInterface, Serializable, EquatableInterface
      */
     public function __construct()
     {
-        $this->isActive = TRUE;
+        $this->isActive = true;
         $this->email = new ArrayCollection();
         $this->phone = new ArrayCollection();
-        $this->faith = FALSE;
+        $this->faith = false;
     }
 
     /**
@@ -138,7 +139,7 @@ class User implements UserInterface, Serializable, EquatableInterface
 
     public function isActive()
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -154,7 +155,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      */
     public function getSalt()
     {
-        return NULL;
+        return null;
     }
 
     /**
@@ -175,34 +176,29 @@ class User implements UserInterface, Serializable, EquatableInterface
         );
 
         if ($this->getPassword()) {
-          $roles[] = 'ROLE_PASSWORD';
+            $roles[] = 'ROLE_PASSWORD';
         }
 
         if ($this->getUsername()) {
-          $roles[] = 'ROLE_USERNAME';
+            $roles[] = 'ROLE_USERNAME';
         }
 
         if ($this->getFaith()) {
-          $roles[] = 'ROLE_FAITH';
+            $roles[] = 'ROLE_FAITH';
         }
 
         if ($this->getFirstName() && $this->getLastName()) {
-          $roles[] = 'ROLE_NAME';
+            $roles[] = 'ROLE_NAME';
         }
 
         if ($email = $this->getPrimaryEmail()) {
-
-          if ($email->getVerified()) {
-            $roles[] = 'ROLE_EMAIL';
-          }
-
-        }
-        else if ($phone = $this->getPrimaryPhone()) {
-
-          if ($phone->getVerified()) {
-            $roles[] = 'ROLE_PHONE';
-          }
-
+            if ($email->getVerified()) {
+                $roles[] = 'ROLE_EMAIL';
+            }
+        } elseif ($phone = $this->getPrimaryPhone()) {
+            if ($phone->getVerified()) {
+                $roles[] = 'ROLE_PHONE';
+            }
         }
 
         return $roles;
@@ -224,8 +220,8 @@ class User implements UserInterface, Serializable, EquatableInterface
     {
         return serialize(array(
           $this->id,
-          isset($this->username) ? $this->username : NULL,
-          isset($this->password) ? $this->username : NULL,
+          isset($this->username) ? $this->username : null,
+          isset($this->password) ? $this->username : null,
         ));
     }
 
@@ -252,22 +248,22 @@ class User implements UserInterface, Serializable, EquatableInterface
     public function isEqualTo(UserInterface $user)
     {
         if ($this->getUsername()) {
-          if ($this->getUsername() !== $user->getUsername()) {
-            return FALSE;
-          }
+            if ($this->getUsername() !== $user->getUsername()) {
+                return false;
+            }
         }
 
         if ($this->getPassword()) {
-          if ($this->getPassword() !== $user->getPassword()) {
-            return FALSE;
-          }
+            if ($this->getPassword() !== $user->getPassword()) {
+                return false;
+            }
         }
 
         if ($this->getID() !== $user->getID()) {
-          return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**

@@ -11,7 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Church\Entity\User\User;
 use Church\Entity\User\Phone;
 
-
 /**
  * Church\Entity\User\PhoneVerify
  *
@@ -83,9 +82,9 @@ class PhoneVerify
      */
     public function setToken($token)
     {
-      $this->token = $token;
+        $this->token = $token;
 
-      return $this;
+        return $this;
     }
 
     /**
@@ -106,9 +105,9 @@ class PhoneVerify
      */
     public function setCode($code)
     {
-      $this->code = $code;
+        $this->code = $code;
 
-      return $this;
+        return $this;
     }
 
     /**
@@ -143,5 +142,4 @@ class PhoneVerify
     {
         return $this->created;
     }
-
 }
