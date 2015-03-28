@@ -69,7 +69,6 @@ services:
 
   church.slug:
       class: Church\Utils\Slug
-      arguments: [@patchwork.utf8]
 
   egulias.email_validator:
         class: Egulias\EmailValidator\EmailValidator
@@ -88,9 +87,6 @@ services:
   prawnsalad.nexmo:
         class: NexmoMessage
         arguments: [%nexmo_api_key%, %nexmo_api_secret%]
-
-  patchwork.utf8:
-       class: Patchwork\Utf8
 
   guzzlehttp.client_yahoo_geoplanet:
        class: GuzzleHttp\Client

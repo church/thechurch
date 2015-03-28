@@ -18,7 +18,7 @@ class DefaultController extends Controller
 
         if (!$auth->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->forward('Church:User:login');
-            
+
         } elseif ($auth->isGranted('ROLE_FAITH')) {
             return $this->forward('Church:Place:nearby');
 
@@ -27,7 +27,6 @@ class DefaultController extends Controller
 
         } elseif (!$auth->isGranted('ROLE_FAITH')) {
             return $this->redirect($this->generateUrl('user_faith'));
-
         }
 
 

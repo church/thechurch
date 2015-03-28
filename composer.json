@@ -34,8 +34,7 @@
         "egulias/email-validator": "~1.0",
         "giggsey/libphonenumber-for-php": "~7.0",
         "prawnsalad/nexmo": "dev-master",
-        "friendsofsymfony/jsrouting-bundle": "~1.5",
-        "patchwork/utf8": "~1.2"
+        "friendsofsymfony/jsrouting-bundle": "~1.5"
      },
      "require-dev": {
        "sensio/generator-bundle": "~2.3",

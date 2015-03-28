@@ -43,39 +43,47 @@ class SlugTest extends \PHPUnit_Framework_TestCase
             ),
             array(
                 'Orléans',
-                'orleans',
+                'orl%E3%A9ans',
             ),
             array(
                 'Āhualoa',
-                'ahualoa',
+                '%E4%80hualoa',
             ),
             array(
                 'Hōnaunau-Napoʻopoʻo',
-                'honaunau-napoopoo',
+                'h%E5%8Dnaunau-napo%EA%BBopo%EA%BBo',
             ),
             array(
                 'Béal Feirste',
-                'beal-feirste',
+                'b%E3%A9al-feirste',
             ),
             array(
                 'Llandygái',
-                'llandygai',
+                'llandyg%E3%A1i',
             ),
             array(
                 'Caersŵs',
-                'caersws',
+                'caers%E5%B5s',
             ),
             array(
                 'Aberdâr',
-                'aberdar',
+                'aberd%E3%A2r',
             ),
             array(
                 'Pentredŵr',
-                'pentredwr',
+                'pentred%E5%B5r',
             ),
             array(
                 'Llannerch-y-môr',
-                'llannerch-y-mor',
+                'llannerch-y-m%E3%B4r',
+            ),
+            array(
+                '香港',
+                '%E9%A6%99%E6%B8%AF',
+            ),
+            array(
+                '東京',
+                '%E6%9D%B1%E4%BA%AC',
             ),
         );
     }
