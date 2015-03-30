@@ -3,5 +3,7 @@ php:
   - 5.5
 before_script:
   - phpenv config-add config.ini
+  - mysql -e 'CREATE DATABASE thechurch;'
+  - php app/console doctrine:schema:create
   - composer install
 script: phpunit -c app
