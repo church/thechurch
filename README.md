@@ -1,5 +1,7 @@
 ![the.church](https://thechur.ch/bundles/churchteaser/images/logo2.png)
 
+[![Build Status](https://travis-ci.org/church/thechurch.svg?branch=develop)](https://travis-ci.org/church/thechurch)
+
 ## Mission
 By the sacrifice and love of Jesus Christ our Lord, according to His eternal
 purpose, [thechur.ch](https://thechur.ch) exists to promote the unity of His
