@@ -2,8 +2,6 @@
 
 namespace Church\Tests\Utils;
 
-use Patchwork\Utf8;
-
 use Church\Utils\Slug;
 
 class SlugTest extends \PHPUnit_Framework_TestCase
@@ -13,7 +11,7 @@ class SlugTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->slug = new Slug(new Utf8());
+        $this->slug = new Slug();
     }
 
     /**
@@ -43,39 +41,39 @@ class SlugTest extends \PHPUnit_Framework_TestCase
             ),
             array(
                 'Orléans',
-                'orl%E3%A9ans',
+                'orl%C3%A9ans',
             ),
             array(
                 'Āhualoa',
-                '%E4%80hualoa',
+                '%C4%81hualoa',
             ),
             array(
                 'Hōnaunau-Napoʻopoʻo',
-                'h%E5%8Dnaunau-napo%EA%BBopo%EA%BBo',
+                'h%C5%8Dnaunau-napo%CA%BBopo%CA%BBo',
             ),
             array(
                 'Béal Feirste',
-                'b%E3%A9al-feirste',
+                'b%C3%A9al-feirste',
             ),
             array(
                 'Llandygái',
-                'llandyg%E3%A1i',
+                'llandyg%C3%A1i',
             ),
             array(
                 'Caersŵs',
-                'caers%E5%B5s',
+                'caers%C5%B5s',
             ),
             array(
                 'Aberdâr',
-                'aberd%E3%A2r',
+                'aberd%C3%A2r',
             ),
             array(
                 'Pentredŵr',
-                'pentred%E5%B5r',
+                'pentred%C5%B5r',
             ),
             array(
                 'Llannerch-y-môr',
-                'llannerch-y-m%E3%B4r',
+                'llannerch-y-m%C3%B4r',
             ),
             array(
                 '香港',
