@@ -2,5 +2,6 @@ language: php
 php:
   - 5.5
 before_script:
+  - phpenv config-add config.ini
   - composer install
 script: phpunit -c app
