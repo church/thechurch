@@ -26,7 +26,7 @@ class PlaceFinder
 
     public function __construct(
         RegistryInterface $doctrine,
-        YahooGeoPlanet $geo
+        YahooGeoPlanet $geo,
         YahooPlaceFinder $finder,
         Slug $slug
     ) {
