@@ -5,3 +5,11 @@ default:
       sessions:
         default:
           symfony2: ~
+  autoload:
+        '': %paths.base%/src
+  suites:
+    church:
+      type: symfony_bundle
+      bundle: Church
+      contexts:
+        - Church\Features\Context\FeatureContext
