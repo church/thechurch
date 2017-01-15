@@ -23,10 +23,10 @@ use Church\Form\Model\Faith;
 
 /**
  * @Route(
- *    "/api/{version}/user",
+ *    "/user",
  *    service="church.controller_user",
  *    defaults = {
- *       "version" = "v1.0.0",
+ *       "version" = "1.0",
  *       "_format" = "json"
  *    }
  * )
@@ -35,7 +35,7 @@ class UserController extends Controller
 {
 
   /**
-   * @Route("/{user}")
+   * @Route("/{user}.{_format}")
    */
     public function showAction(User $user, Request $request) : Response
     {
