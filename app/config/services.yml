@@ -13,6 +13,10 @@ services:
         parent: church.controller
         class: Church\Controller\DefaultController
 
+  church.controller_user:
+        parent: church.controller
+        class: Church\Controller\UserController
+
   church.tree_maker:
      class: Church\EventListener\TreeMaker
      tags:
@@ -153,10 +157,3 @@ services:
              auth: oauth
              query:
                format: json
-
-  # Remove in Symfony 2.7+
-  get_seth_method_normalizer:
-      class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
-      public: false
-      tags:
-          - { name: serializer.normalizer }

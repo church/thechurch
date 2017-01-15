@@ -25,6 +25,7 @@ framework:
     http_method_override: true
     serializer:
         enabled: true
+        enable_annotations: true
     assets:
       enabled: false
     php_errors:

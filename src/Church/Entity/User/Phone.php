@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 use Church\Entity\User\User;
 use Church\Entity\User\PhoneVerify;
@@ -24,6 +25,7 @@ class Phone
     /**
      * @ORM\Id
      * @ORM\Column(type="string", length=35)
+     * @Groups({"api"})
      */
     private $phone;
 
@@ -35,16 +37,19 @@ class Phone
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"api"})
      */
     private $created;
 
     /**
      * @ORM\OneToOne(targetEntity="PhoneVerify", mappedBy="phone")
+     * @Groups({"api"})
      **/
     private $verify;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"api"})
      */
     private $verified;
 

@@ -9,6 +9,15 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Controller
 {
 
+  /**
+   * @var array
+   */
+    const SERIALIZE_CONTEXT = [
+      'groups' => [
+        'api'
+      ],
+    ];
+
     public function __construct(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
@@ -25,7 +34,7 @@ abstract class Controller
     ) : Response {
 
         return new Response(
-            $this->serializer->serialize($data, $format),
+            $this->serializer->serialize($data, $format, self::SERIALIZE_CONTEXT),
             $status,
             $headers
         );

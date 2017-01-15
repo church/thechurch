@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Serializable;
 
 use Church\Entity\Location;
@@ -32,21 +33,25 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @ORM\Column(name="user_id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"api"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"api"})
      */
     private $first_name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"api"})
      */
     private $last_name;
 
     /**
      * @ORM\Column(type="string", length=25, unique=true, nullable=true)
+     * @Groups({"api"})
      */
     private $username;
 
@@ -58,51 +63,60 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * @ORM\OneToMany(targetEntity="Email", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
+     * @Groups({"api"})
      */
     private $emails;
 
     /**
      * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
      * @ORM\JoinColumn(name="primary_email", referencedColumnName="email")
+     * @Groups({"api"})
      */
     private $primary_email;
 
     /**
      * @ORM\OneToMany(targetEntity="Phone", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
+     * @Groups({"api"})
      */
     private $phones;
 
     /**
      * @ORM\OneToOne(targetEntity="Phone", mappedBy="phone", cascade={"all"})
      * @ORM\JoinColumn(name="primary_phone", referencedColumnName="phone")
+     * @Groups({"api"})
      */
     private $primary_phone;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"api"})
      */
     private $address;
 
     /**
      * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
      * @ORM\JoinColumn(name="location_static", referencedColumnName="location_id")
+     * @Groups({"api"})
      */
     private $location_static;
 
     /**
      * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
      * @ORM\JoinColumn(name="location_current", referencedColumnName="location_id")
+     * @Groups({"api"})
      */
     private $location_current;
 
     /**
      * @ORM\Column(type="boolean", options={"default" = 0})
+     * @Groups({"api"})
      */
     private $faith;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"api"})
      */
     private $created;
 
@@ -202,7 +216,6 @@ class User implements UserInterface, Serializable, EquatableInterface
         }
 
         return $roles;
-
     }
 
     /**
@@ -210,7 +223,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      */
     public function eraseCredentials()
     {
-
+      // Do something?
     }
 
     /**

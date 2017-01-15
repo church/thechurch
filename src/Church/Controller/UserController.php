@@ -2,7 +2,6 @@
 
 namespace Church\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,10 +22,25 @@ use Church\Form\Type\FaithType;
 use Church\Form\Model\Faith;
 
 /**
- * @Route("/u")
+ * @Route(
+ *    "/api/{version}/user",
+ *    service="church.controller_user",
+ *    defaults = {
+ *       "version" = "v1.0.0",
+ *       "_format" = "json"
+ *    }
+ * )
  */
 class UserController extends Controller
 {
+
+  /**
+   * @Route("/{user}")
+   */
+    public function showAction(User $user, Request $request) : Response
+    {
+        return $this->reply($user, $request->getRequestFormat());
+    }
 
     /**
      * @Route("/login", name="user_login")
@@ -57,7 +71,6 @@ class UserController extends Controller
                     'type' => 'e',
                     'token' => $verify->getToken(),
                 )));
-
             } elseif ($validator->isPhone($login->getUsername())) {
                 $verify = $this->get('church.verify_create')
                                ->createPhone($login->getUsername());
@@ -69,9 +82,7 @@ class UserController extends Controller
                     'type' => 'p',
                     'token' => $verify->getToken(),
                 )));
-
             }
-
         }
 
         return $this->render('user/login.html.twig', array(
@@ -100,13 +111,11 @@ class UserController extends Controller
                     'token' => $token,
                     'code' => $verify->getCode(),
                 )));
-
             } elseif ($type == 'p') {
                 return $this->redirect($this->generateUrl('user_verify_phone', array(
                     'token' => $token,
                     'code' => $verify->getCode(),
                 )));
-
             }
         }
 

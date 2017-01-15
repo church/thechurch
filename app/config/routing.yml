@@ -1,8 +1,14 @@
+user:
+    resource: '@Church/Controller/UserController.php'
+    type:     annotation
+
 user_logout:
     path: /u/logout
 
-index:
-    path: /
-    defaults:
-      _controller: church.controller_default:indexAction
-      _format: json
+place:
+    resource: '@Church/Controller/PlaceController.php'
+    type:     annotation
+
+default:
+    resource: '@Church/Controller/DefaultController.php'
+    type:     annotation
