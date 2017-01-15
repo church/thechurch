@@ -3,17 +3,19 @@
 namespace Church\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
 
     /**
-     * @Route("/", name="index")
+     * Index Action.
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
 
+        /*
         $auth = $this->get('security.authorization_checker');
 
         if (!$auth->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -28,7 +30,8 @@ class DefaultController extends Controller
         } elseif (!$auth->isGranted('ROLE_FAITH')) {
             return $this->redirect($this->generateUrl('user_faith'));
         }
+        */
 
-
+        return new Response($this->get('serializer')->serialize(['hello' => 'world!'], $request->getRequestFormat()));
     }
 }

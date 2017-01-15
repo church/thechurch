@@ -13,59 +13,69 @@ services:
 
   church.validator.login:
         class: Church\Validator\Constraints\LoginValidator
-        arguments: [@egulias.email_validator, @giggsey.phone_validator]
+        arguments:
+          - '@egulias.email_validator'
+          - '@giggsey.phone_validator'
         tags:
             - { name: validator.constraint_validator, alias: valid_login }
 
   church.user_create:
       class: Church\Utils\UserCreate
-      arguments: [@doctrine]
+      arguments:
+        - '@doctrine'
 
   church.code_authenticator:
         class:     Church\Security\CodeAuthenticator
-        arguments: [@doctrine, @security.http_utils]
+        arguments:
+          - '@doctrine'
+          - '@security.http_utils'
 
   church.verify_create:
       class: Church\Utils\VerifyCreate
       arguments:
-        - @doctrine
-        - @ircmaxell.random
-        - @church.validator.login
-        - @church.user_create
+        - '@doctrine'
+        - '@ircmaxell.random'
+        - '@church.validator.login'
+        - '@church.user_create'
 
   church.verify_send:
       class: Church\Utils\VerifySend
-      arguments: [@church.dispatcher_email, @church.dispatcher_sms, @router]
+      arguments:
+        - '@church.dispatcher_email'
+        - '@church.dispatcher_sms'
+        - '@router'
 
   church.dispatcher_email:
       class: Church\Utils\Dispatcher\Email
-      arguments: [@hip_mandrill.dispatcher]
 
   church.dispatcher_sms:
       class: Church\Utils\Dispatcher\SMS
-      arguments: [@prawnsalad.nexmo, %nexmo_sender%]
+      arguments:
+        - '@prawnsalad.nexmo'
+        - '%nexmo_sender%'
 
   church.place_finder:
     class: Church\Utils\PlaceFinder
     arguments:
-      - @doctrine
-      - @church.client_yahoo_geoplanet
-      - @church.client_yahoo_placefinder
-      - @church.slug
+      - '@doctrine'
+      - '@church.client_yahoo_geoplanet'
+      - '@church.client_yahoo_placefinder'
+      - '@church.slug'
     #church_place.consumer_key: ~
     #church_place.consumer_secret: ~
     #church_place.generic_appid: ~
 
   church.client_yahoo_geoplanet:
       class: Church\Client\Yahoo\GeoPlanet
-      arguments: [@guzzlehttp.client_yahoo_geoplanet]
+      arguments:
+        - '@guzzlehttp.client_yahoo_geoplanet'
 
   church.client_yahoo_placefinder:
       class: Church\Client\Yahoo\PlaceFinder
       arguments:
-        - @guzzlehttp.client_yahoo_boss_placefinder
-        - @guzzlehttp.client_yahoo_yql_placefinder
-        - @guzzlehttp.oauth_yahoo
+        - '@guzzlehttp.client_yahoo_boss_placefinder'
+        - '@guzzlehttp.client_yahoo_yql_placefinder'
+        - '@guzzlehttp.oauth_yahoo'
 
   church.slug:
       class: Church\Utils\Slug
@@ -86,7 +96,9 @@ services:
 
   prawnsalad.nexmo:
         class: NexmoMessage
-        arguments: [%nexmo_api_key%, %nexmo_api_secret%]
+        arguments:
+          - '%nexmo_api_key%'
+          - '%nexmo_api_secret%'
 
   guzzlehttp.client_yahoo_geoplanet:
        class: GuzzleHttp\Client
@@ -96,7 +108,7 @@ services:
            defaults:
              query:
                format: json
-               appid: %yahoo_consumer_key%
+               appid: '%yahoo_consumer_key%'
 
   guzzlehttp.oauth_yahoo:
       class: GuzzleHttp\Subscriber\Oauth\Oauth1
@@ -113,7 +125,7 @@ services:
            defaults:
              query:
                format: json
-               appid: %yahoo_consumer_key%
+               appid: '%yahoo_consumer_key%'
 
   guzzlehttp.client_yahoo_boss_placefinder:
        class: GuzzleHttp\Client
@@ -132,3 +144,10 @@ services:
              auth: oauth
              query:
                format: json
+
+  # Remove in Symfony 2.7+
+  get_seth_method_normalizer:
+      class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
+      public: false
+      tags:
+          - { name: serializer.normalizer }

@@ -2,18 +2,10 @@
 
 namespace Church\Utils\Dispatcher;
 
-use Hip\MandrillBundle\Dispatcher as Mandrill;
 use Church\Message\Email as Message;
 
 class Email
 {
-
-    private $mandrill;
-
-    public function __construct(Mandrill $mandrill)
-    {
-        $this->mandrill = $mandrill;
-    }
 
     /**
      * Send an Email message.

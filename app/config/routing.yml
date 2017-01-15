@@ -1,18 +1,8 @@
-user:
-    resource: @Church/Controller/UserController.php
-    type:     annotation
-
 user_logout:
     path: /u/logout
 
-place:
-    resource: @Church/Controller/PlaceController.php
-    type:     annotation
-
-default:
-    resource: @Church/Controller/DefaultController.php
-    type:     annotation
-
-# Moves the Routes into Javascript.
-fos_js_routing:
-    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+index:
+    path: /
+    defaults:
+      _controller: Church:Default:index
+      _format: json
