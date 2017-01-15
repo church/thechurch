@@ -2,7 +2,7 @@
 
 namespace Church\Security;
 
-use Symfony\Component\Security\Core\Authentication\SimplePreAuthenticatorInterface;
+use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;

@@ -13,7 +13,7 @@ framework:
     csrf_protection: ~
     validation:      { enable_annotations: true }
     templating:
-      engines: ['php']
+      enabled: false
     default_locale:  "%locale%"
     trusted_hosts:   ~
     trusted_proxies: ~
@@ -25,6 +25,10 @@ framework:
     http_method_override: true
     serializer:
         enabled: true
+    assets:
+      enabled: false
+    php_errors:
+      log: true
 
 # Doctrine Configuration
 doctrine:
