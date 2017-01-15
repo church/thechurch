@@ -3,6 +3,7 @@
 namespace Church\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -136,9 +137,11 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * @ORM\PrePersist
      */
-    public function setCreatedValue()
+    public function setCreatedValue() : self
     {
         $this->created = new \DateTime();
+
+        return $this;
     }
 
     /**
@@ -146,12 +149,12 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return integer
      */
-    public function getID()
+    public function getID() :? int
     {
         return $this->id;
     }
 
-    public function isActive()
+    public function isActive() :? bool
     {
         return true;
     }
@@ -159,7 +162,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * @inheritDoc
      */
-    public function getUsername()
+    public function getUsername() :? string
     {
         return $this->username;
     }
@@ -167,7 +170,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * @inheritDoc
      */
-    public function getSalt()
+    public function getSalt() :? string
     {
         return null;
     }
@@ -175,7 +178,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * @inheritDoc
      */
-    public function getPassword()
+    public function getPassword() :? string
     {
         return $this->password;
     }
@@ -183,7 +186,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * @inheritDoc
      */
-    public function getRoles()
+    public function getRoles() :? array
     {
         $roles = array(
           'ROLE_USER',
@@ -221,7 +224,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * @inheritDoc
      */
-    public function eraseCredentials()
+    public function eraseCredentials() : void
     {
       // Do something?
     }
@@ -258,7 +261,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @link http://symfony.com/doc/current/cookbook/security/entity_provider.html
      *
      */
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user) : bool
     {
         if ($this->getUsername()) {
             if ($this->getUsername() !== $user->getUsername()) {
@@ -285,7 +288,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param string $username
      * @return User
      */
-    public function setUsername($username)
+    public function setUsername(string $username) : self
     {
         $this->username = $username;
 
@@ -298,7 +301,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param string $password
      * @return User
      */
-    public function setPassword($password)
+    public function setPassword(string $password) : self
     {
         $this->password = $password;
 
@@ -311,7 +314,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param string $first_name
      * @return User
      */
-    public function setFirstName($first_name)
+    public function setFirstName(string $first_name) : self
     {
         $this->first_name = $first_name;
 
@@ -323,7 +326,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return string
      */
-    public function getFirstName()
+    public function getFirstName() :? string
     {
         return $this->first_name;
     }
@@ -334,7 +337,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param string $last_name
      * @return User
      */
-    public function setLastName($last_name)
+    public function setLastName(string $last_name) : self
     {
         $this->last_name = $last_name;
 
@@ -346,7 +349,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return string
      */
-    public function getLastName()
+    public function getLastName() :? string
     {
         return $this->last_name;
     }
@@ -358,7 +361,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param Email $emails
      * @return User
      */
-    public function addEmail(Email $email)
+    public function addEmail(Email $email) : self
     {
         $this->emails[] = $email;
 
@@ -370,9 +373,11 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @param Email $emails
      */
-    public function removeEmail(Email $email)
+    public function removeEmail(Email $email) : self
     {
         $this->emails->removeElement($email);
+
+        return $this;
     }
 
     /**
@@ -380,7 +385,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return Doctrine\Common\Collections\Collection
      */
-    public function getEmails()
+    public function getEmails() :? Collection
     {
         return $this->emails;
     }
@@ -392,7 +397,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param Email $primaryEmail
      * @return User
      */
-    public function setPrimaryEmail(Email $primaryEmail = null)
+    public function setPrimaryEmail(Email $primaryEmail) : self
     {
         $this->primary_email = $primaryEmail;
 
@@ -404,7 +409,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return Email
      */
-    public function getPrimaryEmail()
+    public function getPrimaryEmail() :? Email
     {
         return $this->primary_email;
     }
@@ -415,7 +420,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param Phone $phone
      * @return User
      */
-    public function addPhone(Phone $phone)
+    public function addPhone(Phone $phone) : self
     {
         $this->phones[] = $phone;
 
@@ -427,9 +432,11 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @param Phone $phone
      */
-    public function removePhone(Phone $phone)
+    public function removePhone(Phone $phone) : self
     {
         $this->phones->removeElement($phone);
+
+        return $this;
     }
 
     /**
@@ -437,7 +444,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return Doctrine\Common\Collections\Collection
      */
-    public function getPhones()
+    public function getPhones() :? Collection
     {
         return $this->phones;
     }
@@ -449,7 +456,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param Phone $primaryPhone
      * @return User
      */
-    public function setPrimaryPhone(Phone $primaryPhone = null)
+    public function setPrimaryPhone(Phone $primaryPhone) : self
     {
         $this->primary_phone = $primaryPhone;
 
@@ -461,7 +468,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return Phone
      */
-    public function getPrimaryPhone()
+    public function getPrimaryPhone() :? Phone
     {
         return $this->primary_phone;
     }
@@ -472,7 +479,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param string $address
      * @return User
      */
-    public function setAddress($address)
+    public function setAddress(string $address) : self
     {
         $this->address = $address;
 
@@ -484,7 +491,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return string
      */
-    public function getAddress()
+    public function getAddress() :? string
     {
         return $this->address;
     }
@@ -495,7 +502,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param Location $location
      * @return User
      */
-    public function setLocationStatic(Location $location)
+    public function setLocationStatic(Location $location) : self
     {
         $this->location_static = $location;
 
@@ -507,7 +514,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return Location
      */
-    public function getLocationStatic()
+    public function getLocationStatic() :? Location
     {
         return $this->location_static;
     }
@@ -519,7 +526,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param Location $location
      * @return User
      */
-    public function setLocationCurrent(Location $location)
+    public function setLocationCurrent(Location $location) : self
     {
         $this->location_current = $location;
 
@@ -531,7 +538,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return Location
      */
-    public function getLocationCurrent()
+    public function getLocationCurrent() :? Location
     {
         return $this->location_current;
     }
@@ -542,7 +549,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param bool $faith
      * @return User
      */
-    public function setFaith($faith)
+    public function setFaith(bool $faith) : self
     {
         $this->faith = $faith;
 
@@ -554,7 +561,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return bool
      */
-    public function getFaith()
+    public function getFaith() :? bool
     {
         return $this->faith;
     }
@@ -565,7 +572,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      * @param \DateTime $verified
      * @return User
      */
-    public function setCreated($created)
+    public function setCreated(\DateTime $created) : self
     {
         $this->created = $created;
 
@@ -577,7 +584,7 @@ class User implements UserInterface, Serializable, EquatableInterface
      *
      * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated() :? \DateTime
     {
         return $this->created;
     }

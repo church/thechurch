@@ -46,9 +46,11 @@ class PhoneVerify
     /**
      * @ORM\PrePersist
      */
-    public function setCreatedValue()
+    public function setCreatedValue() : self
     {
         $this->created = new \DateTime();
+
+        return $this;
     }
 
     /**
@@ -57,7 +59,7 @@ class PhoneVerify
      * @param Phone $phone
      * @return PhoneVerify
      */
-    public function setPhone(Phone $phone)
+    public function setPhone(Phone $phone) : self
     {
         $this->phone = $phone;
 
@@ -69,7 +71,7 @@ class PhoneVerify
      *
      * @return Phone
      */
-    public function getPhone()
+    public function getPhone() :? Phone
     {
         return $this->phone;
     }
@@ -80,7 +82,7 @@ class PhoneVerify
      * @param string $token
      * @return EmailVerify
      */
-    public function setToken($token)
+    public function setToken(string $token) : self
     {
         $this->token = $token;
 
@@ -92,7 +94,7 @@ class PhoneVerify
      *
      * @return string
      */
-    public function getCode()
+    public function getCode() :? string
     {
         return $this->code;
     }
@@ -103,7 +105,7 @@ class PhoneVerify
      * @param string $code
      * @return EmailVerify
      */
-    public function setCode($code)
+    public function setCode(string $code) : self
     {
         $this->code = $code;
 
@@ -115,7 +117,7 @@ class PhoneVerify
      *
      * @return string
      */
-    public function getToken()
+    public function getToken() :? string
     {
         return $this->token;
     }
@@ -126,7 +128,7 @@ class PhoneVerify
      * @param \DateTime $verified
      * @return Email
      */
-    public function setCreated($created)
+    public function setCreated(\DateTime $created) : self
     {
         $this->created = $created;
 
@@ -138,7 +140,7 @@ class PhoneVerify
      *
      * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated() :? \DateTime
     {
         return $this->created;
     }

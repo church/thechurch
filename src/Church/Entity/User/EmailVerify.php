@@ -46,9 +46,11 @@ class EmailVerify
     /**
      * @ORM\PrePersist
      */
-    public function setCreatedValue()
+    public function setCreatedValue() : self
     {
         $this->created = new \DateTime();
+
+        return $this;
     }
 
     /**
@@ -57,7 +59,7 @@ class EmailVerify
      * @param Email $email
      * @return EmailVerify
      */
-    public function setEmail(Email $email)
+    public function setEmail(Email $email) : self
     {
         $this->email = $email;
 
@@ -69,7 +71,7 @@ class EmailVerify
      *
      * @return Email
      */
-    public function getEmail()
+    public function getEmail() :? Email
     {
         return $this->email;
     }
@@ -80,7 +82,7 @@ class EmailVerify
      * @param string $token
      * @return EmailVerify
      */
-    public function setToken($token)
+    public function setToken(string $token) : self
     {
         $this->token = $token;
 
@@ -92,7 +94,7 @@ class EmailVerify
      *
      * @return string
      */
-    public function getToken()
+    public function getToken() :? string
     {
         return $this->token;
     }
@@ -103,7 +105,7 @@ class EmailVerify
      * @param string $code
      * @return EmailVerify
      */
-    public function setCode($code)
+    public function setCode(string $code) : self
     {
         $this->code = $code;
 
@@ -115,7 +117,7 @@ class EmailVerify
      *
      * @return string
      */
-    public function getCode()
+    public function getCode() :? string
     {
         return $this->code;
     }
@@ -126,7 +128,7 @@ class EmailVerify
      * @param \DateTime $verified
      * @return Email
      */
-    public function setCreated($created)
+    public function setCreated(\DateTime $created) : self
     {
         $this->created = $created;
 
@@ -138,7 +140,7 @@ class EmailVerify
      *
      * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated() :? \DateTime
     {
         return $this->created;
     }

@@ -57,9 +57,11 @@ class Phone
     /**
      * @ORM\PrePersist
      */
-    public function setCreatedValue()
+    public function setCreatedValue() : self
     {
         $this->created = new \DateTime();
+
+        return $this;
     }
 
     /**
@@ -68,7 +70,7 @@ class Phone
      * @param string $phone
      * @return Email
      */
-    public function setPhone($phone)
+    public function setPhone(string $phone) : self
     {
         $this->phone = $phone;
 
@@ -80,7 +82,7 @@ class Phone
      *
      * @return string
      */
-    public function getPhone()
+    public function getPhone() :? string
     {
         return $this->phone;
     }
@@ -91,7 +93,7 @@ class Phone
      * @param User $user
      * @return Email
      */
-    public function setUser(User $user = null)
+    public function setUser(User $user) : self
     {
         $this->user = $user;
 
@@ -103,7 +105,7 @@ class Phone
      *
      * @return User
      */
-    public function getUser()
+    public function getUser() :? User
     {
         return $this->user;
     }
@@ -114,7 +116,7 @@ class Phone
      * @param \DateTime $verified
      * @return Email
      */
-    public function setCreated($created)
+    public function setCreated(\DateTime $created) : self
     {
         $this->created = $created;
 
@@ -126,7 +128,7 @@ class Phone
      *
      * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated() :? \DateTime
     {
         return $this->created;
     }
@@ -138,7 +140,7 @@ class Phone
      * @param \DateTime $verified
      * @return Email
      */
-    public function setVerified($verified)
+    public function setVerified(\DateTime $verified) : self
     {
         $this->verified = $verified;
 
@@ -150,7 +152,7 @@ class Phone
      *
      * @return \DateTime
      */
-    public function getVerified()
+    public function getVerified() :? \DateTime
     {
         return $this->verified;
     }
@@ -161,7 +163,7 @@ class Phone
      * @param PhoneVerify $verify
      * @return Phone
      */
-    public function setVerify(PhoneVerify $verify = null)
+    public function setVerify(PhoneVerify $verify) : self
     {
         $this->verify = $verify;
 
@@ -173,7 +175,7 @@ class Phone
      *
      * @return PhoneVerify
      */
-    public function getVerify()
+    public function getVerify() :? PhoneVerify
     {
         return $this->verify;
     }

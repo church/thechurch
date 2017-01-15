@@ -3,7 +3,7 @@
 namespace Church\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -58,9 +58,11 @@ class Email
     /**
      * @ORM\PrePersist
      */
-    public function setCreatedValue()
+    public function setCreatedValue() : self
     {
         $this->created = new \DateTime();
+
+        return $this;
     }
 
     /**
@@ -69,7 +71,7 @@ class Email
      * @param string $email
      * @return Email
      */
-    public function setEmail($email)
+    public function setEmail(string $email) : self
     {
         $this->email = $email;
 
@@ -81,7 +83,7 @@ class Email
      *
      * @return string
      */
-    public function getEmail()
+    public function getEmail() :? string
     {
         return $this->email;
     }
@@ -92,7 +94,7 @@ class Email
      * @param User $user
      * @return Email
      */
-    public function setUser(User $user = null)
+    public function setUser(User $user) : self
     {
         $this->user = $user;
 
@@ -104,7 +106,7 @@ class Email
      *
      * @return User
      */
-    public function getUser()
+    public function getUser() :? User
     {
         return $this->user;
     }
@@ -115,7 +117,7 @@ class Email
      * @param \DateTime $verified
      * @return Email
      */
-    public function setCreated($created)
+    public function setCreated(\DateTime $created) : self
     {
         $this->created = $created;
 
@@ -127,7 +129,7 @@ class Email
      *
      * @return \DateTime
      */
-    public function getCreated()
+    public function getCreated() :? \DateTime
     {
         return $this->created;
     }
@@ -139,7 +141,7 @@ class Email
      * @param \DateTime $verified
      * @return Email
      */
-    public function setVerified($verified)
+    public function setVerified(\DateTime $verified) : self
     {
         $this->verified = $verified;
 
@@ -151,7 +153,7 @@ class Email
      *
      * @return \DateTime
      */
-    public function getVerified()
+    public function getVerified() :? \DateTime
     {
         return $this->verified;
     }
@@ -162,7 +164,7 @@ class Email
      * @param EmailVerify $verify
      * @return Email
      */
-    public function setVerify(EmailVerify $verify = null)
+    public function setVerify(EmailVerify $verify) : self
     {
         $this->verify = $verify;
 
@@ -174,7 +176,7 @@ class Email
      *
      * @return EmailVerify
      */
-    public function getVerify()
+    public function getVerify() :? EmailVerify
     {
         return $this->verify;
     }
