@@ -2,7 +2,6 @@
 
 namespace Church\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -32,6 +31,6 @@ class DefaultController extends Controller
         }
         */
 
-        return new Response($this->get('serializer')->serialize(['hello' => 'world!'], $request->getRequestFormat()));
+        return $this->reply(['hello' => 'world!'], $request->getRequestFormat());
     }
 }

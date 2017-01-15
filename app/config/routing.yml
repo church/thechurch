@@ -4,5 +4,5 @@ user_logout:
 index:
     path: /
     defaults:
-      _controller: Church:Default:index
+      _controller: church.controller_default:indexAction
       _format: json

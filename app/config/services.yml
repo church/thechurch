@@ -4,6 +4,15 @@
 
 services:
 
+  church.controller:
+        abstract:  true
+        arguments:
+          - '@serializer'
+
+  church.controller_default:
+        parent: church.controller
+        class: Church\Controller\DefaultController
+
   church.tree_maker:
      class: Church\EventListener\TreeMaker
      tags:
