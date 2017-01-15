@@ -4,12 +4,11 @@
     "license": "AGPL-3.0",
     "type": "project",
     "autoload": {
-        "psr-0": {
+        "psr-4": {
+          "App\\": "app/",
           "": "src/"
         },
         "classmap": [
-          "app/AppKernel.php",
-          "app/AppCache.php",
           "vendor/prawnsalad/nexmo/src"
         ]
     },
