@@ -9,6 +9,10 @@ place:
     resource: '@Church/Controller/PlaceController.php'
     type:     annotation
 
+csrf:
+    resource: '@Church/Controller/CsrfController.php'
+    type:     annotation
+
 default:
     resource: '@Church/Controller/DefaultController.php'
     type:     annotation

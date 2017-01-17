@@ -9,14 +9,19 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Controller
 {
 
-  /**
-   * @var array
-   */
+    /**
+     * @var array
+     */
     const SERIALIZE_CONTEXT = [
       'groups' => [
         'api'
       ],
     ];
+
+    /**
+     * @var Symfony\Component\Serializer\SerializerInterface
+     */
+    protected $serializer;
 
     public function __construct(SerializerInterface $serializer)
     {

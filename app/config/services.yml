@@ -13,6 +13,12 @@ services:
         parent: church.controller
         class: Church\Controller\DefaultController
 
+  church.controller_csrf:
+        parent: church.controller
+        class: Church\Controller\CsrfController
+        arguments:
+          - '@security.csrf.token_manager'
+
   church.controller_user:
         parent: church.controller
         class: Church\Controller\UserController
