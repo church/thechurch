@@ -8,6 +8,8 @@ services:
         abstract:  true
         arguments:
           - '@serializer'
+          - '@security.token_storage'
+          - '@security.csrf.token_manager'
 
   church.controller_default:
         parent: church.controller
@@ -16,12 +18,16 @@ services:
   church.controller_csrf:
         parent: church.controller
         class: Church\Controller\CsrfController
-        arguments:
-          - '@security.csrf.token_manager'
 
   church.controller_user:
         parent: church.controller
         class: Church\Controller\UserController
+
+  church.normalizer_csrf_token:
+        class: Church\Normalizer\CsrfTokenNormalizer
+        public: false
+        tags:
+            - { name: serializer.normalizer }
 
   church.tree_maker:
      class: Church\EventListener\TreeMaker

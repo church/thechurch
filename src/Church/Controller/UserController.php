@@ -4,6 +4,7 @@ namespace Church\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -33,6 +34,22 @@ use Church\Form\Model\Faith;
  */
 class UserController extends Controller
 {
+
+  /**
+   * @Route("/me.{_format}")
+   *
+   * @TODO move to a Me controller.
+   */
+    public function meAction(Request $request) : Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw new NotFoundHttpException('Not Logged In');
+        }
+
+        return $this->reply($user, $request->getRequestFormat());
+    }
 
   /**
    * @Route("/{user}.{_format}")
