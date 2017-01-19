@@ -22,6 +22,6 @@ class CsrfController extends Controller
      */
     public function showAction(Request $request)
     {
-        return $this->reply($this->csrfToken->getToken(self::CSRF_TOKEN_ID), $request->getRequestFormat());
+        return $this->reply($this->csrfTokenManager->getToken(self::CSRF_TOKEN_ID), $request->getRequestFormat());
     }
 }

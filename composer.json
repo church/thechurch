@@ -43,7 +43,8 @@
        "symfony/debug-bundle": "~3.2",
        "sensio/generator-bundle": "~3.0",
        "squizlabs/php_codesniffer": "~2.0",
-       "symfony/phpunit-bridge": "^3.0"
+       "symfony/phpunit-bridge": "^3.0",
+        "phpunit/phpunit": "^5.7"
     },
     "scripts": {
         "symfony-scripts": [
@@ -58,6 +59,9 @@
         ],
         "post-update-cmd": [
             "@symfony-scripts"
+        ],
+        "test": [
+          "phpunit"
         ]
     },
     "extra": {
