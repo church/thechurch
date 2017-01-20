@@ -32,6 +32,5 @@ class LoadFixtures implements FixtureInterface, ContainerAwareInterface
         $placefinder = $this->container->get('church.place_finder');
 
         $placefinder->getPlaceTypes();
-
     }
 }

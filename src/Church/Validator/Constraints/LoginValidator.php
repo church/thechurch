@@ -30,7 +30,6 @@ class LoginValidator extends ConstraintValidator
             if (!$this->isPhone($value)) {
                 return $this->context->buildViolation($constraint->message)
                                      ->addViolation();
-
             }
         }
     }

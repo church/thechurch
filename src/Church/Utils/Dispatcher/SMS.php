@@ -50,7 +50,6 @@ class SMS
                 throw new \Exception($error->errortext);
             }
         }
-
     }
 
     /**

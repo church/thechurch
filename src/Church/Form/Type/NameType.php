@@ -18,7 +18,6 @@ class NameType extends AbstractType
         $builder->add('last_name', 'text', array(
           'label' => 'Last Name',
         ));
-
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

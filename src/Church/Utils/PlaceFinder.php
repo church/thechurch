@@ -40,7 +40,6 @@ class PlaceFinder
         $this->finder = $finder;
 
         $this->slug = $slug;
-
     }
 
     /**
@@ -318,6 +317,5 @@ class PlaceFinder
         $em->flush();
 
         return $repository->findAll();
-
     }
 }

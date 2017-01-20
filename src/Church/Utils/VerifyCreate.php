@@ -69,7 +69,6 @@ class VerifyCreate
         $em->flush();
 
         return $verify;
-
     }
 
     /**
@@ -111,7 +110,6 @@ class VerifyCreate
         $em->flush();
 
         return $verify;
-
     }
 
     /**
@@ -141,7 +139,6 @@ class VerifyCreate
         }
 
         return $email;
-
     }
 
     /**
@@ -171,7 +168,6 @@ class VerifyCreate
         }
 
         return $phone;
-
     }
 
     /**
@@ -191,7 +187,6 @@ class VerifyCreate
         } while ($repository->findOneByToken($token));
 
         return $token;
-
     }
 
     /**
@@ -211,7 +206,6 @@ class VerifyCreate
         } while ($repository->findOneByCode($code));
 
         return $code;
-
     }
 
     public function setDoctrine($doctrine)

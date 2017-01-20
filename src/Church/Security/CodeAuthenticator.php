@@ -60,7 +60,6 @@ class CodeAuthenticator implements
         );
 
         return new PreAuthenticatedToken('anon.', $credentials, $providerKey);
-
     }
 
     public function authenticateToken(
@@ -100,7 +99,6 @@ class CodeAuthenticator implements
             if ($verify->getCode() != $credentials['code']) {
                 throw new AuthenticationException('Token & Verification Code do not match');
             }
-
         } else {
             throw new AuthenticationException('Token does not exist');
         }
@@ -112,7 +110,6 @@ class CodeAuthenticator implements
         }
 
         return new PreAuthenticatedToken($user, $credentials, $providerKey, $user->getRoles());
-
     }
 
     public function supportsToken(TokenInterface $token, $providerKey)

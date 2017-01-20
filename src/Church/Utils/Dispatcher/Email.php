@@ -18,7 +18,6 @@ class Email
 
         // Send the Message using Async.
         return $this->mandrill->send($message, '', array(), true);
-
     }
 
     /**
