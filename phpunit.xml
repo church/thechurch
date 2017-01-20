@@ -23,6 +23,7 @@
             <directory>./src</directory>
             <exclude>
                 <directory>./src/*/Resources</directory>
+                <directory>./src/*/Tests</directory>
             </exclude>
         </whitelist>
     </filter>
