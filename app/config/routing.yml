@@ -5,6 +5,10 @@ user:
 user_logout:
     path: /u/logout
 
+me:
+    resource: '@Church/Controller/MeController.php'
+    type:     annotation
+
 place:
     resource: '@Church/Controller/PlaceController.php'
     type:     annotation

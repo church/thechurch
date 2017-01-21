@@ -36,22 +36,6 @@ class UserController extends Controller
 {
 
   /**
-   * @Route("/me.{_format}")
-   *
-   * @TODO move to a Me controller.
-   */
-    public function meAction(Request $request) : Response
-    {
-        $user = $this->getUser();
-
-        if (!$user) {
-            throw new NotFoundHttpException('Not Logged In');
-        }
-
-        return $this->reply($user, $request->getRequestFormat());
-    }
-
-  /**
    * @Route("/{user}.{_format}")
    */
     public function showAction(User $user, Request $request) : Response

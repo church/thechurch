@@ -2,6 +2,7 @@
 
 namespace Church\Controller;
 
+use Church\Response\SerializerResponseTrait;
 use Church\Entity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -12,24 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Controller
 {
 
-    /**
-     * @var array
-     */
-    protected const SERIALIZE_CONTEXT = [
-      'groups' => [
-        'api'
-      ],
-    ];
+    use SerializerResponseTrait;
 
     /**
      * @var string
      */
     protected const CSRF_TOKEN_ID = 'api';
-
-    /**
-     * @var Symfony\Component\Serializer\SerializerInterface
-     */
-    protected $serializer;
 
     /**
      * @var Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
@@ -52,34 +41,30 @@ abstract class Controller
     }
 
     /**
-     * Reply action that serializes the data passed.
+     * Determine if current user is logged in.
      */
-    protected function reply(
-        $data,
-        string $format,
-        int $status = 200,
-        iterable $headers = []
-    ) : Response {
+    protected function isLoggedIn() : bool
+    {
+        try {
+            $this->getUser();
+        } catch (\Exception $e) {
+            return false;
+        }
 
-        return new Response(
-            $this->serializer->serialize($data, $format, self::SERIALIZE_CONTEXT),
-            $status,
-            $headers
-        );
+        return true;
     }
 
     /**
      * Get a user from the Security Token Storage.
      */
-    protected function getUser() :? User
+    protected function getUser() : User
     {
         if (null === $token = $this->tokenStorage->getToken()) {
-            return null;
+            throw new \Exception('Not Logged In.');
         }
 
         if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return null;
+            throw new \Exception('Not Logged In.');
         }
 
         return $user;

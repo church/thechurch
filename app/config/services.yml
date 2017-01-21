@@ -19,6 +19,10 @@ services:
         parent: church.controller
         class: Church\Controller\CsrfController
 
+  church.controller_me:
+        parent: church.controller
+        class: Church\Controller\MeController
+
   church.controller_user:
         parent: church.controller
         class: Church\Controller\UserController
@@ -28,6 +32,13 @@ services:
         public: false
         tags:
             - { name: serializer.normalizer }
+
+  church.exception_listener:
+        class: Church\EventListener\ExceptionListener
+        arguments:
+          - '@serializer'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
 
   church.tree_maker:
      class: Church\EventListener\TreeMaker
