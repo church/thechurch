@@ -9,6 +9,8 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class Controller
 {
@@ -21,23 +23,30 @@ abstract class Controller
     protected const CSRF_TOKEN_ID = 'api';
 
     /**
-     * @var Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
+     * @var \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
      */
     protected $tokenStorage;
 
     /**
-     * @var Symfony\Component\Security\Csrf\CsrfTokenManagerInterface
+     * @var \Symfony\Component\Security\Csrf\CsrfTokenManagerInterface
      */
     protected $csrfTokenManager;
+
+    /**
+     * @var \Symfony\Component\Validator\Validator\ValidatorInterface
+     */
+    protected $validator;
 
     public function __construct(
         SerializerInterface $serializer,
         TokenStorageInterface $tokenStorage,
-        CsrfTokenManagerInterface $csrfTokenManager
+        CsrfTokenManagerInterface $csrfTokenManager,
+        ValidatorInterface $validator
     ) {
         $this->serializer = $serializer;
         $this->tokenStorage = $tokenStorage;
         $this->csrfTokenManager = $csrfTokenManager;
+        $this->validator = $validator;
     }
 
     /**
@@ -68,5 +77,16 @@ abstract class Controller
         }
 
         return $user;
+    }
+
+    protected function validate($data) : bool
+    {
+        $errors = $this->validator->validate($data);
+
+        if (count($errors)) {
+            throw new BadRequestHttpException((string) $errors);
+        }
+
+        return true;
     }
 }

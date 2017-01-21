@@ -11,10 +11,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use Church\Entity\User\User;
+use Church\Entity\User\Login;
 use Church\Entity\User\EmailVerify;
 use Church\Entity\User\PhoneVerify;
 use Church\Form\Type\LoginType;
-use Church\Form\Model\Login;
 use Church\Form\Type\VerifyType;
 use Church\Form\Model\Verify;
 use Church\Form\Type\NameType;
@@ -37,58 +37,12 @@ class UserController extends Controller
 
   /**
    * @Route("/{user}.{_format}")
+   *
+   * @TODO add an int rquirement for user.
    */
     public function showAction(User $user, Request $request) : Response
     {
         return $this->reply($user, $request->getRequestFormat());
-    }
-
-    /**
-     * @Route("/login", name="user_login")
-     * @Security("!has_role('ROLE_USER')")
-     */
-    public function loginAction(Request $request)
-    {
-        // Build the Registration Form
-        $form = $this->createForm(new LoginType(), new Login());
-
-        // Handle the Form Request.
-        $form->handleRequest($request);
-
-        // If this Form has been completed
-        if ($form->isSubmitted() && $form->isValid()) {
-            $login = $form->getData();
-
-            $validator = $this->get('church.validator.login');
-
-            if ($validator->isEmail($login->getUsername())) {
-                $verify = $this->get('church.verify_create')
-                               ->createEmail($login->getUsername());
-
-                // Send the Verification.
-                $this->get('church.verify_send')->sendEmail($verify);
-
-                return $this->redirect($this->generateUrl('user_verify', array(
-                    'type' => 'e',
-                    'token' => $verify->getToken(),
-                )));
-            } elseif ($validator->isPhone($login->getUsername())) {
-                $verify = $this->get('church.verify_create')
-                               ->createPhone($login->getUsername());
-
-                // Send the Verification.
-                $this->get('church.verify_send')->sendSMS($verify);
-
-                return $this->redirect($this->generateUrl('user_verify', array(
-                    'type' => 'p',
-                    'token' => $verify->getToken(),
-                )));
-            }
-        }
-
-        return $this->render('user/login.html.twig', array(
-            'form' => $form->createView(),
-        ));
     }
 
     /**

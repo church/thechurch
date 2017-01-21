@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Form\Model;
+namespace Church\Entity\User;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Church\Validator\Constraints as ChurchAssert;
@@ -16,12 +16,14 @@ class Login
      */
     protected $username;
 
-    public function setUsername($username)
+    public function setUsername(string $username) : self
     {
         $this->username = $username;
+
+        return $this;
     }
 
-    public function getUsername()
+    public function getUsername() :? string
     {
         return $this->username;
     }

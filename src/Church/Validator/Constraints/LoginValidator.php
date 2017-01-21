@@ -14,8 +14,14 @@ use libphonenumber\NumberParseException;
 class LoginValidator extends ConstraintValidator
 {
 
+  /**
+   * @var \Egulias\EmailValidator\EmailValidator
+   */
     private $email;
 
+    /**
+     * @var \libphonenumber\PhoneNumberUtil
+     */
     private $phone;
 
     public function __construct(EmailValidator $email, PhoneNumberUtil $phone)
@@ -43,7 +49,7 @@ class LoginValidator extends ConstraintValidator
      */
     public function isEmail($value)
     {
-        return $this->getEmail()->isValid($value);
+        return $this->email->isValid($value);
     }
 
     /**
@@ -56,33 +62,11 @@ class LoginValidator extends ConstraintValidator
     public function isPhone($value)
     {
         try {
-            $number = $this->getPhone()->parse($value, 'US');
+            $number = $this->phone->parse($value, 'US');
         } catch (NumberParseException $e) {
             return false;
         }
 
-        return $this->getPhone()->isValidNumber($number);
-    }
-
-    public function setEmail($email)
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    public function setPhone($phone)
-    {
-        $this->phone = $phone;
-        return $this;
-    }
-
-    public function getPhone()
-    {
-        return $this->phone;
+        return $this->email->isValidNumber($number);
     }
 }
