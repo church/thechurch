@@ -1,6 +1,6 @@
 ![the.church](https://thechur.ch/bundles/churchteaser/images/logo2.png)
 
-[![Build Status](https://travis-ci.org/church/thechurch.svg?branch=develop)](https://travis-ci.org/church/thechurch)
+[![Build Status](https://travis-ci.org/church/thechurch.svg?branch=develop)](https://travis-ci.org/church/thechurch) [![Coverage Status](https://coveralls.io/repos/github/church/thechurch/badge.svg?branch=develop)](https://coveralls.io/github/church/thechurch?branch=develop)
 
 ## Mission
 By the sacrifice and love of Jesus Christ our Lord, according to His eternal
