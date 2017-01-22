@@ -4,8 +4,6 @@ namespace Church\Controller;
 
 use Church\Response\SerializerResponseTrait;
 use Church\Entity\User\User;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,34 +16,15 @@ abstract class Controller
     use SerializerResponseTrait;
 
     /**
-     * @var string
-     */
-    protected const CSRF_TOKEN_ID = 'api';
-
-    /**
-     * @var \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    /**
-     * @var \Symfony\Component\Security\Csrf\CsrfTokenManagerInterface
-     */
-    protected $csrfTokenManager;
-
-    /**
      * @var \Symfony\Component\Validator\Validator\ValidatorInterface
      */
     protected $validator;
 
     public function __construct(
         SerializerInterface $serializer,
-        TokenStorageInterface $tokenStorage,
-        CsrfTokenManagerInterface $csrfTokenManager,
         ValidatorInterface $validator
     ) {
         $this->serializer = $serializer;
-        $this->tokenStorage = $tokenStorage;
-        $this->csrfTokenManager = $csrfTokenManager;
         $this->validator = $validator;
     }
 

@@ -8,8 +8,6 @@ services:
         abstract:  true
         arguments:
           - '@serializer'
-          - '@security.token_storage'
-          - '@security.csrf.token_manager'
           - '@validator'
 
   church.controller_default:
@@ -19,6 +17,8 @@ services:
   church.controller_csrf:
         parent: church.controller
         class: Church\Controller\CsrfController
+        arguments:
+          - '@security.csrf.token_manager'
 
   church.controller_me:
         parent: church.controller
@@ -40,6 +40,13 @@ services:
           - '@serializer'
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+  church.csrf_token_listener:
+    class: Church\EventListener\CsrfToken
+    arguments:
+      - '@security.csrf.token_manager'
+    tags:
+        - { name: kernel.event_listener, event: kernel.request }
 
   church.tree_maker:
      class: Church\EventListener\TreeMaker

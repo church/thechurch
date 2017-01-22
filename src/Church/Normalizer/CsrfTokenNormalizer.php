@@ -15,9 +15,12 @@ class CsrfTokenNormalizer implements NormalizerInterface
     *
     * Convert the object to a string.
     */
-    public function normalize($object, $format = null, array $context = array()) : string
+    public function normalize($object, $format = null, array $context = array()) : array
     {
-        return (string) $object;
+        return [
+          'id' => $object->getId(),
+          'value' => $object->getValue(),
+        ];
     }
 
     /**
