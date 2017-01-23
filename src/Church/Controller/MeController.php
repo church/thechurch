@@ -40,21 +40,15 @@ class MeController extends Controller
      * @Method("POST")
      * @Security("!has_role('ROLE_USER')")
      */
-    public function loginAction(Request $request)
+    public function loginAction(Request $request) : Response
     {
-        $login = $this->serializer->deserialize(
-            $request->getContent(),
-            Login::class,
-            $request->getRequestFormat()
-        );
-
-        $this->validate($login);
+        $login = $this->deserialize($request, Login::class);
 
         // @TODO Make this rest of this work. Perhaps a Normalizer should
         //       figure out if it's a email or a phone number? Then the
         //       verification logic should probably move into this class since
         //       this is the only place it will be used.
-        dump((string) $login);
+        dump($login);
         exit;
 
         // If this Form has been completed

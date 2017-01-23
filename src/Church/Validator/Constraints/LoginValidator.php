@@ -11,7 +11,7 @@ use libphonenumber\NumberParseException;
 /**
  * @Annotation
  */
-class LoginValidator extends ConstraintValidator
+class LoginValidator extends ConstraintValidator implements LoginValidatorInterface
 {
 
   /**
@@ -30,6 +30,9 @@ class LoginValidator extends ConstraintValidator
         $this->phone = $phone;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function validate($value, Constraint $constraint)
     {
         if (!$this->isEmail($value)) {
@@ -41,25 +44,17 @@ class LoginValidator extends ConstraintValidator
     }
 
     /**
-     * Determine if value is an email.
-     *
-     * @param string $value String to test if is an email.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isEmail($value)
+    public function isEmail(string $value) : bool
     {
         return $this->email->isValid($value);
     }
 
     /**
-     * Determine if value is phone number.
-     *
-     * @param string $value String to test if is an phone.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isPhone($value)
+    public function isPhone(string $value) : bool
     {
         try {
             $number = $this->phone->parse($value, 'US');

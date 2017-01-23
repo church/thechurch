@@ -3,10 +3,22 @@
 namespace Church\Normalizer;
 
 use Church\Entity\User\Login;
+use Church\Validator\Constraints\LoginValidatorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class LoginNormalizer implements DenormalizerInterface
 {
+
+    /**
+     * @var \Church\Validator\Constraints\LoginValidatorInterface
+     */
+    protected $validator;
+
+    public function __construct(LoginValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +30,13 @@ class LoginNormalizer implements DenormalizerInterface
             $login->setValue($data['value']);
         }
 
-        // @TODO set the type based on the validator.
+        if ($value = $login->getValue()) {
+            if ($this->validator->isEmail($value)) {
+                $login->setType('email');
+            } elseif ($this->validator->isPhone($value)) {
+                $login->setType('phone');
+            }
+        }
 
         return $login;
     }

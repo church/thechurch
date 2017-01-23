@@ -58,6 +58,24 @@ abstract class Controller
         return $user;
     }
 
+    /**
+     * Deserialize and validate an object.
+     *
+     * This method exists to prevent validation from being skipped by mistake.
+     */
+    protected function deserialize(Request $request, string $type)
+    {
+        $object = $this->serializer->deserialize(
+            $request->getContent(),
+            $type,
+            $request->getRequestFormat()
+        );
+
+        $this->validate($object);
+
+        return $object;
+    }
+
     protected function validate($data) : bool
     {
         $errors = $this->validator->validate($data);

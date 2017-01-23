@@ -34,9 +34,11 @@ services:
         tags:
             - { name: serializer.normalizer }
 
-  hurch.normalizer_login:
+  church.normalizer_login:
         class: Church\Normalizer\LoginNormalizer
         public: false
+        arguments:
+          - '@church.validator.login'
         tags:
             - { name: serializer.normalizer }
 
