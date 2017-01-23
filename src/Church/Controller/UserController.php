@@ -37,6 +37,7 @@ class UserController extends Controller
 
   /**
    * @Route("/{user}.{_format}")
+   * @Method("GET")
    *
    * @TODO add an int rquirement for user.
    */

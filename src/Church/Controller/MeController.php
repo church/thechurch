@@ -24,6 +24,7 @@ class MeController extends Controller
 {
   /**
    * @Route("/me.{_format}")
+   * @Method("GET")
    */
     public function showAction(Request $request) : Response
     {
@@ -53,7 +54,7 @@ class MeController extends Controller
         //       figure out if it's a email or a phone number? Then the
         //       verification logic should probably move into this class since
         //       this is the only place it will be used.
-        dump($login->getUserName());
+        dump((string) $login);
         exit;
 
         // If this Form has been completed

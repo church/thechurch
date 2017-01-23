@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -39,8 +40,9 @@ class CsrfController extends Controller
      *    "_format" = "json"
      *  }
      *)
+     * @Method("GET")
      */
-    public function showAction(Request $request)
+    public function showAction(Request $request) : Response
     {
         return $this->reply($this->csrfTokenManager->getToken(self::CSRF_TOKEN_ID), $request->getRequestFormat());
     }

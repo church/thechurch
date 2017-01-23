@@ -14,17 +14,22 @@ class Login
      *      max = "255"
      * )
      */
-    protected $username;
+    protected $value;
 
-    public function setUsername(string $username) : self
+    public function setValue(string $value) : self
     {
-        $this->username = $username;
+        $this->value = $value;
 
         return $this;
     }
 
-    public function getUsername() :? string
+    public function getValue() :? string
     {
-        return $this->username;
+        return $this->value;
+    }
+
+    public function __toString() : string
+    {
+        return $this->value;
     }
 }
