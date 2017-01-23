@@ -17,12 +17,12 @@ class LoginValidator extends ConstraintValidator
   /**
    * @var \Egulias\EmailValidator\EmailValidator
    */
-    private $email;
+    protected $email;
 
     /**
      * @var \libphonenumber\PhoneNumberUtil
      */
-    private $phone;
+    protected $phone;
 
     public function __construct(EmailValidator $email, PhoneNumberUtil $phone)
     {
