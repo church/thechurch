@@ -15,24 +15,30 @@ use Church\Validator\Constraints\LoginValidator as Validator;
 class VerifyCreate
 {
 
-    private $doctrine;
+    /**
+     * @var \Symfony\Bridge\Doctrine\RegistryInterface
+     */
+    protected $doctrine;
 
-    private $random;
+    /**
+     * @var \RandomLib\Generator
+     */
+    protected $random;
 
-    private $validator;
+    /**
+     * @var \Church\Validator\Constraints\LoginValidator
+     */
+    protected $validator;
 
-    private $user_create;
 
     public function __construct(
         Doctrine $doctrine,
         RandomGenerator $random,
-        Validator $validator,
-        UserCreate $user_create
+        Validator $validator
     ) {
         $this->doctrine = $doctrine;
         $this->random = $random;
         $this->validator = $validator;
-        $this->user_create = $user_create;
     }
 
     /**
@@ -44,7 +50,7 @@ class VerifyCreate
      */
     public function createEmail($email_address)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         // Get the existig email from the database.
         $email = $this->findExistingEmail($email_address);
@@ -54,7 +60,7 @@ class VerifyCreate
             $email = new Email();
             $email->setEmail($email_address);
 
-            $user = $this->getUserCreate()->createFromEmail($email);
+            $user = $em->getRepository(User::class)->createFromEmail($email);
         }
 
         $verify = new EmailVerify();
@@ -81,9 +87,9 @@ class VerifyCreate
     public function createPhone($phone_number)
     {
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
-        $parsed = $this->getValidator()->getPhone()->parse($phone_number, 'US');
+        $parsed = $this->validator->getPhone()->parse($phone_number, 'US');
 
         $phone_number = $parsed->getCountryCode().$parsed->getNationalNumber();
 
@@ -95,11 +101,11 @@ class VerifyCreate
             $phone = new Phone();
             $phone->setPhone($phone_number);
 
-            $user = $this->getUserCreate()->createFromPhone($phone);
+            $user = $em->getRepository(User::class)->createFromPhone($phone);
         }
 
         $verify = new PhoneVerify();
-        $random = $this->getRandom();
+        $random = $this->random;
         $verify->setToken($this->getUniqueToken('Church:User\PhoneVerify'));
         $verify->setCode($this->getUniqueCode('Church:User\PhoneVerify'));
         $verify->setPhone($phone);
@@ -122,14 +128,14 @@ class VerifyCreate
     private function findExistingEmail($email_address)
     {
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         // Get the existig email from the database.
-        $repository = $this->getDoctrine()->getRepository('Church:User\Email');
+        $repository = $this->doctrine->getRepository('Church:User\Email');
 
         // If there is ane email, then there's also a user.
         if ($email = $repository->findOneByEmail($email_address)) {
-            $repository = $this->getDoctrine()->getRepository('Church:User\EmailVerify');
+            $repository = $this->doctrine->getRepository('Church:User\EmailVerify');
 
             // If one is found, destroy it so a new one can be issued.
             if ($verify = $repository->findOneByEmail($email_address)) {
@@ -151,14 +157,14 @@ class VerifyCreate
     private function findExistingPhone($phone_number)
     {
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         // Get the existig email from the database.
-        $repository = $this->getDoctrine()->getRepository('Church:User\Phone');
+        $repository = $this->doctrine->getRepository(Phone::class);
 
         // If there is ane email, then there's also a user.
         if ($phone = $repository->findOneByPhone($phone_number)) {
-            $repository = $this->getDoctrine()->getRepository('Church:User\PhoneVerify');
+            $repository = $this->doctrine->getRepository(PhoneVerify::class);
 
             // If one is found, destroy it so a new one can be issued.
             if ($verify = $repository->findOneByPhone($phone_number)) {
@@ -179,8 +185,8 @@ class VerifyCreate
      */
     private function getUniqueToken($entity)
     {
-        $repository = $this->getDoctrine()->getRepository($entity);
-        $random = $this->getRandom();
+        $repository = $this->doctrine->getRepository($entity);
+        $random = $this->random;
 
         do {
             $token = $random->generateString(6, $random::CHAR_ALNUM);
@@ -198,57 +204,13 @@ class VerifyCreate
      */
     private function getUniqueCode($entity)
     {
-        $repository = $this->getDoctrine()->getRepository($entity);
-        $random = $this->getRandom();
+        $repository = $this->doctrine->getRepository($entity);
+        $random = $this->random;
 
         do {
             $code = $random->generateString(6, $random::CHAR_DIGITS);
         } while ($repository->findOneByCode($code));
 
         return $code;
-    }
-
-    public function setDoctrine($doctrine)
-    {
-        $this->doctrine = $doctrine;
-        return $this;
-    }
-
-    public function getDoctrine()
-    {
-        return $this->doctrine;
-    }
-
-    public function setRandom($random)
-    {
-        $this->random = $random;
-        return $this;
-    }
-
-    public function getRandom()
-    {
-        return $this->random;
-    }
-
-    public function setValidator($validator)
-    {
-        $this->validator = $validator;
-        return $this;
-    }
-
-    public function getValidator()
-    {
-        return $this->validator;
-    }
-
-    public function setUserCreate($user_create)
-    {
-        $this->user_create = $user_create;
-        return $this;
-    }
-
-    public function getUserCreate()
-    {
-        return $this->user_create;
     }
 }

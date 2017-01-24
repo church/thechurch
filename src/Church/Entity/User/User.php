@@ -19,7 +19,7 @@ use Church\Entity\User\Phone;
  * Church\Entity\User\User
  *
  * @ORM\Table(name="users")
- * @ORM\Entity(repositoryClass="Church\Entity\User\UserRepository")
+ * @ORM\Entity(repositoryClass="Church\Repository\User\UserRepository")
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("username")
  * @UniqueEntity("primary_email")
