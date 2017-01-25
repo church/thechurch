@@ -14,6 +14,8 @@ use Church\Message\SMS as SMSMessage;
 class VerifySend
 {
 
+    // @TODO Move this into the appropriate Verify utility.
+
     private $dispatcher;
 
     private $router;

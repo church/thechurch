@@ -15,6 +15,8 @@ use Church\Validator\Constraints\LoginValidator as Validator;
 class VerifyCreate
 {
 
+    // @TODO Move the phone verification into it's own class.
+
     /**
      * @var \Symfony\Bridge\Doctrine\RegistryInterface
      */
@@ -39,42 +41,6 @@ class VerifyCreate
         $this->doctrine = $doctrine;
         $this->random = $random;
         $this->validator = $validator;
-    }
-
-    /**
-     * Create a Verification from an email address.
-     *
-     * @param string $email_address Valid email address.
-     *
-     * @return EmailVerify Newly created verify object.
-     */
-    public function createEmail($email_address)
-    {
-        $em = $this->doctrine->getManager();
-
-        // Get the existig email from the database.
-        $email = $this->findExistingEmail($email_address);
-
-        // If there is ane email, then there's also a user.
-        if (!$email) {
-            $email = new Email();
-            $email->setEmail($email_address);
-
-            $user = $em->getRepository(User::class)->createFromEmail($email);
-        }
-
-        $verify = new EmailVerify();
-
-        $verify->setToken($this->getUniqueToken('Church:User\EmailVerify'));
-        $verify->setCode($this->getUniqueCode('Church:User\EmailVerify'));
-        $verify->setEmail($email);
-        $email->setVerify($verify);
-
-        $em->persist($email);
-        $em->persist($verify);
-        $em->flush();
-
-        return $verify;
     }
 
     /**
@@ -119,42 +85,13 @@ class VerifyCreate
     }
 
     /**
-     * Finds an Existing Email.
-     *
-     * @param string $email_address Valid email_addressr.
-     *
-     * @return mixed Existing Email object or NULL.
-     */
-    private function findExistingEmail($email_address)
-    {
-
-        $em = $this->doctrine->getManager();
-
-        // Get the existig email from the database.
-        $repository = $this->doctrine->getRepository('Church:User\Email');
-
-        // If there is ane email, then there's also a user.
-        if ($email = $repository->findOneByEmail($email_address)) {
-            $repository = $this->doctrine->getRepository('Church:User\EmailVerify');
-
-            // If one is found, destroy it so a new one can be issued.
-            if ($verify = $repository->findOneByEmail($email_address)) {
-                $em->remove($verify);
-                $em->flush();
-            }
-        }
-
-        return $email;
-    }
-
-    /**
      * Finds an Existing Phone Number.
      *
      * @param string $phone_number Valid phone number.
      *
      * @return mixed Existing Phone object or NULL.
      */
-    private function findExistingPhone($phone_number)
+    private function findExistingPhone($phone_number) :? Phone
     {
 
         $em = $this->doctrine->getManager();
