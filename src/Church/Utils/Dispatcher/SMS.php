@@ -8,9 +8,9 @@ use Church\Message\SMS as Message;
 class SMS
 {
 
-    private $nexmo;
+    protected $nexmo;
 
-    private $from;
+    protected $from;
 
     /**
      * Send an SMS message.
@@ -36,9 +36,9 @@ class SMS
     {
 
         // Send the Message.
-        $result = $this->getNexmo()->sendText(
+        $result = $this->nexmo->sendText(
             $message->getTo(),
-            $this->getFrom(),
+            $this->from,
             $message->getTextString()
         );
 
@@ -50,21 +50,5 @@ class SMS
                 throw new \Exception($error->errortext);
             }
         }
-    }
-
-    /**
-     * Get Mandrill Object.
-     */
-    public function getNexmo()
-    {
-        return $this->nexmo;
-    }
-
-    /**
-     * Get From Number.
-     */
-    public function getFrom()
-    {
-        return $this->from;
     }
 }

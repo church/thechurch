@@ -1,18 +1,15 @@
 <?php
 
-namespace Church\Utils;
-
-use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
-use RandomLib\Generator as RandomGenerator;
+namespace Church\Utils\User;
 
 use Church\Entity\User\User;
-use Church\Entity\User\Email;
-use Church\Entity\User\EmailVerify;
 use Church\Entity\User\Phone;
 use Church\Entity\User\PhoneVerify;
-use Church\Validator\Constraints\LoginValidator as Validator;
+use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
+use RandomLib\Generator as RandomGenerator;
+use libphonenumber\PhoneNumberUtil;
 
-class VerifyCreate
+class PhoneVerification implements VerificationInterface
 {
 
     // @TODO Move the phone verification into it's own class.
@@ -28,36 +25,35 @@ class VerifyCreate
     protected $random;
 
     /**
-     * @var \Church\Validator\Constraints\LoginValidator
+     * @var \libphonenumber\PhoneNumberUtil
      */
-    protected $validator;
+    protected $parser;
 
 
     public function __construct(
         Doctrine $doctrine,
         RandomGenerator $random,
-        Validator $validator
+        PhoneNumberUtil $parser
     ) {
         $this->doctrine = $doctrine;
         $this->random = $random;
-        $this->validator = $validator;
+        $this->parser = $parser;
     }
 
     /**
-     * Create a Verification from an phone number.
+     * Create a Verification from an email address.
      *
-     * @param string $phone_number Valid phone number.
+     * @param string $phone_number Valid phone number address.
      *
      * @return PhoneVerify Newly created verify object.
      */
-    public function createPhone($phone_number)
+    public function create(string $phone_number) : Verify
     {
-
         $em = $this->doctrine->getManager();
 
-        $parsed = $this->validator->getPhone()->parse($phone_number, 'US');
+        $parsed = $this->parser->parse($phone_number, 'US');
 
-        $phone_number = $parsed->getCountryCode().$parsed->getNationalNumber();
+        $phone_number = $parsed->getCountryCode() . $parsed->getNationalNumber();
 
         // Get the existig email from the database.
         $phone = $this->findExistingPhone($phone_number);
@@ -72,8 +68,8 @@ class VerifyCreate
 
         $verify = new PhoneVerify();
         $random = $this->random;
-        $verify->setToken($this->getUniqueToken('Church:User\PhoneVerify'));
-        $verify->setCode($this->getUniqueCode('Church:User\PhoneVerify'));
+        $verify->setToken($this->getUniqueToken());
+        $verify->setCode($this->getUniqueCode());
         $verify->setPhone($phone);
         $phone->setVerify($verify);
 
@@ -91,7 +87,7 @@ class VerifyCreate
      *
      * @return mixed Existing Phone object or NULL.
      */
-    private function findExistingPhone($phone_number) :? Phone
+    private function findExisting(string $phone_number) :? Phone
     {
 
         $em = $this->doctrine->getManager();
@@ -116,13 +112,14 @@ class VerifyCreate
     /**
      * Gets a Unique Token
      *
-     * @param string $entity Doctrine entity to search against.
-     *
      * @return string A unique token.
+     *
+     * @deprecated Attempt to insert and catch the exception rather than looking
+     *             for an existing item which may be a race condition.
      */
-    private function getUniqueToken($entity)
+    private function getUniqueToken()
     {
-        $repository = $this->doctrine->getRepository($entity);
+        $repository = $this->doctrine->getRepository(PhoneVerify::class);
         $random = $this->random;
 
         do {
@@ -138,10 +135,13 @@ class VerifyCreate
      * @param string $entity Doctrine entity to search against.
      *
      * @return string A unique code.
+     *
+     * @deprecated Attempt to insert and catch the exception rather than looking
+     *             for an existing item which may be a race condition.
      */
-    private function getUniqueCode($entity)
+    private function getUniqueCode()
     {
-        $repository = $this->doctrine->getRepository($entity);
+        $repository = $this->doctrine->getRepository(PhoneVerify::class);
         $random = $this->random;
 
         do {

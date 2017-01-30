@@ -7,6 +7,8 @@ use Church\Message\Email as Message;
 class Email
 {
 
+    // @TODO Ineject Send Grid.
+
     /**
      * Send an Email message.
      *
@@ -18,13 +20,5 @@ class Email
 
         // Send the Message using Async.
         return $this->mandrill->send($message, '', array(), true);
-    }
-
-    /**
-     * Get Mandrill Object.
-     */
-    public function getMandrill()
-    {
-        return $this->mandrill;
     }
 }

@@ -8,11 +8,8 @@ use RandomLib\Generator as RandomGenerator;
 use Church\Entity\User\User;
 use Church\Entity\User\Email;
 use Church\Entity\User\EmailVerify;
-use Church\Entity\User\Phone;
-use Church\Entity\User\PhoneVerify;
-use Church\Validator\Constraints\LoginValidator as Validator;
 
-class VerifyCreate implements VerifyInterface
+class EmailVerification implements VerificationInterface
 {
 
     /**
