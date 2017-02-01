@@ -5,6 +5,8 @@ namespace Church\Utils\User;
 use Church\Entity\User\User;
 use Church\Entity\User\Phone;
 use Church\Entity\User\PhoneVerify;
+use Church\Entity\Message\SMS as Message;
+use Church\Utils\Dispatcher\SMS as Dispatcher;
 use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
 use RandomLib\Generator as RandomGenerator;
 use libphonenumber\PhoneNumberUtil;
@@ -29,15 +31,21 @@ class PhoneVerification implements VerificationInterface
      */
     protected $parser;
 
+    /**
+     * @var \Church\Utils\Dispatcher\SMS
+     */
+    protected $dispatcher;
 
     public function __construct(
         Doctrine $doctrine,
         RandomGenerator $random,
-        PhoneNumberUtil $parser
+        PhoneNumberUtil $parser,
+        Dispatcher $dispatcher
     ) {
         $this->doctrine = $doctrine;
         $this->random = $random;
         $this->parser = $parser;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -78,6 +86,31 @@ class PhoneVerification implements VerificationInterface
         $em->flush();
 
         return $verify;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function send(PhoneVerify $verify) : boolean
+    {
+        $message = new Message();
+
+        $params = array(
+          'token' => $verify->getToken(),
+          'code' => $verify->getCode(),
+        );
+
+        // @TODO get rid of the router and generate the url ourselves.
+        $link = $this->getRouter()->generate('user_verify_phone', $params, true);
+
+        $message->setTo($verify->getPhone()->getPhone());
+
+        $message->addTextLine('thechur.ch');
+        $message->addTextLine('Login Code: '.$verify->getCode());
+        $message->addTextLine('');
+        $message->addTextLine($link);
+
+        return $this->dispatcher->send($message);
     }
 
     /**

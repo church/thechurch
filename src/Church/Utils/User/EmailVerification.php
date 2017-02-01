@@ -8,6 +8,8 @@ use RandomLib\Generator as RandomGenerator;
 use Church\Entity\User\User;
 use Church\Entity\User\Email;
 use Church\Entity\User\EmailVerify;
+use Church\Entity\Message\Email as Message;
+use Church\Utils\Dispatcher\Email as Dispatcher;
 
 class EmailVerification implements VerificationInterface
 {
@@ -22,13 +24,19 @@ class EmailVerification implements VerificationInterface
      */
     protected $random;
 
+    /**
+     * @var \Church\Utils\Dispatcher\Email
+     */
+    protected $dispatcher;
 
     public function __construct(
         Doctrine $doctrine,
-        RandomGenerator $random
+        RandomGenerator $random,
+        Dispatcher $dispatcher
     ) {
         $this->doctrine = $doctrine;
         $this->random = $random;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -66,6 +74,33 @@ class EmailVerification implements VerificationInterface
 
         return $verify;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function send(EmailVerify $verify) : boolean
+    {
+        $message = new Message();
+
+        $params = array(
+          'token' => $verify->getToken(),
+          'code' => $verify->getCode(),
+        );
+
+        // Build the Message.
+        $message->addTo($verify->getEmail()->getEmail());
+        $message->setSubject('Confirm Your Email');
+
+        // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
+        $text = "Please visit the following location to verify your email.\n";
+        $text .= $this->getRouter()->generate('user_verify_email', $params, true);
+
+        $message->setText($text);
+
+        // Send the Message using Async.
+        return $this->dispatcher->send($message);
+    }
+
 
     /**
      * Finds an Existing Email.

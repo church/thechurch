@@ -1,10 +1,10 @@
 <?php
 
-namespace Church\Message;
+namespace Church\Entity\Message;
 
 use Hip\MandrillBundle\Message;
 
-class Email extends Message
+class EmailMessage extends Message implements MessageInterface
 {
 
     /**

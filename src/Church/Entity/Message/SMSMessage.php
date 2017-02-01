@@ -1,8 +1,8 @@
 <?php
 
-namespace Church\Message;
+namespace Church\Entity\Message;
 
-class SMS
+class SMSMessage implements MessageInterface
 {
 
     private $to;

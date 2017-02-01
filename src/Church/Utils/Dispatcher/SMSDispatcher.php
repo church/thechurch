@@ -5,7 +5,7 @@ namespace Church\Utils\Dispatcher;
 use NexmoMessage as Nexmo;
 use Church\Message\SMS as Message;
 
-class SMS
+class SMSDispatcher implements DispatcherInterface
 {
 
     protected $nexmo;
@@ -32,7 +32,7 @@ class SMS
      * @param Message
      *    Message Object compatible this object.
      */
-    public function send(Message $message)
+    public function send(Message $message) : boolean
     {
 
         // Send the Message.
@@ -50,5 +50,7 @@ class SMS
                 throw new \Exception($error->errortext);
             }
         }
+
+        return true;
     }
 }

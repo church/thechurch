@@ -17,7 +17,7 @@ use Church\Entity\User\Email;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
-class EmailVerify
+class EmailVerify implements VerifyInterface
 {
 
     /**

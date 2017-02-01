@@ -18,7 +18,7 @@ use Church\Entity\User\Phone;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
-class PhoneVerify
+class PhoneVerify implements VerifyInterface
 {
 
     /**

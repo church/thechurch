@@ -4,7 +4,7 @@ namespace Church\Utils\Dispatcher;
 
 use Church\Message\Email as Message;
 
-class Email
+class EmailDispatcher implements DispatcherInterface
 {
 
     // @TODO Ineject Send Grid.
@@ -15,10 +15,12 @@ class Email
      * @param Message
      *    Message Object compatible with Mandrill.
      */
-    public function send(Message $message)
+    public function send(Message $message) : boolean
     {
 
         // Send the Message using Async.
-        return $this->mandrill->send($message, '', array(), true);
+        $this->mandrill->send($message, '', array(), true);
+
+        return true;
     }
 }
