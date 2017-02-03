@@ -83,8 +83,10 @@ class MeController extends Controller
         //       verification logic should probably move into this class since
         //       this is the only place it will be used.
         $verification = $this->verificationManager->getVerification($login->getType());
-        dump($verification);
-        exit;
+
+        $verify = $verification->create($login);
+
+        return $this->reply($verify, $request->getRequestFormat());
 
         // If this Form has been completed
         if ($form->isSubmitted() && $form->isValid()) {
