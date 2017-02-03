@@ -25,21 +25,15 @@ class LoginNormalizer implements DenormalizerInterface
      */
     public function denormalize($data, $class, $format = null, array $context = array()) : Login
     {
-        $login = new Login();
-
-        if (isset($data['value'])) {
-            $login->setValue($data['value']);
-        }
-
-        if ($value = $login->getValue()) {
-            if ($this->validator->isEmail($value)) {
-                $login->setType('email');
-            } elseif ($this->validator->isPhone($value)) {
-                $login->setType('phone');
+        if (array_key_exists('value', $data)) {
+            if ($this->validator->isEmail($data['value'])) {
+                $data['type'] = 'email';
+            } elseif ($this->validator->isPhone($data['value'])) {
+                $data['type'] = 'phone';
             }
         }
 
-        return $login;
+        return new Login($data);
     }
 
     /**

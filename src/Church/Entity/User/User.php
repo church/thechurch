@@ -39,16 +39,16 @@ class User implements UserInterface, Serializable, EquatableInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(name="first_name", type="string", length=255, nullable=true)
      * @Groups({"api"})
      */
-    private $first_name;
+    private $firstName;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(name="last_name", type="string", length=255, nullable=true)
      * @Groups({"api"})
      */
-    private $last_name;
+    private $lastName;
 
     /**
      * @ORM\Column(type="string", length=25, unique=true, nullable=true)
@@ -121,17 +121,36 @@ class User implements UserInterface, Serializable, EquatableInterface
      */
     private $created;
 
-    private $isActive;
 
     /**
      * Construct
+     *
+     * @TODO Finish this!
      */
-    public function __construct()
+    public function __construct($data = [])
     {
-        $this->isActive = true;
-        $this->email = new ArrayCollection();
-        $this->phone = new ArrayCollection();
-        $this->faith = false;
+        $id = $data['id'] ?? null;
+        $this->id = is_int($id) ? $id : null;
+
+        $firstName = $data['firstName'] ?? null;
+        $this->firstName = is_string($firstName) ? $firstName : null;
+
+        $lastName = $data['lastName'] ?? null;
+        $this->lastName = is_string($lastName) ? $lastName : null;
+
+        $username = $data['username'] ?? null;
+        $this->username = is_string($username) ? $username : null;
+
+        // @TODO ....
+
+        $email = $data['email'] ?? [];
+        $email = is_array($email) ? new ArrayCollection($email) : new ArrayCollection();
+
+        $phone = $data['phone'] ?? [];
+        $phone = is_array($phone) ? new ArrayCollection($phone) : new ArrayCollection();
+
+        $faith = $data['faith'] ?? false;
+        $this->faith = is_bool($faith) ? $faith : false;
     }
 
     /**
@@ -154,7 +173,7 @@ class User implements UserInterface, Serializable, EquatableInterface
         return $this->id;
     }
 
-    public function isActive() :? bool
+    public function isActive() : bool
     {
         return true;
     }
