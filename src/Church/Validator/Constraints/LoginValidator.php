@@ -35,6 +35,11 @@ class LoginValidator extends ConstraintValidator implements LoginValidatorInterf
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$value) {
+            return $this->context->buildViolation($constraint->message)
+                                 ->addViolation();
+        }
+
         if (!$this->isEmail($value)) {
             if (!$this->isPhone($value)) {
                 return $this->context->buildViolation($constraint->message)

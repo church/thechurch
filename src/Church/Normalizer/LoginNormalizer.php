@@ -27,11 +27,9 @@ class LoginNormalizer implements DenormalizerInterface
     {
         $login = new Login();
 
-        if (!isset($data['value'])) {
-            throw new BadRequestHttpException('Missing Value');
+        if (isset($data['value'])) {
+            $login->setValue($data['value']);
         }
-
-        $login->setValue($data['value']);
 
         if ($value = $login->getValue()) {
             if ($this->validator->isEmail($value)) {

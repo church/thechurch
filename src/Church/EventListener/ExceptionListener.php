@@ -41,6 +41,7 @@ class ExceptionListener
         }
 
         // Override the default request format.
+        // @TODO The Symfony exception handler converts the format back to text/html. :(
         if ($request->getRequestFormat() === 'html') {
             $request->setRequestFormat('json');
         }

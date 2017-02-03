@@ -29,7 +29,7 @@ class User implements UserInterface, Serializable, EquatableInterface
 {
 
     /**
-     * @var integer $id
+     * @var int $id
      *
      * @ORM\Column(name="user_id", type="integer")
      * @ORM\Id

@@ -89,7 +89,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername(string $username) : UserInterface
+    public function loadUserByUsername($username)
     {
         $query = $this->createQueryBuilder('u');
         $query->where('u.username = :username OR e.email = :email');
@@ -133,7 +133,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsClass(string $class) : bool
+    public function supportsClass($class)
     {
         return $this->getEntityName() === $class
             || is_subclass_of($class, $this->getEntityName());

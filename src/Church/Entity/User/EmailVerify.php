@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Symfony\Component\Serializer\Annotation\Groups;
 use Church\Entity\User\User;
 use Church\Entity\User\Email;
 
@@ -30,6 +30,7 @@ class EmailVerify implements VerifyInterface
 
     /**
      * @ORM\Column(type="string", length=6, unique=true)
+     * @Groups({"api"})
      */
     private $token;
 
@@ -40,6 +41,7 @@ class EmailVerify implements VerifyInterface
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"api"})
      */
     private $created;
 

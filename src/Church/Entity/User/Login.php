@@ -14,10 +14,10 @@ class Login
     ];
 
     /**
-     * @ChurchAssert\Login
      * @Assert\Length(
      *      max = "255"
      * )
+     * @ChurchAssert\Login
      */
     protected $value;
 
