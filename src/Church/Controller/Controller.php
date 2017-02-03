@@ -65,6 +65,11 @@ abstract class Controller
      */
     protected function deserialize(Request $request, string $type)
     {
+
+        if (!$request->getContent()) {
+            throw new BadRequestHttpException('Missing Request Body.');
+        }
+
         $object = $this->serializer->deserialize(
             $request->getContent(),
             $type,

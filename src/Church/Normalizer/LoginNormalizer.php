@@ -4,6 +4,7 @@ namespace Church\Normalizer;
 
 use Church\Entity\User\Login;
 use Church\Validator\Constraints\LoginValidatorInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class LoginNormalizer implements DenormalizerInterface
@@ -26,9 +27,11 @@ class LoginNormalizer implements DenormalizerInterface
     {
         $login = new Login();
 
-        if (isset($data['value'])) {
-            $login->setValue($data['value']);
+        if (!isset($data['value'])) {
+            throw new BadRequestHttpException('Missing Value');
         }
+
+        $login->setValue($data['value']);
 
         if ($value = $login->getValue()) {
             if ($this->validator->isEmail($value)) {

@@ -17,7 +17,7 @@ class VerificationManager implements VerificationManagerInterface
      */
     public function hasVerification(string $type) : bool
     {
-        return array_key_exists($type, $this->vefications);
+        return array_key_exists($type, $this->verifications);
     }
 
     /**
@@ -25,7 +25,7 @@ class VerificationManager implements VerificationManagerInterface
      */
     public function getVerification(string $type) : VerificationInterface
     {
-        if (!array_key_exists($type, $this->vefications)) {
+        if (!array_key_exists($type, $this->verifications)) {
             throw new \LogicException('Verification does not exist.');
         }
 

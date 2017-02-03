@@ -14,6 +14,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
+ * Current User actions.
+ *
  * @Route(
  *    service="church.controller_me",
  *    defaults = {
@@ -30,6 +32,13 @@ class MeController extends Controller
      */
     protected $verificationManager;
 
+    /**
+     * Create a new Controller.
+     *
+     * @param SerializerInterface $serializer
+     * @param ValidatorInterface $validator
+     * @param VerificationManagerInterface $verificationManager
+     */
     public function __construct(
         SerializerInterface $serializer,
         ValidatorInterface $validator,
@@ -40,8 +49,12 @@ class MeController extends Controller
     }
 
    /**
+    * Show the current user.
+    *
     * @Route("/me.{_format}")
     * @Method("GET")
+    *
+    * @param Request $request
     */
     public function showAction(Request $request) : Response
     {
@@ -53,9 +66,13 @@ class MeController extends Controller
     }
 
     /**
+     * Login Action.
+     *
      * @Route("/login", name="user_login")
      * @Method("POST")
      * @Security("!has_role('ROLE_USER')")
+     *
+     * @param Request $request
      */
     public function loginAction(Request $request) : Response
     {

@@ -26,9 +26,19 @@ class ExceptionListener
         $exception = $event->getException();
         $request = $event->getRequest();
 
-        $data = [
-          'error' => $exception->getMessage(),
-        ];
+        if ($exception instanceof HttpExceptionInterface) {
+            $data = [
+                'error' => $exception->getMessage(),
+            ];
+        } else {
+            $data = [
+                'error' => $exception->getMessage(),
+                'code' => $exception->getCode(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTrace(),
+            ];
+        }
 
         // Override the default request format.
         if ($request->getRequestFormat() === 'html') {

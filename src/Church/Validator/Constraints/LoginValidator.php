@@ -62,6 +62,6 @@ class LoginValidator extends ConstraintValidator implements LoginValidatorInterf
             return false;
         }
 
-        return $this->email->isValidNumber($number);
+        return $this->phone->isValidNumber($number);
     }
 }
