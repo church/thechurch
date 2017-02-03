@@ -2,6 +2,8 @@
 
 namespace Church\Utils\User;
 
+use Church\Entity\Message\EmailMessage;
+use Church\Entity\User\VerifyInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
 use RandomLib\Generator as RandomGenerator;
 
@@ -9,7 +11,7 @@ use Church\Entity\User\User;
 use Church\Entity\User\Email;
 use Church\Entity\User\EmailVerify;
 use Church\Entity\Message\Email as Message;
-use Church\Utils\Dispatcher\Email as Dispatcher;
+use Church\Utils\Dispatcher\DispatcherInterface;
 
 class EmailVerification implements VerificationInterface
 {
@@ -25,14 +27,14 @@ class EmailVerification implements VerificationInterface
     protected $random;
 
     /**
-     * @var \Church\Utils\Dispatcher\Email
+     * @var \Church\Utils\Dispatcher\DispatcherInterface
      */
     protected $dispatcher;
 
     public function __construct(
         Doctrine $doctrine,
         RandomGenerator $random,
-        Dispatcher $dispatcher
+        DispatcherInterface $dispatcher
     ) {
         $this->doctrine = $doctrine;
         $this->random = $random;
@@ -46,7 +48,7 @@ class EmailVerification implements VerificationInterface
      *
      * @return EmailVerify Newly created verify object.
      */
-    public function create(string $email_address) : EmailVerify
+    public function create(string $email_address) : VerifyInterface
     {
         $em = $this->doctrine->getManager();
 
@@ -78,9 +80,9 @@ class EmailVerification implements VerificationInterface
     /**
      * {@inheritdoc}
      */
-    public function send(EmailVerify $verify) : boolean
+    public function send(VerifyInterface $verify) : bool
     {
-        $message = new Message();
+        $message = new EmailMessage();
 
         $params = array(
           'token' => $verify->getToken(),

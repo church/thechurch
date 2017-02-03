@@ -5,8 +5,9 @@ namespace Church\Utils\User;
 use Church\Entity\User\User;
 use Church\Entity\User\Phone;
 use Church\Entity\User\PhoneVerify;
-use Church\Entity\Message\SMS as Message;
-use Church\Utils\Dispatcher\SMS as Dispatcher;
+use Church\Entity\Message\SMSMessage;
+use Church\Entity\User\VerifyInterface;
+use Church\Utils\Dispatcher\DispatcherInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
 use RandomLib\Generator as RandomGenerator;
 use libphonenumber\PhoneNumberUtil;
@@ -32,7 +33,7 @@ class PhoneVerification implements VerificationInterface
     protected $parser;
 
     /**
-     * @var \Church\Utils\Dispatcher\SMS
+     * @var \Church\Utils\Dispatcher\DispatcherInterface
      */
     protected $dispatcher;
 
@@ -40,7 +41,7 @@ class PhoneVerification implements VerificationInterface
         Doctrine $doctrine,
         RandomGenerator $random,
         PhoneNumberUtil $parser,
-        Dispatcher $dispatcher
+        DispatcherInterface $dispatcher
     ) {
         $this->doctrine = $doctrine;
         $this->random = $random;
@@ -55,7 +56,7 @@ class PhoneVerification implements VerificationInterface
      *
      * @return PhoneVerify Newly created verify object.
      */
-    public function create(string $phone_number) : Verify
+    public function create(string $phone_number) : VerifyInterface
     {
         $em = $this->doctrine->getManager();
 
@@ -91,9 +92,9 @@ class PhoneVerification implements VerificationInterface
     /**
      * {@inheritdoc}
      */
-    public function send(PhoneVerify $verify) : boolean
+    public function send(VerifyInterface $verify) : bool
     {
-        $message = new Message();
+        $message = new SMSMessage();
 
         $params = array(
           'token' => $verify->getToken(),

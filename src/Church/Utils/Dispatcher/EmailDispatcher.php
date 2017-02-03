@@ -2,6 +2,7 @@
 
 namespace Church\Utils\Dispatcher;
 
+use Church\Entity\Message\MessageInterface;
 use Church\Message\Email as Message;
 
 class EmailDispatcher implements DispatcherInterface
@@ -15,7 +16,7 @@ class EmailDispatcher implements DispatcherInterface
      * @param Message
      *    Message Object compatible with Mandrill.
      */
-    public function send(Message $message) : boolean
+    public function send(MessageInterface $message) : bool
     {
 
         // Send the Message using Async.

@@ -3,6 +3,7 @@
 namespace Church\Utils\Dispatcher;
 
 use NexmoMessage as Nexmo;
+use Church\Entity\Message\MessageInterface;
 use Church\Message\SMS as Message;
 
 class SMSDispatcher implements DispatcherInterface
@@ -32,7 +33,7 @@ class SMSDispatcher implements DispatcherInterface
      * @param Message
      *    Message Object compatible this object.
      */
-    public function send(Message $message) : boolean
+    public function send(MessageInterface $message) : bool
     {
 
         // Send the Message.

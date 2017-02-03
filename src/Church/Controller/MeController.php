@@ -3,13 +3,15 @@
 namespace Church\Controller;
 
 use Church\Entity\User\Login;
+use Church\Utils\User\VerificationManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route(
@@ -22,10 +24,25 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
  */
 class MeController extends Controller
 {
-  /**
-   * @Route("/me.{_format}")
-   * @Method("GET")
-   */
+
+    /**
+     * @var \Church\Utils\User\VerificationManagerInterface
+     */
+    protected $verificationManager;
+
+    public function __construct(
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        VerificationManagerInterface $verificationManager
+    ) {
+        parent::__construct($serializer, $validator);
+        $this->verificationManager = $verificationManager;
+    }
+
+   /**
+    * @Route("/me.{_format}")
+    * @Method("GET")
+    */
     public function showAction(Request $request) : Response
     {
         if (!$this->isLoggedIn()) {
@@ -48,7 +65,8 @@ class MeController extends Controller
         //       figure out if it's a email or a phone number? Then the
         //       verification logic should probably move into this class since
         //       this is the only place it will be used.
-        dump($login);
+        $verification = $this->verificationManager->getVerification($login->getType());
+        dump($verification);
         exit;
 
         // If this Form has been completed

@@ -23,6 +23,9 @@ services:
   church.controller_me:
         parent: church.controller
         class: Church\Controller\MeController
+        arguments:
+            - "@church.verification_manager"
+
 
   church.controller_user:
         parent: church.controller
@@ -71,37 +74,39 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: valid_login }
 
-  church.user_create:
-      class: Church\Utils\UserCreate
-      arguments:
-        - '@doctrine'
-
   church.code_authenticator:
         class:     Church\Security\CodeAuthenticator
         arguments:
           - '@doctrine'
           - '@security.http_utils'
 
-  church.verify_create:
-      class: Church\Utils\VerifyCreate
-      arguments:
-        - '@doctrine'
-        - '@ircmaxell.random'
-        - '@church.validator.login'
-        - '@church.user_create'
+  church.verification_manager:
+      class: Church\Utils\User\VerificationManager
 
-  church.verify_send:
-      class: Church\Utils\VerifySend
+  church.verification_email:
+      class: Church\Utils\User\EmailVerification
       arguments:
-        - '@church.dispatcher_email'
-        - '@church.dispatcher_sms'
-        - '@router'
+          - '@doctrine'
+          - '@ircmaxell.random'
+          - '@church.dispatcher_email'
+      tags:
+            - { name: church.verification, type: email }
+
+  church.verification_phone:
+      class: Church\Utils\User\PhoneVerification
+      arguments:
+          - '@doctrine'
+          - '@ircmaxell.random'
+          - '@giggsey.phone_validator'
+          - '@church.dispatcher_sms'
+      tags:
+            - { name: church.verification, type: phone }
 
   church.dispatcher_email:
-      class: Church\Utils\Dispatcher\Email
+      class: Church\Utils\Dispatcher\EmailDispatcher
 
   church.dispatcher_sms:
-      class: Church\Utils\Dispatcher\SMS
+      class: Church\Utils\Dispatcher\SMSDispatcher
       arguments:
         - '@prawnsalad.nexmo'
         - '%nexmo_sender%'

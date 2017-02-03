@@ -13,5 +13,5 @@ interface DispatcherInterface
      * @param Message
      *    Message Object compatible with Mandrill.
      */
-    public function send(MessageInterface $message) : boolean;
+    public function send(MessageInterface $message) : bool;
 }
