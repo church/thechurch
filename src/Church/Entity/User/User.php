@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Serializable;
 
 use Church\Entity\Location;
 use Church\Entity\User\Email;
@@ -25,11 +24,11 @@ use Church\Entity\User\Phone;
  * @UniqueEntity("primary_email")
  * @UniqueEntity("primary_phone")
  */
-class User implements UserInterface, Serializable, EquatableInterface
+class User implements UserInterface, \Serializable, EquatableInterface
 {
 
     /**
-     * @var int $id
+     * @var int
      *
      * @ORM\Column(name="user_id", type="integer")
      * @ORM\Id
@@ -39,29 +38,32 @@ class User implements UserInterface, Serializable, EquatableInterface
     private $id;
 
     /**
+     * @var string
+     *
      * @ORM\Column(name="first_name", type="string", length=255, nullable=true)
      * @Groups({"api"})
      */
     private $firstName;
 
     /**
+     * @var string
+     *
      * @ORM\Column(name="last_name", type="string", length=255, nullable=true)
      * @Groups({"api"})
      */
     private $lastName;
 
     /**
+     * @var string
+     *
      * @ORM\Column(type="string", length=25, unique=true, nullable=true)
      * @Groups({"api"})
      */
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=60, nullable=true)
-     */
-    private $password;
-
-    /**
+     * @var ArrayCollection
+     *
      * @ORM\OneToMany(targetEntity="Email", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      * @Groups({"api"})
@@ -69,13 +71,17 @@ class User implements UserInterface, Serializable, EquatableInterface
     private $emails;
 
     /**
+     * @var Email
+     *
      * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
      * @ORM\JoinColumn(name="primary_email", referencedColumnName="email")
      * @Groups({"api"})
      */
-    private $primary_email;
+    private $primaryEmail;
 
     /**
+     * @var ArrayCollection
+     *
      * @ORM\OneToMany(targetEntity="Phone", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      * @Groups({"api"})
@@ -83,39 +89,34 @@ class User implements UserInterface, Serializable, EquatableInterface
     private $phones;
 
     /**
+     * @var Phone
+     *
      * @ORM\OneToOne(targetEntity="Phone", mappedBy="phone", cascade={"all"})
      * @ORM\JoinColumn(name="primary_phone", referencedColumnName="phone")
      * @Groups({"api"})
      */
-    private $primary_phone;
+    private $primaryPhone;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"api"})
-     */
-    private $address;
-
-    /**
+     * @var Location
+     *
      * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
-     * @ORM\JoinColumn(name="location_static", referencedColumnName="location_id")
+     * @ORM\JoinColumn(name="location", referencedColumnName="location_id")
      * @Groups({"api"})
      */
-    private $location_static;
+    private $location;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
-     * @ORM\JoinColumn(name="location_current", referencedColumnName="location_id")
-     * @Groups({"api"})
-     */
-    private $location_current;
-
-    /**
+     * @var bool
+     *
      * @ORM\Column(type="boolean", options={"default" = 0})
      * @Groups({"api"})
      */
     private $faith;
 
     /**
+     * @var \DateTimeInterface
+     *
      * @ORM\Column(type="datetime")
      * @Groups({"api"})
      */
@@ -123,9 +124,9 @@ class User implements UserInterface, Serializable, EquatableInterface
 
 
     /**
-     * Construct
+     * Create new User.
      *
-     * @TODO Finish this!
+     * @param array $data
      */
     public function __construct($data = [])
     {
@@ -141,16 +142,36 @@ class User implements UserInterface, Serializable, EquatableInterface
         $username = $data['username'] ?? null;
         $this->username = is_string($username) ? $username : null;
 
-        // @TODO ....
+        $emails = $data['emails'] ?? [];
+        if (is_array($emails)) {
+            $emails = array_filter($emails, function ($email) {
+                return $email instanceof Email;
+            });
+        }
+        $this->emails = is_array($emails) ? new ArrayCollection($emails) : new ArrayCollection();
 
-        $email = $data['email'] ?? [];
-        $email = is_array($email) ? new ArrayCollection($email) : new ArrayCollection();
+        $primaryEmail = $data['primaryEmail'] ?? null;
+        $this->primaryEmail = $primaryEmail instanceof Email ? $primaryEmail : null;
 
-        $phone = $data['phone'] ?? [];
-        $phone = is_array($phone) ? new ArrayCollection($phone) : new ArrayCollection();
+        $phones = $data['phones'] ?? [];
+        if (is_array($phones)) {
+            $phones = array_filter($phones, function ($phone) {
+                return $phone instanceof Phone;
+            });
+        }
+        $this->phones = is_array($phones) ? new ArrayCollection($phones) : new ArrayCollection();
+
+        $primaryPhone = $data['primaryPhone'] ?? null;
+        $this->primaryPhone = $primaryPhone instanceof Phone ? $primaryPhone : null;
 
         $faith = $data['faith'] ?? false;
         $this->faith = is_bool($faith) ? $faith : false;
+
+        $location = $data['location'] ?? null;
+        $this->location = $location instanceof Location ? $location : null;
+
+        $created = $data['created'] ?? null;
+        $this->created = $created instanceof \DateTimeInterface ? $created : null;
     }
 
     /**
@@ -165,17 +186,10 @@ class User implements UserInterface, Serializable, EquatableInterface
 
     /**
      * Get id
-     *
-     * @return integer
      */
     public function getID() :? int
     {
         return $this->id;
-    }
-
-    public function isActive() : bool
-    {
-        return true;
     }
 
     /**
@@ -197,9 +211,9 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * @inheritDoc
      */
-    public function getPassword() :? string
+    public function getPassword() : string
     {
-        return $this->password;
+        return '';
     }
 
     /**
@@ -249,36 +263,29 @@ class User implements UserInterface, Serializable, EquatableInterface
     }
 
     /**
-     * @see \Serializable::serialize()
+     * {@inheritdoc}
      */
     public function serialize()
     {
-        return serialize(array(
-          $this->id,
-          isset($this->username) ? $this->username : null,
-          isset($this->password) ? $this->username : null,
-        ));
+        return serialize([
+            $this->id,
+            $this->username,
+        ]);
     }
 
     /**
-     * @see \Serializable::unserialize()
+     * {@inheritdoc}
      */
     public function unserialize($serialized)
     {
         list (
           $this->id,
-          $this->username,
-          $this->password
+          $this->username
         ) = unserialize($serialized);
     }
 
     /**
-     * Only check for username, salt, and password, if they exist.
-     *
-     * @see EquatableInterface::isEqualTo()
-     *
-     * @link http://symfony.com/doc/current/cookbook/security/entity_provider.html
-     *
+     * {@inheritdoc}
      */
     public function isEqualTo(UserInterface $user) : bool
     {
@@ -351,14 +358,13 @@ class User implements UserInterface, Serializable, EquatableInterface
     }
 
     /**
-     * Set last_name
+     * Set Last Name.
      *
-     * @param string $last_name
-     * @return User
+     * @param string $lastName
      */
-    public function setLastName(string $last_name) : self
+    public function setLastName(string $lastName) : self
     {
-        $this->last_name = $last_name;
+        $this->lastName = $lastName;
 
         return $this;
     }
@@ -370,15 +376,14 @@ class User implements UserInterface, Serializable, EquatableInterface
      */
     public function getLastName() :? string
     {
-        return $this->last_name;
+        return $this->lastName;
     }
 
 
     /**
      * Add emails
      *
-     * @param Email $emails
-     * @return User
+     * @param Email $email
      */
     public function addEmail(Email $email) : self
     {
@@ -390,7 +395,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * Remove emails
      *
-     * @param Email $emails
+     * @param Email $email
      */
     public function removeEmail(Email $email) : self
     {
@@ -402,7 +407,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * Get emails
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getEmails() :? Collection
     {
@@ -411,26 +416,26 @@ class User implements UserInterface, Serializable, EquatableInterface
 
 
     /**
-     * Set primary_email
+     * Set Primary Email.
      *
      * @param Email $primaryEmail
      * @return User
      */
     public function setPrimaryEmail(Email $primaryEmail) : self
     {
-        $this->primary_email = $primaryEmail;
+        $this->primaryEmail = $primaryEmail;
 
         return $this;
     }
 
     /**
-     * Get primary_email
+     * Get Primary Email.
      *
      * @return Email
      */
     public function getPrimaryEmail() :? Email
     {
-        return $this->primary_email;
+        return $this->primaryEmail;
     }
 
     /**
@@ -461,7 +466,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * Get phones
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getPhones() :? Collection
     {
@@ -470,96 +475,46 @@ class User implements UserInterface, Serializable, EquatableInterface
 
 
     /**
-     * Set primary_phone
+     * Set Primary Phone.
      *
      * @param Phone $primaryPhone
-     * @return User
      */
     public function setPrimaryPhone(Phone $primaryPhone) : self
     {
-        $this->primary_phone = $primaryPhone;
+        $this->primaryPhone = $primaryPhone;
 
         return $this;
     }
 
     /**
-     * Get primary_phone
+     * Get Primary Phone.
      *
      * @return Phone
      */
     public function getPrimaryPhone() :? Phone
     {
-        return $this->primary_phone;
+        return $this->primaryPhone;
     }
 
-    /**
-     * Set address
-     *
-     * @param string $address
-     * @return User
-     */
-    public function setAddress(string $address) : self
-    {
-        $this->address = $address;
-
-        return $this;
-    }
 
     /**
-     * Get address
-     *
-     * @return string
-     */
-    public function getAddress() :? string
-    {
-        return $this->address;
-    }
-
-    /**
-     * Set static location
+     * Set location
      *
      * @param Location $location
-     * @return User
      */
-    public function setLocationStatic(Location $location) : self
+    public function setLocation(Location $location) : self
     {
-        $this->location_static = $location;
-
-        return $this;
-    }
-
-    /**
-     * Get static location
-     *
-     * @return Location
-     */
-    public function getLocationStatic() :? Location
-    {
-        return $this->location_static;
-    }
-
-
-    /**
-     * Set current location
-     *
-     * @param Location $location
-     * @return User
-     */
-    public function setLocationCurrent(Location $location) : self
-    {
-        $this->location_current = $location;
+        $this->location = $location;
 
         return $this;
     }
 
     /**
      * Get current location
-     *
-     * @return Location
      */
-    public function getLocationCurrent() :? Location
+    public function getLocation() :? Location
     {
-        return $this->location_current;
+        return $this->location;
     }
 
     /**
@@ -588,8 +543,7 @@ class User implements UserInterface, Serializable, EquatableInterface
     /**
      * Set created
      *
-     * @param \DateTime $verified
-     * @return User
+     * @param \DateTime $created
      */
     public function setCreated(\DateTime $created) : self
     {

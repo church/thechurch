@@ -12,6 +12,9 @@ use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
 use RandomLib\Generator as RandomGenerator;
 use libphonenumber\PhoneNumberUtil;
 
+/**
+ * Phone Verification Utility.
+ */
 class PhoneVerification implements VerificationInterface
 {
 
@@ -37,6 +40,14 @@ class PhoneVerification implements VerificationInterface
      */
     protected $dispatcher;
 
+    /**
+     * Create a new Phone Verification.
+     *
+     * @param Doctrine $doctrine
+     * @param RandomGenerator $random
+     * @param PhoneNumberUtil $parser
+     * @param DispatcherInterface $dispatcher
+     */
     public function __construct(
         Doctrine $doctrine,
         RandomGenerator $random,
@@ -165,10 +176,6 @@ class PhoneVerification implements VerificationInterface
 
     /**
      * Gets a Unique Code
-     *
-     * @param string $entity Doctrine entity to search against.
-     *
-     * @return string A unique code.
      *
      * @deprecated Attempt to insert and catch the exception rather than looking
      *             for an existing item which may be a race condition.

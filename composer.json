@@ -19,6 +19,7 @@
     },
     "require": {
         "php": "^7.1.0",
+        "ext-uuid": "*",
         "symfony/framework-bundle": "~3.2",
         "symfony/security-bundle": "~3.2",
         "symfony/finder": "~3.2",
