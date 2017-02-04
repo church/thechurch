@@ -2,14 +2,8 @@
 
 namespace Church\Entity\User;
 
-use Doctrine\ORM\Mapping as ORM;
-
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\Util\SecureRandom;
-use Symfony\Component\Validator\Constraints as Assert;
-
-use Church\Entity\User\User;
 use Church\Entity\User\Phone;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Church\Entity\User\PhoneVerify
@@ -22,6 +16,8 @@ class PhoneVerify implements VerifyInterface
 {
 
     /**
+     * @var Phone
+     *
      * @ORM\Id
      * @ORM\OneToOne(targetEntity="Phone", inversedBy="verify")
      * @ORM\JoinColumn(name="phone", referencedColumnName="phone")
@@ -29,19 +25,45 @@ class PhoneVerify implements VerifyInterface
     private $phone;
 
     /**
+     * @var string
+     *
      * @ORM\Column(type="string", length=6, unique=true)
      */
     private $token;
 
     /**
+     * @var string
+     *
      * @ORM\Column(type="string", length=6, unique=true)
      */
     private $code;
 
     /**
+     * @var \DateTimeInterface
+     *
      * @ORM\Column(type="datetime")
      */
     private $created;
+
+    /**
+     * Creates a new PHone Verification.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        $phone = $data['phone'] ?? null;
+        $this->phone = $phone instanceof Phone ? $phone : null;
+
+        $token = $data['token'] ?? null;
+        $this->token = is_string($token) ? $token : null;
+
+        $code = $data['code'] ?? null;
+        $this->code = is_string($code) ? $code : null;
+
+        $created = $data['created'] ?? null;
+        $this->created = $created instanceof \DateTimeInterface ? $created : null;
+    }
 
     /**
      * @ORM\PrePersist

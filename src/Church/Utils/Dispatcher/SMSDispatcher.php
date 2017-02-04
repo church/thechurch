@@ -31,6 +31,7 @@ class SMSDispatcher implements DispatcherInterface
      */
     public function __construct(Nexmo $nexmo, string $from)
     {
+        // @TODO Get rid of Nexmo since it doesn't work on Republic.
         $this->nexmo = $nexmo;
         $this->from = $from;
     }

@@ -2,7 +2,9 @@
 
 namespace Church\Entity\User;
 
-interface VerifyInterface
+use Church\Entity\EntityInterface;
+
+interface VerifyInterface extends EntityInterface
 {
 
 }
