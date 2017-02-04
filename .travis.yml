@@ -11,5 +11,4 @@ after_script:
     - wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
     - travis_retry php coveralls.phar -v
 notifications:
-  email: false
   irc: "chat.freenode.net#thechurch"
