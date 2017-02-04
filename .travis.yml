@@ -1,6 +1,8 @@
 language: php
 php: 7.1
-before_script:
+before_install:
+    - pecl install uuid
+install:
     - composer install
 script:
   - ./vendor/bin/phpcs .
@@ -9,5 +11,4 @@ after_script:
     - wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
     - travis_retry php coveralls.phar -v
 notifications:
-  email: false
   irc: "chat.freenode.net#thechurch"
