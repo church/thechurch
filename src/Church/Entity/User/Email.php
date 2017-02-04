@@ -3,7 +3,6 @@
 namespace Church\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -23,6 +22,8 @@ class Email
 {
 
     /**
+     * @var string
+     *
      * @ORM\Id
      * @ORM\Column(type="string", length=255)
      * @Assert\Email()
@@ -31,28 +32,59 @@ class Email
     private $email;
 
     /**
+     * @var User
+     *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="emails")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      */
     private $user;
 
     /**
+     * @var \DateTimeInterface
+     *
      * @ORM\Column(type="datetime")
      * @Groups({"api"})
      */
     private $created;
 
     /**
+     * @var EmailVerify
+     *
      * @ORM\OneToOne(targetEntity="EmailVerify", mappedBy="email")
      * @Groups({"api"})
      **/
     private $verify;
 
     /**
+     * @var \DateTimeInterface
+     *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"api"})
      */
     private $verified;
+
+    /**
+     * Create new Email.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        $email = $data['email'] ?? null;
+        $this->email = is_string($data['email']) ? $data['email'] : null;
+
+        $user = $data['user'] ?? null;
+        $this->user = $user instanceof User ? $user : null;
+
+        $created = $data['created'] ?? null;
+        $this->created = $created instanceof \DateTimeInterface ? $created : null;
+
+        $verify = $data['verify'] ?? null;
+        $this->verify = $verify instanceof EmailVerify ? $verify : null;
+
+        $verified = $data['verified'] ?? null;
+        $this->verified = $verified instanceof \DateTimeInterface ? $verified : null;
+    }
 
 
     /**

@@ -5,6 +5,8 @@ namespace Church\Repository\User;
 use Church\Entity\User\Email;
 use Church\Entity\User\Phone;
 use Church\Entity\User\User;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\UnitOfWork;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -79,9 +81,20 @@ class UserRepository extends EntityRepository implements UserProviderInterface
         // Create a new stub user.
         $user = new User();
 
-        // Save the User
-        $em->persist($user);
-        $em->flush();
+        // Save the User. Since there is a possability that the id could already
+        // exist, catch the exception and try again.
+        $saved = false;
+
+        while (!$saved) {
+            try {
+                $user = new User();
+                $em->persist($user);
+                $em->flush();
+                $saved = true;
+            } catch (UniqueConstraintViolationException $e) {
+                // Try again.
+            }
+        }
 
         return $user;
     }

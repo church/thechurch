@@ -4,15 +4,18 @@ namespace Church\Utils\User;
 
 use Church\Entity\Message\EmailMessage;
 use Church\Entity\User\VerifyInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
 use RandomLib\Generator as RandomGenerator;
 
 use Church\Entity\User\User;
 use Church\Entity\User\Email;
 use Church\Entity\User\EmailVerify;
-use Church\Entity\Message\Email as Message;
 use Church\Utils\Dispatcher\DispatcherInterface;
 
+/**
+ * Email Verification.
+ */
 class EmailVerification implements VerificationInterface
 {
 
@@ -31,6 +34,13 @@ class EmailVerification implements VerificationInterface
      */
     protected $dispatcher;
 
+    /**
+     * Create the Email Verification.
+     *
+     * @param Doctrine $doctrine
+     * @param RandomGenerator $random
+     * @param DispatcherInterface $dispatcher
+     */
     public function __construct(
         Doctrine $doctrine,
         RandomGenerator $random,
@@ -57,22 +67,30 @@ class EmailVerification implements VerificationInterface
 
         // If there is ane email, then there's also a user.
         if (!$email) {
-            $email = new Email();
-            $email->setEmail($email_address);
+            $email = new Email([
+                'email' => $email_address,
+            ]);
 
             $user = $em->getRepository(User::class)->createFromEmail($email);
         }
 
-        $verify = new EmailVerify();
+        $saved = false;
+        while (!$saved) {
+            try {
+                $verify = new EmailVerify([
+                    'email' => $email,
+                    'token' => $this->random->generateString(6, $this->random::CHAR_LOWER | $this->random::CHAR_DIGITS),
+                    'code' => $this->random->generateString(6, $this->random::CHAR_DIGITS),
+                ]);
 
-        $verify->setToken($this->getUniqueToken(Email::class));
-        $verify->setCode($this->getUniqueCode(EmailVerify::class));
-        $verify->setEmail($email);
-        $email->setVerify($verify);
-
-        $em->persist($email);
-        $em->persist($verify);
-        $em->flush();
+                $email->setVerify($verify);
+                $em->persist($verify);
+                $em->flush();
+                $saved = true;
+            } catch (UniqueConstraintViolationException $e) {
+                // Try again.
+            }
+        }
 
         return $verify;
     }
@@ -131,47 +149,5 @@ class EmailVerification implements VerificationInterface
         }
 
         return $email;
-    }
-
-    /**
-     * Gets a Unique Token
-     *
-     * @return string A unique token.
-     *
-     * @deprecated Attempt to insert and catch the exception rather than looking
-     *             for an existing item which may be a race condition.
-     */
-    private function getUniqueToken()
-    {
-        $repository = $this->doctrine->getRepository(EmailVerify::class);
-        $random = $this->random;
-
-        do {
-            $token = $random->generateString(6, $random::CHAR_ALNUM);
-        } while ($repository->findOneByToken($token));
-
-        return $token;
-    }
-
-    /**
-     * Gets a Unique Code
-     *
-     * @param string $entity Doctrine entity to search against.
-     *
-     * @return string A unique code.
-     *
-     * @deprecated Attempt to insert and catch the exception rather than looking
-     *             for an existing item which may be a race condition.
-     */
-    private function getUniqueCode()
-    {
-        $repository = $this->doctrine->getRepository(EmailVerify::class);
-        $random = $this->random;
-
-        do {
-            $code = $random->generateString(6, $random::CHAR_DIGITS);
-        } while ($repository->findOneByCode($code));
-
-        return $code;
     }
 }

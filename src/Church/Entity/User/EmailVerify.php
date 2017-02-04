@@ -4,10 +4,8 @@ namespace Church\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Church\Entity\User\User;
 use Church\Entity\User\Email;
 
 /**
@@ -21,6 +19,8 @@ class EmailVerify implements VerifyInterface
 {
 
     /**
+     * @var Email
+     *
      * @ORM\Id
      * @ORM\OneToOne(targetEntity="Email", inversedBy="verify")
      * @ORM\JoinColumn(name="email", referencedColumnName="email")
@@ -29,21 +29,47 @@ class EmailVerify implements VerifyInterface
     private $email;
 
     /**
+     * @var string
+     *
      * @ORM\Column(type="string", length=6, unique=true)
      * @Groups({"api"})
      */
     private $token;
 
     /**
+     * @var string
+     *
      * @ORM\Column(type="string", length=6, unique=true)
      */
     private $code;
 
     /**
+     * @var \DateTimeInterface
+     *
      * @ORM\Column(type="datetime")
      * @Groups({"api"})
      */
     private $created;
+
+    /**
+     * Create new Email Verify.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        $email = $data['email'] ?? null;
+        $this->email = $email instanceof Email ? $email : null;
+
+        $token = $data['token'] ?? null;
+        $this->token = is_string($token) ? $token : null;
+
+        $code = $data['code'] ?? null;
+        $this->code = is_string($code) ? $code : null;
+
+        $created = $data['created'] ?? null;
+        $this->created = $created instanceof \DateTimeInterface ? $created : null;
+    }
 
     /**
      * @ORM\PrePersist

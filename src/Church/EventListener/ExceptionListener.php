@@ -33,6 +33,7 @@ class ExceptionListener
         } else {
             $data = [
                 'error' => $exception->getMessage(),
+                'type' => get_class($exception),
                 'code' => $exception->getCode(),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
