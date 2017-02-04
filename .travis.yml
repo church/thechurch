@@ -1,7 +1,5 @@
 language: php
 php: 7.1
-before_install:
-    - "yes '' | pecl install uuid"
 install:
     - composer install
 script:
