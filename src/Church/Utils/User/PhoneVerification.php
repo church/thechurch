@@ -8,6 +8,7 @@ use Church\Entity\User\PhoneVerify;
 use Church\Entity\Message\SMSMessage;
 use Church\Entity\User\VerifyInterface;
 use Church\Utils\Dispatcher\DispatcherInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
 use RandomLib\Generator as RandomGenerator;
 use libphonenumber\PhoneNumberUtil;
@@ -76,26 +77,35 @@ class PhoneVerification implements VerificationInterface
         $phone_number = $parsed->getCountryCode() . $parsed->getNationalNumber();
 
         // Get the existig email from the database.
-        $phone = $this->findExistingPhone($phone_number);
+        $phone = $this->findExisting($phone_number);
 
         // If there is ane email, then there's also a user.
         if (!$phone) {
-            $phone = new Phone();
-            $phone->setPhone($phone_number);
+            $phone = new Phone([
+                'phone' => $phone_number,
+            ]);
 
             $user = $em->getRepository(User::class)->createFromPhone($phone);
         }
 
-        $verify = new PhoneVerify();
-        $random = $this->random;
-        $verify->setToken($this->getUniqueToken());
-        $verify->setCode($this->getUniqueCode());
-        $verify->setPhone($phone);
-        $phone->setVerify($verify);
 
-        $em->persist($phone);
-        $em->persist($verify);
-        $em->flush();
+        $saved = false;
+        while (!$saved) {
+            try {
+                $verify = new PhoneVerify([
+                    'phone' => $phone,
+                    'token' => $this->random->generateString(6, $this->random::CHAR_LOWER | $this->random::CHAR_DIGITS),
+                    'code' => $this->random->generateString(6, $this->random::CHAR_DIGITS),
+                ]);
+
+                $phone->setVerify($verify);
+                $em->persist($verify);
+                $em->flush();
+                $saved = true;
+            } catch (UniqueConstraintViolationException $e) {
+                // Try again.
+            }
+        }
 
         return $verify;
     }
@@ -105,22 +115,15 @@ class PhoneVerification implements VerificationInterface
      */
     public function send(VerifyInterface $verify) : bool
     {
-        $message = new SMSMessage();
-
-        $params = array(
-          'token' => $verify->getToken(),
-          'code' => $verify->getCode(),
-        );
-
-        // @TODO get rid of the router and generate the url ourselves.
-        $link = $this->getRouter()->generate('user_verify_phone', $params, true);
-
-        $message->setTo($verify->getPhone()->getPhone());
-
-        $message->addTextLine('thechur.ch');
-        $message->addTextLine('Login Code: '.$verify->getCode());
-        $message->addTextLine('');
-        $message->addTextLine($link);
+        $message = new SMSMessage([
+            'to' => $verify->getPhone()->getPhone(),
+            'text' => [
+                'thechur.ch',
+                'Login Code: ' . $verify->getCode(),
+                '',
+                'https://thechur.ch/v/p/' . $verify->getToken() . '/' . $verify->getCode(),
+            ],
+        ]);
 
         return $this->dispatcher->send($message);
     }
@@ -152,43 +155,5 @@ class PhoneVerification implements VerificationInterface
         }
 
         return $phone;
-    }
-
-    /**
-     * Gets a Unique Token
-     *
-     * @return string A unique token.
-     *
-     * @deprecated Attempt to insert and catch the exception rather than looking
-     *             for an existing item which may be a race condition.
-     */
-    private function getUniqueToken()
-    {
-        $repository = $this->doctrine->getRepository(PhoneVerify::class);
-        $random = $this->random;
-
-        do {
-            $token = $random->generateString(6, $random::CHAR_ALNUM);
-        } while ($repository->findOneByToken($token));
-
-        return $token;
-    }
-
-    /**
-     * Gets a Unique Code
-     *
-     * @deprecated Attempt to insert and catch the exception rather than looking
-     *             for an existing item which may be a race condition.
-     */
-    private function getUniqueCode()
-    {
-        $repository = $this->doctrine->getRepository(PhoneVerify::class);
-        $random = $this->random;
-
-        do {
-            $code = $random->generateString(6, $random::CHAR_DIGITS);
-        } while ($repository->findOneByCode($code));
-
-        return $code;
     }
 }

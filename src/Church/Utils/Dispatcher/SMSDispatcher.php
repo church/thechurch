@@ -4,13 +4,21 @@ namespace Church\Utils\Dispatcher;
 
 use NexmoMessage as Nexmo;
 use Church\Entity\Message\MessageInterface;
-use Church\Message\SMS as Message;
 
+/**
+ * SMS Dispatcher
+ */
 class SMSDispatcher implements DispatcherInterface
 {
 
+    /**
+     * @var Nexmo
+     */
     protected $nexmo;
 
+    /**
+     * @var string
+     */
     protected $from;
 
     /**
@@ -21,7 +29,7 @@ class SMSDispatcher implements DispatcherInterface
      * @param string $from
      *    SMS From Number.
      */
-    public function __construct(Nexmo $nexmo, $from)
+    public function __construct(Nexmo $nexmo, string $from)
     {
         $this->nexmo = $nexmo;
         $this->from = $from;
@@ -30,8 +38,7 @@ class SMSDispatcher implements DispatcherInterface
     /**
      * Send an SMS message.
      *
-     * @param Message
-     *    Message Object compatible this object.
+     * @param MessageInterface $message
      */
     public function send(MessageInterface $message) : bool
     {

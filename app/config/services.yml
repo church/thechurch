@@ -104,6 +104,8 @@ services:
 
   church.dispatcher_email:
       class: Church\Utils\Dispatcher\EmailDispatcher
+      arguments:
+          - '@sendgrid'
 
   church.dispatcher_sms:
       class: Church\Utils\Dispatcher\SMSDispatcher
@@ -139,6 +141,11 @@ services:
 
   egulias.email_validator:
         class: Egulias\EmailValidator\EmailValidator
+
+  sendgrid:
+        class: SendGrid
+        arguments:
+            - '%sendgrid_api_key%'
 
   giggsey.phone_validator:
         class: libphonenumber\PhoneNumberUtil

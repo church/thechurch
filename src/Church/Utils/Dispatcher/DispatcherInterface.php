@@ -4,14 +4,16 @@ namespace Church\Utils\Dispatcher;
 
 use Church\Entity\Message\MessageInterface;
 
+/**
+ * Dispatcher Interface
+ */
 interface DispatcherInterface
 {
 
     /**
      * Send an Email message.
      *
-     * @param Message
-     *    Message Object compatible with Mandrill.
+     * @param MessageInterface $message
      */
     public function send(MessageInterface $message) : bool;
 }

@@ -44,7 +44,7 @@ class Login implements EntityInterface
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $value = $data['value'] ?? '';
         $this->value = is_string($value) ? $value : '';

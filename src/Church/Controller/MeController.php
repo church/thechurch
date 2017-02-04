@@ -82,7 +82,7 @@ class MeController extends Controller
 
         $verify = $verification->create($login);
 
-        // @TODO send the verification.
+        $verification->send($verify);
 
         return $this->reply($verify, $request->getRequestFormat());
     }

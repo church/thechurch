@@ -7,4 +7,5 @@ namespace Church\Entity;
  */
 interface EntityInterface
 {
+
 }

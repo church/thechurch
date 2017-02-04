@@ -2,26 +2,57 @@
 
 namespace Church\Utils\Dispatcher;
 
+use Church\Entity\Message\EmailMessage;
 use Church\Entity\Message\MessageInterface;
-use Church\Message\Email as Message;
+use SendGrid\Content;
+use SendGrid\Mail;
+use SendGrid\Email;
 
+/**
+ * Email Dispatcher
+ */
 class EmailDispatcher implements DispatcherInterface
 {
 
-    // @TODO Ineject Send Grid.
+    /**
+     * @var \SendGrid
+     */
+    protected $sendGrid;
 
     /**
-     * Send an Email message.
+     * Creates an email dispatcher.
      *
-     * @param Message
-     *    Message Object compatible with Mandrill.
+     * @var \SendGrid $sendGrid
+     */
+    public function __construct(\SendGrid $sendGrid)
+    {
+        $this->sendGrid = $sendGrid;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function send(MessageInterface $message) : bool
     {
+        $mail = $this->convertMessage($message);
 
-        // Send the Message using Async.
-        $this->mandrill->send($message, '', array(), true);
+        $response = $this->sendGrid->client->mail()->send()->post($mail);
 
-        return true;
+        return $response->statusCode() == 202;
+    }
+
+    /**
+     * Convert Message Entity to SendGrid Mail.
+     *
+     * @param EmailMessage $message
+     */
+    protected function convertMessage(EmailMessage $message) : Mail
+    {
+        $from = new Email(null, "church@thechur.ch");
+        $subject = "Hello World from the SendGrid PHP Library!";
+        $to = new Email(null, $message->getTo());
+        $content = new Content("text/plain", $message->getTextString());
+
+        return new Mail($from, $message->getSubject(), $to, $content);
     }
 }

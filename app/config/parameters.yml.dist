@@ -15,9 +15,7 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    mandrill_api_key: ~
-    mandrill_sender: ~
-    mandrill_sender_name: ~
+    sendgrid_api_key: ~
 
     nexmo_api_key: ~
     nexmo_api_secret: ~

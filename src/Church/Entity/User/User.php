@@ -127,7 +127,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $id = $data['id'] ?? null;
         $this->id = is_string($id) && uuid_is_valid($id) ? strtolower($id) : strtolower(uuid_create(UUID_TYPE_DEFAULT));

@@ -100,22 +100,14 @@ class EmailVerification implements VerificationInterface
      */
     public function send(VerifyInterface $verify) : bool
     {
-        $message = new EmailMessage();
-
-        $params = array(
-          'token' => $verify->getToken(),
-          'code' => $verify->getCode(),
-        );
-
-        // Build the Message.
-        $message->addTo($verify->getEmail()->getEmail());
-        $message->setSubject('Confirm Your Email');
-
-        // @TODO: Add the Validation Code to the Email (Render a Twig Template?).
-        $text = "Please visit the following location to verify your email.\n";
-        $text .= $this->getRouter()->generate('user_verify_email', $params, true);
-
-        $message->setText($text);
+        $message = new EmailMessage([
+            'to' => $verify->getEmail()->getEmail(),
+            'subject' => 'Confirm Your Email',
+            'text' => [
+                'Please visit the following location to verify your email:',
+                'https://thechur.ch/v/e/' . $verify->getToken() . '/' . $verify->getCode(),
+            ],
+        ]);
 
         // Send the Message using Async.
         return $this->dispatcher->send($message);

@@ -40,7 +40,8 @@
         "giggsey/libphonenumber-for-php": "~7.0",
         "prawnsalad/nexmo": "dev-master",
         "symfony/security": "^3.2",
-        "symfony/expression-language": "^3.2"
+        "symfony/expression-language": "^3.2",
+        "sendgrid/sendgrid": "^5.1"
      },
      "require-dev": {
        "symfony/debug-bundle": "~3.2",
