@@ -54,17 +54,6 @@ class Login implements EntityInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function toArray() : array
-    {
-        return [
-            'value' => $this->value,
-            'type' => $this->type,
-        ];
-    }
-
-    /**
      * Returns the value of the login.
      */
     public function getValue() : string

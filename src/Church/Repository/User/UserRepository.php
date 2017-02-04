@@ -74,7 +74,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface
      */
     private function createStub() : User
     {
-        $em = $this-getEntityManager();
+        $em = $this->getEntityManager();
 
         // Create a new stub user.
         $user = new User();

@@ -2,6 +2,10 @@
 
 namespace Church\Entity\User;
 
+use Church\Entity\Location;
+use Church\Entity\User\Email;
+use Church\Entity\User\Phone;
+use Church\Entity\EntityInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -9,10 +13,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-
-use Church\Entity\Location;
-use Church\Entity\User\Email;
-use Church\Entity\User\Phone;
 
 /**
  * Church\Entity\User\User
@@ -24,15 +24,14 @@ use Church\Entity\User\Phone;
  * @UniqueEntity("primary_email")
  * @UniqueEntity("primary_phone")
  */
-class User implements UserInterface, \Serializable, EquatableInterface
+class User implements EntityInterface, UserInterface, \Serializable, EquatableInterface
 {
 
     /**
      * @var int
      *
-     * @ORM\Column(name="user_id", type="integer")
+     * @ORM\Column(name="user_id", type="guid")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      * @Groups({"api"})
      */
     private $id;
@@ -131,7 +130,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
     public function __construct($data = [])
     {
         $id = $data['id'] ?? null;
-        $this->id = is_int($id) ? $id : null;
+        $this->id = is_string($id) && uuid_is_valid($id) ? strtolower($id) : strtolower(uuid_create(UUID_TYPE_DEFAULT));
 
         $firstName = $data['firstName'] ?? null;
         $this->firstName = is_string($firstName) ? $firstName : null;
@@ -187,7 +186,7 @@ class User implements UserInterface, \Serializable, EquatableInterface
     /**
      * Get id
      */
-    public function getID() :? int
+    public function getId() :? string
     {
         return $this->id;
     }
