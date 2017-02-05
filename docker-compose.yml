@@ -1,0 +1,8 @@
+version: '2'
+services:
+    api:
+        ports:
+            - '8000:80'
+        build: ./
+        volumes:
+            - './:/var/www'

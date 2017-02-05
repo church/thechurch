@@ -1,5 +1,11 @@
 language: php
 php: 7.1
+addons:
+  apt:
+    packages:
+        - uuid-dev
+before_install:
+    - pecl install uuid
 install:
     - composer install
 script:
