@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Entity\User;
+namespace Church\Entity\User\Verify;
 
 use Doctrine\ORM\Mapping as ORM;
 

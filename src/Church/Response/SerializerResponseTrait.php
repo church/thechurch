@@ -3,23 +3,33 @@
 namespace Church\Response;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * Serializer Response Trait.
+ */
 trait SerializerResponseTrait
 {
 
     /**
-     * @var Symfony\Component\Serializer\SerializerInterface
+     * @var SerializerInterface
      */
     protected $serializer;
 
     /**
      * Reply action that serializes the data passed.
+     *
+     * @param mixed $data
+     * @param string $format
+     * @param int $status
+     * @param array $headers
+     * @param array $context
      */
     protected function reply(
         $data,
         string $format,
         int $status = 200,
-        iterable $headers = [],
+        array $headers = [],
         array $context = [
           'groups' => [
             'api'

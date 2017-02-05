@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Entity\User;
+namespace Church\Entity\User\Verify;
 
 use Church\Entity\User\Phone;
 use Doctrine\ORM\Mapping as ORM;
@@ -46,7 +46,7 @@ class PhoneVerify implements VerifyInterface
     private $created;
 
     /**
-     * Creates a new PHone Verification.
+     * Creates a new Phone Verification.
      *
      * @param array $data
      */
@@ -147,10 +147,9 @@ class PhoneVerify implements VerifyInterface
     /**
      * Set created
      *
-     * @param \DateTime $verified
-     * @return Email
+     * @param \DateTimeInterface $created
      */
-    public function setCreated(\DateTime $created) : self
+    public function setCreated(\DateTimeInterface $created) : self
     {
         $this->created = $created;
 
@@ -162,7 +161,7 @@ class PhoneVerify implements VerifyInterface
      *
      * @return \DateTime
      */
-    public function getCreated() :? \DateTime
+    public function getCreated() :? \DateTimeInterface
     {
         return $this->created;
     }
