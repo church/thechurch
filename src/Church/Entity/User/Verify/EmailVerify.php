@@ -24,7 +24,6 @@ class EmailVerify implements VerifyInterface
      * @ORM\Id
      * @ORM\OneToOne(targetEntity="\Church\Entity\User\Email", inversedBy="verify")
      * @ORM\JoinColumn(name="email", referencedColumnName="email")
-     * @Assert\Email()
      */
     private $email;
 
@@ -33,6 +32,7 @@ class EmailVerify implements VerifyInterface
      *
      * @ORM\Column(type="string", length=6, unique=true)
      * @Groups({"api"})
+     * @Assert\NotBlank()
      */
     private $token;
 
@@ -40,6 +40,7 @@ class EmailVerify implements VerifyInterface
      * @var string
      *
      * @ORM\Column(type="string", length=6, unique=true)
+     * @Assert\NotBlank()
      */
     private $code;
 

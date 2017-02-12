@@ -39,97 +39,12 @@ class UserController extends Controller
    * @Route("/{user}.{_format}")
    * @Method("GET")
    *
-   * @TODO add an int rquirement for user.
+   * @param User $user
+   * @param Request $request
    */
     public function showAction(User $user, Request $request) : Response
     {
         return $this->reply($user, $request->getRequestFormat());
-    }
-
-    /**
-     * @Route("/v/{type}/{token}", name="user_verify")
-     * @Security("!has_role('ROLE_USER')")
-     */
-    public function verifyAction(Request $request, $type, $token)
-    {
-        // Build the Verification Form
-        $form = $this->createForm(new VerifyType(), new Verify());
-
-        // Handle the Form Request.
-        $form->handleRequest($request);
-
-        // If this Form has been completed
-        if ($form->isSubmitted() && $form->isValid()) {
-            $verify = $form->getData();
-
-            if ($type == 'e') {
-                return $this->redirect($this->generateUrl('user_verify_email', array(
-                    'token' => $token,
-                    'code' => $verify->getCode(),
-                )));
-            } elseif ($type == 'p') {
-                return $this->redirect($this->generateUrl('user_verify_phone', array(
-                    'token' => $token,
-                    'code' => $verify->getCode(),
-                )));
-            }
-        }
-
-        return $this->render('user/verify.html.twig', array(
-            'type' => $type,
-            'token' => $token,
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * @Route("/v/e/{token}/{code}", name="user_verify_email")
-     * @Security("has_role('ROLE_USER')")
-     */
-    public function verifyEmailAction($token, $code)
-    {
-        $doctrine = $this->getDoctrine();
-        $em = $doctrine->getManager();
-        $repository = $doctrine->getRepository('Church:User\EmailVerify');
-
-        if ($verify = $repository->findOneByToken($token)) {
-            $email = $verify->getEmail();
-
-            $email->setVerified(new \DateTime());
-
-            $em->persist($email);
-            $em->remove($verify);
-            $em->flush();
-
-            $this->get('security.context')->getToken()->setAuthenticated(false);
-        }
-
-        return $this->redirect($this->generateUrl('index'));
-    }
-
-    /**
-     * @Route("/v/p/{token}/{code}", name="user_verify_phone")
-     * @Security("has_role('ROLE_USER')")
-     */
-    public function verifyPhoneAction($token, $code)
-    {
-        $doctrine = $this->getDoctrine();
-        $em = $doctrine->getManager();
-        $repository = $doctrine->getRepository('Church:User\PhoneVerify');
-
-        if ($verify = $repository->findOneByToken($token)) {
-            $phone = $verify->getPhone();
-
-            $phone->setVerified(new \DateTime());
-
-            $em->persist($phone);
-            $em->remove($verify);
-            $em->flush();
-
-            $this->get('security.context')->getToken()->setAuthenticated(false);
-        }
-
-        return $this->redirect($this->generateUrl('index'));
     }
 
     /**

@@ -3,13 +3,16 @@
 namespace Church\Controller;
 
 use Church\Entity\User\Login;
+use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\User\VerificationManagerInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -28,23 +31,18 @@ class MeController extends Controller
 {
 
     /**
-     * @var \Church\Utils\User\VerificationManagerInterface
+     * @var VerificationManagerInterface
      */
     protected $verificationManager;
 
-    /**
-     * Create a new Controller.
-     *
-     * @param SerializerInterface $serializer
-     * @param ValidatorInterface $validator
-     * @param VerificationManagerInterface $verificationManager
-     */
     public function __construct(
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        RegistryInterface $doctrine,
+        TokenStorageInterface $tokenStorage,
         VerificationManagerInterface $verificationManager
     ) {
-        parent::__construct($serializer, $validator);
+        parent::__construct($serializer, $validator, $doctrine, $tokenStorage);
         $this->verificationManager = $verificationManager;
     }
 
@@ -62,13 +60,17 @@ class MeController extends Controller
             throw new NotFoundHttpException('Not Logged In');
         }
 
-        return $this->reply($this->getUser(), $request->getRequestFormat());
+        return $this->reply($this->getUser(), $request->getRequestFormat(), 200, [], [
+            'groups' => [
+                'me',
+            ],
+        ]);
     }
 
     /**
      * Login Action.
      *
-     * @Route("/login", name="user_login")
+     * @Route("/login")
      * @Method("POST")
      * @Security("!has_role('ROLE_USER')")
      *
@@ -85,5 +87,35 @@ class MeController extends Controller
         $verification->send($verify);
 
         return $this->reply($verify, $request->getRequestFormat());
+    }
+
+    /**
+     * Verify Email.
+     *
+     * @Route("/verify/email", name="me_verify_email")
+     * @Method("POST")
+     * @Security("has_role('ROLE_USER')")
+     *
+     * @param Request $request
+     */
+    public function verifyEmailAction(Request $request) : Response
+    {
+        $input = $this->deserialize($request, EmailVerify::class);
+        $em = $this->doctrine->getEntityManager();
+        $repository = $this->doctrine->getRepository(EmailVerify::class);
+
+        if ($verify = $repository->findOneByToken($input->getToken())) {
+            $email = $verify->getEmail();
+
+            $email->setVerified(new \DateTime());
+
+            $em->persist($email);
+            $em->remove($verify);
+            $em->flush();
+
+            $this->tokenStorage->getToken()->setAuthenticated(false);
+        }
+
+        return $this->showAction($request);
     }
 }

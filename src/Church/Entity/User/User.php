@@ -4,6 +4,7 @@ namespace Church\Entity\User;
 
 use Church\Entity\Location;
 use Church\Entity\User\Email;
+use Church\Entity\User\Name;
 use Church\Entity\EntityInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -30,31 +31,23 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @ORM\Column(name="user_id", type="guid")
      * @ORM\Id
-     * @Groups({"api"})
+     * @Groups({"me", "api"})
      */
     private $id;
 
     /**
-     * @var string
+     * @var Name
      *
-     * @ORM\Column(name="first_name", type="string", length=255, nullable=true)
-     * @Groups({"api"})
+     * @ORM\Embedded(class = "Name", columnPrefix = "name_")
+     * @Groups({"me", "api"})
      */
-    private $firstName;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="last_name", type="string", length=255, nullable=true)
-     * @Groups({"api"})
-     */
-    private $lastName;
+    private $name;
 
     /**
      * @var string
      *
      * @ORM\Column(type="string", length=25, unique=true, nullable=true)
-     * @Groups({"api"})
+     * @Groups({"me", "api"})
      */
     private $username;
 
@@ -63,7 +56,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @ORM\OneToMany(targetEntity="Email", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
-     * @Groups({"api"})
+     * @Groups({"me"})
      */
     private $emails;
 
@@ -72,7 +65,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
      * @ORM\JoinColumn(name="primary_email", referencedColumnName="email")
-     * @Groups({"api"})
+     * @Groups({"me"})
      */
     private $primaryEmail;
 
@@ -81,7 +74,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
      * @ORM\JoinColumn(name="location", referencedColumnName="location_id")
-     * @Groups({"api"})
+     * @Groups({"me"})
      */
     private $location;
 
@@ -89,7 +82,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      * @var bool
      *
      * @ORM\Column(type="boolean", options={"default" = 0})
-     * @Groups({"api"})
+     * @Groups({"me"})
      */
     private $faith;
 
@@ -97,10 +90,9 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"api"})
+     * @Groups({"me", "api"})
      */
     private $created;
-
 
     /**
      * Create new User.
@@ -112,8 +104,14 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
         $id = $data['id'] ?? null;
         $this->id = is_string($id) && uuid_is_valid($id) ? strtolower($id) : strtolower(uuid_create(UUID_TYPE_DEFAULT));
 
-        $firstName = $data['firstName'] ?? null;
-        $this->firstName = is_string($firstName) ? $firstName : null;
+        $name = $data['name'] ?? null;
+        if ($name instanceof Name) {
+            $this->name = $name;
+        } elseif (is_array($name)) {
+            $this->name = new Name($name);
+        } else {
+            $this->name = new Name();
+        }
 
         $lastName = $data['lastName'] ?? null;
         $this->lastName = is_string($lastName) ? $lastName : null;
@@ -212,7 +210,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
             $roles[] = 'ROLE_FAITH';
         }
 
-        if ($this->getFirstName() && $this->getLastName()) {
+        if ($this->getName()->getFirst() && $this->getName()->getLastName()) {
             $roles[] = 'ROLE_NAME';
         }
 
@@ -306,50 +304,24 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     }
 
     /**
-     * Set first_name
+     * Set Name.
      *
-     * @param string $first_name
-     * @return User
+     * @param Name $name
      */
-    public function setFirstName(string $first_name) : self
+    public function setName(Name $name) : self
     {
-        $this->first_name = $first_name;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get first_name
-     *
-     * @return string
+     * Get Name.
      */
-    public function getFirstName() :? string
+    public function getName() :? Name
     {
-        return $this->first_name;
+        return $this->name;
     }
-
-    /**
-     * Set Last Name.
-     *
-     * @param string $lastName
-     */
-    public function setLastName(string $lastName) : self
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getLastName() :? string
-    {
-        return $this->lastName;
-    }
-
 
     /**
      * Add emails

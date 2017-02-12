@@ -3,8 +3,9 @@
 namespace Church\Security;
 
 use Church\Entity\User\User;
-use Church\Entity\User\PhoneVerify;
-use Church\Entity\User\EmailVerify;
+use Church\Entity\User\Verify\EmailVerify;
+use Church\Request\DeserializeRequestTrait;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -12,10 +13,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerI
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Code Authenticator.
@@ -25,6 +26,8 @@ class CodeAuthenticator implements
     SimplePreAuthenticatorInterface,
     AuthenticationFailureHandlerInterface
 {
+
+    use DeserializeRequestTrait;
 
     /**
      * @var RegistryInterface
@@ -41,11 +44,19 @@ class CodeAuthenticator implements
      *
      * @param RegistryInterface $doctrine
      * @param HttpUtils $http
+     * @param ValidatorInterface $validator
+     * @param SerializerInterface $serializer
      */
-    public function __construct(RegistryInterface $doctrine, HttpUtils $http)
-    {
+    public function __construct(
+        RegistryInterface $doctrine,
+        HttpUtils $http,
+        ValidatorInterface $validator,
+        SerializerInterface $serializer
+    ) {
         $this->doctrine = $doctrine;
         $this->http = $http;
+        $this->validator = $validator;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -54,27 +65,15 @@ class CodeAuthenticator implements
     public function createToken(Request $request, $providerKey)
     {
         // Only Create a Token when on a verify path and get the type.
-        // @TODO Update these paths.
-        if ($this->http->checkRequestPath($request, 'user_verify_email')) {
-            $type = 'email';
-        } elseif ($this->http->checkRequestPath($request, 'user_verify_phone')) {
-            $type = 'phone';
-        } else {
+        if (!$this->http->checkRequestPath($request, 'me_verify_email')) {
             return;
         }
 
-        // Look for a Token & Code in the URL.
-        $token = $request->get('token');
-        $code = $request->get('code');
-
-        if (!$token || !$code) {
-            throw new BadCredentialsException('No Token or Code Found');
-        }
+        $input = $this->deserialize($request, EmailVerify::class);
 
         $credentials = [
-            'token' => $token,
-            'code' => $code,
-            'type' => $type,
+            'token' => $input->getToken(),
+            'code' => $input->getCode(),
         ];
 
         return new PreAuthenticatedToken('anon.', $credentials, $providerKey);
@@ -90,18 +89,6 @@ class CodeAuthenticator implements
     ) {
 
         $credentials = $token->getCredentials();
-        $type = $credentials['type'];
-        $doctrine = $this->getDoctrine();
-        $em = $doctrine->getManager();
-
-        switch ($type) {
-            case 'email':
-                $repository = $doctrine->getRepository(EmailVerify::class);
-                break;
-            case 'phone':
-                $repository = $doctrine->getRepository(PhoneVerify::class);
-                break;
-        }
 
         // User is already in the session.
         $user = $token->getUser();
@@ -109,6 +96,7 @@ class CodeAuthenticator implements
             return new PreAuthenticatedToken($user, $credentials, $providerKey, $user->getRoles());
         }
 
+        $repository = $this->doctrine->getRepository(EmailVerify::class);
 
         if ($verify = $repository->findOneByToken($credentials['token'])) {
             $created = clone $verify->getCreated();
@@ -127,18 +115,8 @@ class CodeAuthenticator implements
             throw new AuthenticationException('Token does not exist');
         }
 
-        // @TODO just add a getUer() method to the verifications.
-        switch ($type) {
-            case 'email':
-                $user = $verify->getEmail()->getUser();
-                break;
 
-            case 'phone':
-                $user = $verify->getPhone()->getUser();
-                break;
-        }
-
-
+        $user = $verify->getEmail()->getUser();
         return new PreAuthenticatedToken($user, $credentials, $providerKey, $user->getRoles());
     }
 
@@ -157,20 +135,7 @@ class CodeAuthenticator implements
         Request $request,
         AuthenticationException $exception
     ) {
-        $em = $this->doctrine->getManager();
 
-        if ($this->http->checkRequestPath($request, 'user_verify_email')) {
-            $repository = $this->doctrine->getRepository(EmailVerify::class);
-        } elseif ($this->http->checkRequestPath($request, 'user_verify_phone')) {
-            $repository = $this->doctrine->getRepository(PhoneVerify::class);
-        }
-
-        if ($verify = $request->get('token')) {
-            $em->remove($verify);
-            $em->flush();
-        }
-
-        // @TODO use SerializerResponseTrait
-        return new Response($exception->getMessage(), 403);
+        throw new AccessDeniedException($exception->getMessage(), null, $exception);
     }
 }

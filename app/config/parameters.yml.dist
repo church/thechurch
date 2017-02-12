@@ -15,6 +15,7 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
+    dispatch: false
     sendgrid_api_key: ~
 
     nexmo_api_key: ~

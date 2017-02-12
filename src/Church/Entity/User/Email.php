@@ -30,7 +30,7 @@ class Email
      *     strict = true,
      *     checkMX = true
      * )
-     * @Groups({"api"})
+     * @Groups({"me"})
      */
     private $email;
 
@@ -46,7 +46,7 @@ class Email
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"api"})
+     * @Groups({"me"})
      */
     private $created;
 
@@ -54,15 +54,14 @@ class Email
      * @var EmailVerify
      *
      * @ORM\OneToOne(targetEntity="\Church\Entity\User\Verify\EmailVerify", mappedBy="email")
-     * @Groups({"api"})
-     **/
+     */
     private $verify;
 
     /**
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"api"})
+     * @Groups({"me"})
      */
     private $verified;
 

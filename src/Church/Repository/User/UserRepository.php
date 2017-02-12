@@ -3,10 +3,8 @@
 namespace Church\Repository\User;
 
 use Church\Entity\User\Email;
-use Church\Entity\User\Phone;
 use Church\Entity\User\User;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\UnitOfWork;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -37,32 +35,6 @@ class UserRepository extends EntityRepository implements UserProviderInterface
 
         // Save the Email
         $em->persist($email);
-        $em->persist($user);
-        $em->flush();
-
-        return $user;
-    }
-
-    /**
-     * Create a new User from a Phone.
-     *
-     * @param Phone $phone Valid phone object.
-     *
-     * @return User Newly created user object.
-     */
-    public function createFromPhone(Phone $phone) : User
-    {
-        $em = $this->getEntityManager();
-
-        // Create a new stub user.
-        $user = $this->createStub();
-
-        // Set the Phone
-        $phone->setUser($user);
-        $user->setPrimaryPhone($phone);
-
-        // Save the phone.
-        $em->persist($phone);
         $em->persist($user);
         $em->flush();
 
@@ -128,7 +100,7 @@ class UserRepository extends EntityRepository implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function refreshUser(UserInterface $user) : UserInterface
+    public function refreshUser(UserInterface $user)
     {
         $class = get_class($user);
         if (!$this->supportsClass($class)) {

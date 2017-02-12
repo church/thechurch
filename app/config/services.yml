@@ -9,6 +9,8 @@ services:
         arguments:
           - '@serializer'
           - '@validator'
+          - '@doctrine'
+          - '@security.token_storage'
 
   church.controller_default:
         parent: church.controller
@@ -25,7 +27,6 @@ services:
         class: Church\Controller\MeController
         arguments:
             - "@church.verification_manager"
-
 
   church.controller_user:
         parent: church.controller
@@ -63,6 +64,8 @@ services:
         arguments:
           - '@doctrine'
           - '@security.http_utils'
+          - '@validator'
+          - '@serializer'
 
   church.verification_manager:
       class: Church\Utils\User\VerificationManager
@@ -79,6 +82,7 @@ services:
   church.dispatcher_email:
       class: Church\Utils\Dispatcher\EmailDispatcher
       arguments:
+          - '%dispatch%'
           - '@sendgrid'
 
   church.place_finder:
