@@ -37,14 +37,6 @@ services:
         tags:
             - { name: serializer.normalizer }
 
-  church.normalizer_login:
-        class: Church\Normalizer\LoginNormalizer
-        public: false
-        arguments:
-          - '@church.validator.login'
-        tags:
-            - { name: serializer.normalizer }
-
   church.exception_listener:
         class: Church\EventListener\ExceptionListener
         arguments:
@@ -66,14 +58,6 @@ services:
          - { name: doctrine.event_listener, event: preUpdate }
          - { name: doctrine.event_listener, event: preRemove }
 
-  church.validator.login:
-        class: Church\Validator\Constraints\LoginValidator
-        arguments:
-          - '@egulias.email_validator'
-          - '@giggsey.phone_validator'
-        tags:
-            - { name: validator.constraint_validator, alias: valid_login }
-
   church.code_authenticator:
         class:     Church\Security\CodeAuthenticator
         arguments:
@@ -92,26 +76,10 @@ services:
       tags:
             - { name: church.verification, type: email }
 
-  church.verification_phone:
-      class: Church\Utils\User\PhoneVerification
-      arguments:
-          - '@doctrine'
-          - '@ircmaxell.random'
-          - '@giggsey.phone_validator'
-          - '@church.dispatcher_sms'
-      tags:
-            - { name: church.verification, type: phone }
-
   church.dispatcher_email:
       class: Church\Utils\Dispatcher\EmailDispatcher
       arguments:
           - '@sendgrid'
-
-  church.dispatcher_sms:
-      class: Church\Utils\Dispatcher\SMSDispatcher
-      arguments:
-        - '@prawnsalad.nexmo'
-        - '%nexmo_sender%'
 
   church.place_finder:
     class: Church\Utils\PlaceFinder
@@ -146,10 +114,6 @@ services:
         class: SendGrid
         arguments:
             - '%sendgrid_api_key%'
-
-  giggsey.phone_validator:
-        class: libphonenumber\PhoneNumberUtil
-        factory: [libphonenumber\PhoneNumberUtil, getInstance]
 
   ircmaxell.random_factory:
         class: RandomLib\Factory

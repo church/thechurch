@@ -9,5 +9,5 @@ interface VerifyInterface extends EntityInterface
     /**
      * Get Created Date.
      */
-    public function getCreated() : \DateTimeInterface;
+    public function getCreated() :? \DateTimeInterface;
 }

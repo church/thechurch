@@ -22,7 +22,7 @@ class EmailVerify implements VerifyInterface
      * @var Email
      *
      * @ORM\Id
-     * @ORM\OneToOne(targetEntity="Email", inversedBy="verify")
+     * @ORM\OneToOne(targetEntity="\Church\Entity\User\Email", inversedBy="verify")
      * @ORM\JoinColumn(name="email", referencedColumnName="email")
      * @Assert\Email()
      */
@@ -85,7 +85,6 @@ class EmailVerify implements VerifyInterface
      * Set email
      *
      * @param Email $email
-     * @return EmailVerify
      */
     public function setEmail(Email $email) : self
     {
@@ -95,9 +94,7 @@ class EmailVerify implements VerifyInterface
     }
 
     /**
-     * Get email
-     *
-     * @return Email
+     * Get email.
      */
     public function getEmail() :? Email
     {
@@ -108,7 +105,6 @@ class EmailVerify implements VerifyInterface
      * Set token
      *
      * @param string $token
-     * @return EmailVerify
      */
     public function setToken(string $token) : self
     {
@@ -119,8 +115,6 @@ class EmailVerify implements VerifyInterface
 
     /**
      * Get token
-     *
-     * @return string
      */
     public function getToken() :? string
     {
@@ -131,7 +125,6 @@ class EmailVerify implements VerifyInterface
      * Set code
      *
      * @param string $code
-     * @return EmailVerify
      */
     public function setCode(string $code) : self
     {
@@ -142,8 +135,6 @@ class EmailVerify implements VerifyInterface
 
     /**
      * Get code
-     *
-     * @return string
      */
     public function getCode() :? string
     {
@@ -153,10 +144,9 @@ class EmailVerify implements VerifyInterface
     /**
      * Set created
      *
-     * @param \DateTime $verified
-     * @return Email
+     * @param \DateTimeInterface $created
      */
-    public function setCreated(\DateTime $created) : self
+    public function setCreated(\DateTimeInterface $created) : self
     {
         $this->created = $created;
 
@@ -164,11 +154,9 @@ class EmailVerify implements VerifyInterface
     }
 
     /**
-     * Get created
-     *
-     * @return \DateTime
+     * Get created.
      */
-    public function getCreated() :? \DateTime
+    public function getCreated() :? \DateTimeInterface
     {
         return $this->created;
     }

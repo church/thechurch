@@ -3,14 +3,14 @@
 namespace Church\Utils\User;
 
 use Church\Entity\Message\EmailMessage;
-use Church\Entity\User\VerifyInterface;
+use Church\Entity\User\Verify\VerifyInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bridge\Doctrine\RegistryInterface as Doctrine;
 use RandomLib\Generator as RandomGenerator;
 
 use Church\Entity\User\User;
 use Church\Entity\User\Email;
-use Church\Entity\User\EmailVerify;
+use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\Dispatcher\DispatcherInterface;
 
 /**

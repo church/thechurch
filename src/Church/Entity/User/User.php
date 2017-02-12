@@ -4,7 +4,6 @@ namespace Church\Entity\User;
 
 use Church\Entity\Location;
 use Church\Entity\User\Email;
-use Church\Entity\User\Phone;
 use Church\Entity\EntityInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -22,7 +21,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("username")
  * @UniqueEntity("primary_email")
- * @UniqueEntity("primary_phone")
  */
 class User implements EntityInterface, UserInterface, \Serializable, EquatableInterface
 {
@@ -79,24 +77,6 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     private $primaryEmail;
 
     /**
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="Phone", mappedBy="user",  cascade={"all"})
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
-     * @Groups({"api"})
-     */
-    private $phones;
-
-    /**
-     * @var Phone
-     *
-     * @ORM\OneToOne(targetEntity="Phone", mappedBy="phone", cascade={"all"})
-     * @ORM\JoinColumn(name="primary_phone", referencedColumnName="phone")
-     * @Groups({"api"})
-     */
-    private $primaryPhone;
-
-    /**
      * @var Location
      *
      * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
@@ -143,6 +123,13 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
 
         $emails = $data['emails'] ?? [];
         if (is_array($emails)) {
+            $emails = array_map(function ($item) {
+                if (!is_array($item)) {
+                    return $item;
+                }
+
+                return new Email($item);
+            }, $emails);
             $emails = array_filter($emails, function ($email) {
                 return $email instanceof Email;
             });
@@ -151,17 +138,6 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
 
         $primaryEmail = $data['primaryEmail'] ?? null;
         $this->primaryEmail = $primaryEmail instanceof Email ? $primaryEmail : null;
-
-        $phones = $data['phones'] ?? [];
-        if (is_array($phones)) {
-            $phones = array_filter($phones, function ($phone) {
-                return $phone instanceof Phone;
-            });
-        }
-        $this->phones = is_array($phones) ? new ArrayCollection($phones) : new ArrayCollection();
-
-        $primaryPhone = $data['primaryPhone'] ?? null;
-        $this->primaryPhone = $primaryPhone instanceof Phone ? $primaryPhone : null;
 
         $faith = $data['faith'] ?? false;
         $this->faith = is_bool($faith) ? $faith : false;
@@ -243,10 +219,6 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
         if ($email = $this->getPrimaryEmail()) {
             if ($email->getVerified()) {
                 $roles[] = 'ROLE_EMAIL';
-            }
-        } elseif ($phone = $this->getPrimaryPhone()) {
-            if ($phone->getVerified()) {
-                $roles[] = 'ROLE_PHONE';
             }
         }
 
@@ -436,65 +408,6 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     {
         return $this->primaryEmail;
     }
-
-    /**
-     * Add phones
-     *
-     * @param Phone $phone
-     * @return User
-     */
-    public function addPhone(Phone $phone) : self
-    {
-        $this->phones[] = $phone;
-
-        return $this;
-    }
-
-    /**
-     * Remove phones
-     *
-     * @param Phone $phone
-     */
-    public function removePhone(Phone $phone) : self
-    {
-        $this->phones->removeElement($phone);
-
-        return $this;
-    }
-
-    /**
-     * Get phones
-     *
-     * @return Collection
-     */
-    public function getPhones() :? Collection
-    {
-        return $this->phones;
-    }
-
-
-    /**
-     * Set Primary Phone.
-     *
-     * @param Phone $primaryPhone
-     */
-    public function setPrimaryPhone(Phone $primaryPhone) : self
-    {
-        $this->primaryPhone = $primaryPhone;
-
-        return $this;
-    }
-
-    /**
-     * Get Primary Phone.
-     *
-     * @return Phone
-     */
-    public function getPrimaryPhone() :? Phone
-    {
-        return $this->primaryPhone;
-    }
-
 
     /**
      * Set location

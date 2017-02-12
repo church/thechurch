@@ -8,7 +8,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 use Church\Entity\User\User;
-use Church\Entity\User\EmailVerify;
+use Church\Entity\User\Verify\EmailVerify;
 
 /**
  * Church\Entity\User\Email
@@ -26,7 +26,10 @@ class Email
      *
      * @ORM\Id
      * @ORM\Column(type="string", length=255)
-     * @Assert\Email()
+     * @Assert\Email(
+     *     strict = true,
+     *     checkMX = true
+     * )
      * @Groups({"api"})
      */
     private $email;
@@ -50,7 +53,7 @@ class Email
     /**
      * @var EmailVerify
      *
-     * @ORM\OneToOne(targetEntity="EmailVerify", mappedBy="email")
+     * @ORM\OneToOne(targetEntity="\Church\Entity\User\Verify\EmailVerify", mappedBy="email")
      * @Groups({"api"})
      **/
     private $verify;
@@ -146,10 +149,9 @@ class Email
     /**
      * Set created
      *
-     * @param \DateTime $verified
-     * @return Email
+     * @param \DateTimeInterface $created
      */
-    public function setCreated(\DateTime $created) : self
+    public function setCreated(\DateTimeInterface $created) : self
     {
         $this->created = $created;
 
@@ -161,7 +163,7 @@ class Email
      *
      * @return \DateTime
      */
-    public function getCreated() :? \DateTime
+    public function getCreated() :? \DateTimeInterface
     {
         return $this->created;
     }
@@ -181,11 +183,9 @@ class Email
     }
 
     /**
-     * Get verified
-     *
-     * @return \DateTime
+     * Get verified.
      */
-    public function getVerified() :? \DateTime
+    public function getVerified() :? \DateTimeInterface
     {
         return $this->verified;
     }
@@ -194,7 +194,6 @@ class Email
      * Set verify
      *
      * @param EmailVerify $verify
-     * @return Email
      */
     public function setVerify(EmailVerify $verify) : self
     {
@@ -205,8 +204,6 @@ class Email
 
     /**
      * Get verify
-     *
-     * @return EmailVerify
      */
     public function getVerify() :? EmailVerify
     {

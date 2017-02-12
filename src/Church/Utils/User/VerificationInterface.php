@@ -2,7 +2,7 @@
 
 namespace Church\Utils\User;
 
-use Church\Entity\User\VerifyInterface;
+use Church\Entity\User\Verify\VerifyInterface;
 
 /**
  * Verification Interface.

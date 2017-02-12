@@ -4,7 +4,6 @@ namespace Church\Entity\User;
 
 use Church\Entity\EntityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Church\Validator\Constraints as ChurchAssert;
 
 /**
  * Login Entity.
@@ -15,29 +14,17 @@ class Login implements EntityInterface
 {
 
     /**
-     * @var array
-     */
-    protected const TYPES = [
-      'phone',
-      'email',
-    ];
-
-    /**
      * @var string
      *
      * @Assert\Length(
      *      max = "255"
      * )
-     * @ChurchAssert\Login
+     * @Assert\Email(
+     *     strict = true,
+     *     checkMX = true
+     * )
      */
     protected $value;
-
-    /**
-     * @var string
-     *
-     * @Assert\Choice(callback = "getTypes")
-     */
-    protected $type;
 
     /**
      * Creates a new Login.
@@ -48,9 +35,18 @@ class Login implements EntityInterface
     {
         $value = $data['value'] ?? '';
         $this->value = is_string($value) ? $value : '';
+    }
 
-        $type = $data['type'] ?? null;
-        $this->type = is_string($type) && in_array($type, self::TYPES) ? $type : null;
+    /**
+     * Sets the value of the login.
+     *
+     * @param string $value
+     */
+    public function setValue(string $value) : self
+    {
+        $this->value = $value;
+
+        return $this;
     }
 
     /**
@@ -62,35 +58,11 @@ class Login implements EntityInterface
     }
 
     /**
-     * Returns the type of the login (if there is one).
+     * Returns the type of login.
      */
-    public function getType() :? string
+    public function getType() : string
     {
-        return $this->type;
-    }
-
-    /**
-     * Returns all possible types.
-     */
-    public function getTypes() : array
-    {
-        return self::TYPES;
-    }
-
-    /**
-     * Determines if login is an email.
-     */
-    public function isEmail() : bool
-    {
-        return $this->type === 'email';
-    }
-
-    /**
-     * Determines if login is a phone number.
-     */
-    public function isPhone() : bool
-    {
-        return $this->type === 'phone';
+        return 'email';
     }
 
     /**

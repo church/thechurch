@@ -22,7 +22,7 @@ class EmailDispatcher implements DispatcherInterface
     /**
      * Creates an email dispatcher.
      *
-     * @var \SendGrid $sendGrid
+     * @param \SendGrid $sendGrid
      */
     public function __construct(\SendGrid $sendGrid)
     {
