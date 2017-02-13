@@ -24,15 +24,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class User implements EntityInterface, UserInterface, \Serializable, EquatableInterface
 {
-
     /**
      * User Role.
      *
      * Granted to everyone.
+     * @todo Granting this to everyone also grants them write access to
+     *       everything. :(
      *
      * @var string.
      */
-    const ROLE_PUBLIC = 'public';
+    const ROLE_ANONYMOUS = 'anonymous';
 
     /**
      * User Role.
@@ -41,7 +42,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @var string.
      */
-    const ROLE_USER = 'user';
+    const ROLE_AUTHENTICATED = 'authenticated';
 
     /**
      * User Role.
@@ -50,32 +51,14 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @var string.
      */
-    const ROLE_EMAIL = 'email';
-
-    /**
-     * User Role.
-     *
-     * Granted to users with a name
-     *
-     * @var string.
-     */
-    const ROLE_NAME = 'name';
-
-    /**
-     * User Role.
-     *
-     * Granted to who have agreed to the statement of faith.
-     *
-     * @var string.
-     */
-    const ROLE_FAITH = 'faith';
+    const ROLE_STANDARD = 'standard';
 
     /**
      * @var int
      *
      * @ORM\Column(name="user_id", type="guid")
      * @ORM\Id
-     * @Groups({"public", "me"})
+     * @Groups({"anonymous", "me"})
      */
     private $id;
 
@@ -83,7 +66,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      * @var Name
      *
      * @ORM\Embedded(class = "Name", columnPrefix = "name_")
-     * @Groups({"public", "me", "email"})
+     * @Groups({"anonymous", "authenticated"", "me"})
      */
     private $name;
 
@@ -126,7 +109,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"public", "me"})
+     * @Groups({"anonymous", "me"})
      */
     private $created;
 
@@ -230,22 +213,18 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     public function getRoles() : array
     {
         $roles = [
-            self::ROLE_PUBLIC,
-            self::ROLE_USER,
+            self::ROLE_ANONYMOUS,
+            self::ROLE_AUTHENTICATED,
         ];
 
         if ($email = $this->getPrimaryEmail()) {
             if ($email->getVerified()) {
-                $roles[] = self::ROLE_EMAIL;
+                if ($this->getName()->getFirst() && $this->getName()->getLastName()) {
+                    if ($this->getFaith()) {
+                        $roles[] = self::ROLE_STANDARD;
+                    }
+                }
             }
-        }
-
-        if ($this->getName()->getFirst() && $this->getName()->getLastName()) {
-            $roles[] = self::ROLE_NAME;
-        }
-
-        if ($this->getFaith()) {
-            $roles[] = self::ROLE_FAITH;
         }
 
         return $roles;
