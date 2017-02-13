@@ -31,7 +31,7 @@ class EmailVerify implements VerifyInterface
      * @var string
      *
      * @ORM\Column(type="string", length=6, unique=true)
-     * @Groups({"api"})
+     * @Groups({"me"})
      * @Assert\NotBlank()
      */
     private $token;
@@ -48,7 +48,7 @@ class EmailVerify implements VerifyInterface
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"api"})
+     * @Groups({"me"})
      */
     private $created;
 

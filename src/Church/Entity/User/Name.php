@@ -17,7 +17,7 @@ class Name implements EntityInterface
      * @var string
      *
      * @ORM\Column(name="first", type="string", length=255, nullable=true)
-     * @Groups({"me", "api"})
+     * @Groups({"public", "me", "email"})
      */
     private $first;
 
@@ -25,7 +25,7 @@ class Name implements EntityInterface
      * @var string
      *
      * @ORM\Column(name="last", type="string", length=255, nullable=true)
-     * @Groups({"me", "api"})
+     * @Groups({"public", "me", "email"})
      */
     private $last;
 

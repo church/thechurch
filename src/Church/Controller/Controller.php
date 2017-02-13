@@ -5,6 +5,7 @@ namespace Church\Controller;
 use Church\Request\DeserializeRequestTrait;
 use Church\Response\SerializerResponseTrait;
 use Church\Entity\User\User;
+use Church\Response\SerializerResponseInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * An abstract controller to extend.
  */
-abstract class Controller
+abstract class Controller implements SerializerResponseInterface
 {
 
     use SerializerResponseTrait;
@@ -77,10 +78,26 @@ abstract class Controller
             throw new \Exception('Not Logged In.');
         }
 
-        if (!is_object($user = $token->getUser())) {
+        $user = $token->getUser();
+
+        if (!is_object($user)) {
             throw new \Exception('Not Logged In.');
         }
 
         return $user;
+    }
+
+    /**
+     * Get the groups for the user.
+     *
+     * @param array $groups
+     */
+    protected function getGroups(array $groups = [])
+    {
+        if ($this->isLoggedIn()) {
+            $groups = array_merge($groups, $this->getUser()->getRoles());
+        }
+
+        return array_merge($groups, self::DEFAULT_GROUPS);
     }
 }

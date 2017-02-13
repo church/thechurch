@@ -20,18 +20,62 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="Church\Repository\User\UserRepository")
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("username")
  * @UniqueEntity("primary_email")
  */
 class User implements EntityInterface, UserInterface, \Serializable, EquatableInterface
 {
 
     /**
+     * User Role.
+     *
+     * Granted to everyone.
+     *
+     * @var string.
+     */
+    const ROLE_PUBLIC = 'public';
+
+    /**
+     * User Role.
+     *
+     * Granted to all users.
+     *
+     * @var string.
+     */
+    const ROLE_USER = 'user';
+
+    /**
+     * User Role.
+     *
+     * Granted to users with a confirmed email.
+     *
+     * @var string.
+     */
+    const ROLE_EMAIL = 'email';
+
+    /**
+     * User Role.
+     *
+     * Granted to users with a name
+     *
+     * @var string.
+     */
+    const ROLE_NAME = 'name';
+
+    /**
+     * User Role.
+     *
+     * Granted to who have agreed to the statement of faith.
+     *
+     * @var string.
+     */
+    const ROLE_FAITH = 'faith';
+
+    /**
      * @var int
      *
      * @ORM\Column(name="user_id", type="guid")
      * @ORM\Id
-     * @Groups({"me", "api"})
+     * @Groups({"public", "me"})
      */
     private $id;
 
@@ -39,17 +83,9 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      * @var Name
      *
      * @ORM\Embedded(class = "Name", columnPrefix = "name_")
-     * @Groups({"me", "api"})
+     * @Groups({"public", "me", "email"})
      */
     private $name;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=25, unique=true, nullable=true)
-     * @Groups({"me", "api"})
-     */
-    private $username;
 
     /**
      * @var ArrayCollection
@@ -90,7 +126,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"me", "api"})
+     * @Groups({"public", "me"})
      */
     private $created;
 
@@ -115,9 +151,6 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
 
         $lastName = $data['lastName'] ?? null;
         $this->lastName = is_string($lastName) ? $lastName : null;
-
-        $username = $data['username'] ?? null;
-        $this->username = is_string($username) ? $username : null;
 
         $emails = $data['emails'] ?? [];
         if (is_array($emails)) {
@@ -170,7 +203,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      */
     public function getUsername() :? string
     {
-        return $this->username;
+        return null;
     }
 
     /**
@@ -186,38 +219,33 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      */
     public function getPassword() : string
     {
-        return '';
+        return null;
     }
 
     /**
      * @inheritDoc
+     *
+     * @Groups({"me"})
      */
-    public function getRoles() :? array
+    public function getRoles() : array
     {
-        $roles = array(
-          'ROLE_USER',
-        );
-
-        if ($this->getPassword()) {
-            $roles[] = 'ROLE_PASSWORD';
-        }
-
-        if ($this->getUsername()) {
-            $roles[] = 'ROLE_USERNAME';
-        }
-
-        if ($this->getFaith()) {
-            $roles[] = 'ROLE_FAITH';
-        }
-
-        if ($this->getName()->getFirst() && $this->getName()->getLastName()) {
-            $roles[] = 'ROLE_NAME';
-        }
+        $roles = [
+            self::ROLE_PUBLIC,
+            self::ROLE_USER,
+        ];
 
         if ($email = $this->getPrimaryEmail()) {
             if ($email->getVerified()) {
-                $roles[] = 'ROLE_EMAIL';
+                $roles[] = self::ROLE_EMAIL;
             }
+        }
+
+        if ($this->getName()->getFirst() && $this->getName()->getLastName()) {
+            $roles[] = self::ROLE_NAME;
+        }
+
+        if ($this->getFaith()) {
+            $roles[] = self::ROLE_FAITH;
         }
 
         return $roles;
@@ -237,8 +265,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     public function serialize()
     {
         return serialize([
-            $this->id,
-            $this->username,
+            $this->id
         ]);
     }
 
@@ -248,8 +275,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     public function unserialize($serialized)
     {
         list (
-          $this->id,
-          $this->username
+          $this->id
         ) = unserialize($serialized);
     }
 
@@ -258,49 +284,11 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      */
     public function isEqualTo(UserInterface $user) : bool
     {
-        if ($this->getUsername()) {
-            if ($this->getUsername() !== $user->getUsername()) {
-                return false;
-            }
-        }
-
-        if ($this->getPassword()) {
-            if ($this->getPassword() !== $user->getPassword()) {
-                return false;
-            }
-        }
-
-        if ($this->getID() !== $user->getID()) {
+        if ($this->getId() !== $user->getId()) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Set username
-     *
-     * @param string $username
-     * @return User
-     */
-    public function setUsername(string $username) : self
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     * @return User
-     */
-    public function setPassword(string $password) : self
-    {
-        $this->password = $password;
-
-        return $this;
     }
 
     /**
@@ -427,9 +415,9 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     /**
      * Set created
      *
-     * @param \DateTime $created
+     * @param \DateTimeInterface $created
      */
-    public function setCreated(\DateTime $created) : self
+    public function setCreated(\DateTimeInterface $created) : self
     {
         $this->created = $created;
 
@@ -441,7 +429,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @return \DateTime
      */
-    public function getCreated() :? \DateTime
+    public function getCreated() :? \DateTimeInterface
     {
         return $this->created;
     }

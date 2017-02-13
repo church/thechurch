@@ -21,22 +21,21 @@ trait SerializerResponseTrait
      *
      * @param mixed $data
      * @param string $format
+     * @param array $groups
      * @param int $status
      * @param array $headers
-     * @param array $context
      */
     protected function reply(
         $data,
         string $format,
+        array $groups = ['public'],
         int $status = 200,
-        array $headers = [],
-        array $context = [
-          'groups' => [
-            'api'
-          ],
-        ]
+        array $headers = []
     ) : Response {
 
+        $context = [
+            'groups' => $groups,
+        ];
         return new Response(
             $this->serializer->serialize($data, $format, $context),
             $status,

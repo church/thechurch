@@ -60,11 +60,7 @@ class MeController extends Controller
             throw new NotFoundHttpException('Not Logged In');
         }
 
-        return $this->reply($this->getUser(), $request->getRequestFormat(), 200, [], [
-            'groups' => [
-                'me',
-            ],
-        ]);
+        return $this->reply($this->getUser(), $request->getRequestFormat(), $this->getGroups(['me']));
     }
 
     /**
@@ -86,7 +82,7 @@ class MeController extends Controller
 
         $verification->send($verify);
 
-        return $this->reply($verify, $request->getRequestFormat());
+        return $this->reply($verify, $request->getRequestFormat(), $this->getGroups());
     }
 
     /**

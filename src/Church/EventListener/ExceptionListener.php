@@ -3,23 +3,36 @@
 namespace Church\EventListener;
 
 use Church\Response\SerializerResponseTrait;
-use Symfony\Component\HttpFoundation\Request;
+use Church\Response\SerializerResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class ExceptionListener
+/**
+ * Listen for Exceptions.
+ */
+class ExceptionListener implements SerializerResponseInterface
 {
 
     use SerializerResponseTrait;
 
+    /**
+     * Create the Exception Listener.
+     *
+     * @param SerializerInterface $serializer
+     */
     public function __construct(
         SerializerInterface $serializer
     ) {
         $this->serializer = $serializer;
     }
 
+    /**
+     * Handle the Kernel Exception.
+     *
+     * @param GetResponseForExceptionEvent $event
+     */
     public function onKernelException(GetResponseForExceptionEvent $event) : Response
     {
         // You get the exception object from the received event
@@ -51,11 +64,17 @@ class ExceptionListener
             $response = $this->reply(
                 $data,
                 $request->getRequestFormat(),
+                self::DEFAULT_GROUPS,
                 $exception->getStatusCode(),
                 $exception->getHeaders()
             );
         } else {
-            $response = $this->reply($data, $request->getRequestFormat(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $response = $this->reply(
+                $data,
+                $request->getRequestFormat(),
+                self::DEFAULT_GROUPS,
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
         // Send the modified response object to the event
