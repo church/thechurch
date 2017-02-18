@@ -2,10 +2,11 @@
 
 namespace Church\Security;
 
+use Church\Controller\Controller;
 use Church\Entity\User\User;
 use Church\Entity\User\Verify\EmailVerify;
-use Church\Request\DeserializeRequestTrait;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -22,41 +23,27 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * Code Authenticator.
  */
 
-class CodeAuthenticator implements
+class CodeAuthenticator extends Controller implements
     SimplePreAuthenticatorInterface,
     AuthenticationFailureHandlerInterface
 {
-
-    use DeserializeRequestTrait;
-
-    /**
-     * @var RegistryInterface
-     */
-    protected $doctrine;
-
     /**
      * @var HttpUtils
      */
     protected $http;
 
     /**
-     * Creates a new Code Authenticator.
-     *
-     * @param RegistryInterface $doctrine
-     * @param HttpUtils $http
-     * @param ValidatorInterface $validator
-     * @param SerializerInterface $serializer
+     * {@inheritdoc}
      */
     public function __construct(
-        RegistryInterface $doctrine,
-        HttpUtils $http,
+        SerializerInterface $serializer,
         ValidatorInterface $validator,
-        SerializerInterface $serializer
+        RegistryInterface $doctrine,
+        TokenStorageInterface $tokenStorage,
+        HttpUtils $http
     ) {
-        $this->doctrine = $doctrine;
+        parent::__construct($serializer, $validator, $doctrine, $tokenStorage);
         $this->http = $http;
-        $this->validator = $validator;
-        $this->serializer = $serializer;
     }
 
     /**

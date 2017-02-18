@@ -51,16 +51,13 @@ class MeController extends Controller
     *
     * @Route("/me.{_format}")
     * @Method("GET")
+    * @Security("has_role('authenticated')")
     *
     * @param Request $request
     */
     public function showAction(Request $request) : Response
     {
-        if (!$this->isLoggedIn()) {
-            throw new NotFoundHttpException('Not Logged In');
-        }
-
-        return $this->reply($this->getUser(), $request->getRequestFormat(), $this->getGroups(['me']));
+        return $this->reply($this->getUser(), $request->getRequestFormat(), ['me']);
     }
 
     /**
@@ -68,7 +65,7 @@ class MeController extends Controller
      *
      * @Route("/login")
      * @Method("POST")
-     * @Security("!has_role('ROLE_USER')")
+     * @Security("!has_role('authenticated')")
      *
      * @param Request $request
      */
@@ -82,7 +79,7 @@ class MeController extends Controller
 
         $verification->send($verify);
 
-        return $this->reply($verify, $request->getRequestFormat(), $this->getGroups());
+        return $this->reply($verify, $request->getRequestFormat());
     }
 
     /**
@@ -90,7 +87,7 @@ class MeController extends Controller
      *
      * @Route("/verify/email", name="me_verify_email")
      * @Method("POST")
-     * @Security("has_role('ROLE_USER')")
+     * @Security("has_role('authenticated')")
      *
      * @param Request $request
      */

@@ -2,11 +2,11 @@
 
 namespace Church\Controller;
 
-use Church\Request\DeserializeRequestTrait;
-use Church\Response\SerializerResponseTrait;
 use Church\Entity\User\User;
-use Church\Response\SerializerResponseInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -14,11 +14,27 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * An abstract controller to extend.
  */
-abstract class Controller implements SerializerResponseInterface
+abstract class Controller
 {
+    /**
+     * @var string
+     */
+    const OPERATION_READ = 'read';
 
-    use SerializerResponseTrait;
-    use DeserializeRequestTrait;
+    /**
+     * @var string
+     */
+    const OPERATION_WRITE = 'write';
+
+    /**
+     * @var array
+     */
+    const DEFAULT_ROLES = ['anonymous'];
+
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
 
     /**
      * @var ValidatorInterface
@@ -90,14 +106,92 @@ abstract class Controller implements SerializerResponseInterface
     /**
      * Get the groups for the user.
      *
-     * @param array $groups
+     * @param string $operation
+     * @param array $roles
      */
-    protected function getGroups(array $groups = [])
+    protected function getGroups(string $operation, array $roles = []) : array
     {
+        $roles = array_merge(self::DEFAULT_ROLES, $roles);
+
         if ($this->isLoggedIn()) {
-            $groups = array_merge($groups, $this->getUser()->getRoles());
+            $roles = array_merge($roles, $this->getUser()->getRoles());
         }
 
-        return array_merge($groups, self::DEFAULT_GROUPS);
+        return array_map(function ($role) use ($operation) {
+            return $role . '_' . $operation;
+        }, $roles);
+    }
+
+    /**
+     * Deserialize and validate an object.
+     *
+     * This method exists to prevent validation from being skipped by mistake.
+     *
+     * @param Request $request
+     * @param string $type
+     * @param array $roles
+     */
+    protected function deserialize(Request $request, string $type, array $roles = [])
+    {
+
+        if (!$request->getContent()) {
+            throw new BadRequestHttpException('Missing Request Body.');
+        }
+
+        $object = $this->serializer->deserialize(
+            $request->getContent(),
+            $type,
+            $request->getRequestFormat(),
+            [
+                'groups' => $this->getGroups(self::OPERATION_WRITE, $roles),
+            ]
+        );
+
+        $this->validate($object);
+
+        return $object;
+    }
+
+    /**
+     * Validate an object.
+     *
+     * @param object $data
+     */
+    protected function validate($data) : bool
+    {
+        $errors = $this->validator->validate($data);
+
+        if (count($errors)) {
+            throw new BadRequestHttpException((string) $errors);
+        }
+
+        return true;
+    }
+
+    /**
+     * Reply action that serializes the data passed.
+     *
+     * @param mixed $data
+     * @param string $format
+     * @param array $roles
+     * @param int $status
+     * @param array $headers
+     */
+    protected function reply(
+        $data,
+        string $format,
+        array $roles = [],
+        int $status = 200,
+        array $headers = []
+    ) : Response {
+
+        $context = [
+            'groups' => $this->getGroups(self::OPERATION_READ, $roles),
+        ];
+        return new Response(
+            $this->serializer->serialize($data, $format, $context),
+            $status,
+            $headers
+        );
     }
 }

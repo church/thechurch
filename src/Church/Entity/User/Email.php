@@ -30,7 +30,7 @@ class Email
      *     strict = true,
      *     checkMX = true
      * )
-     * @Groups({"me"})
+     * @Groups({"me_read", "me_write"})
      */
     private $email;
 
@@ -46,7 +46,7 @@ class Email
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"me"})
+     * @Groups({"me_read"})
      */
     private $created;
 
@@ -61,7 +61,7 @@ class Email
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"me"})
+     * @Groups({"me_read"})
      */
     private $verified;
 

@@ -4,6 +4,7 @@ namespace Church\Entity\User;
 
 use Church\Entity\EntityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Login Entity.
@@ -23,6 +24,7 @@ class Login implements EntityInterface
      *     strict = true,
      *     checkMX = true
      * )
+     * @Groups({"anonymous_write"})
      */
     protected $value;
 
