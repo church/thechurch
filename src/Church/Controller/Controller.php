@@ -19,17 +19,22 @@ abstract class Controller
     /**
      * @var string
      */
-    const OPERATION_READ = 'read';
+    protected const OPERATION_READ = 'read';
 
     /**
      * @var string
      */
-    const OPERATION_WRITE = 'write';
+    protected const OPERATION_WRITE = 'write';
 
     /**
      * @var array
      */
-    const DEFAULT_ROLES = ['anonymous'];
+    protected const DEFAULT_ROLES = ['anonymous'];
+
+    /**
+     * @var string
+     */
+    protected const CSRF_TOKEN_ID = 'api';
 
     /**
      * @var SerializerInterface
@@ -128,11 +133,21 @@ abstract class Controller
      * This method exists to prevent validation from being skipped by mistake.
      *
      * @param Request $request
-     * @param string $type
+     * @param string|object $type
      * @param array $roles
      */
-    protected function deserialize(Request $request, string $type, array $roles = [])
+    protected function deserialize(Request $request, $type, array $roles = [])
     {
+
+        if (!is_string($type) && !is_object($type)) {
+            throw new \InvalidArgumentException('type must be a string or an object');
+        }
+
+        $object = null;
+        if (is_object($type)) {
+            $object = $type;
+            $type = get_class($object);
+        }
 
         if (!$request->getContent()) {
             throw new BadRequestHttpException('Missing Request Body.');
@@ -143,6 +158,7 @@ abstract class Controller
             $type,
             $request->getRequestFormat(),
             [
+                'object_to_populate' => $object,
                 'groups' => $this->getGroups(self::OPERATION_WRITE, $roles),
             ]
         );

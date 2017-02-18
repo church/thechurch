@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="Church\Repository\User\UserRepository")
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("primary_email")
+ * @UniqueEntity("primaryEmail")
  */
 class User implements EntityInterface, UserInterface, \Serializable, EquatableInterface
 {
@@ -66,7 +66,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      * @var Name
      *
      * @ORM\Embedded(class = "Name", columnPrefix = "name_")
-     * @Groups({"anonymous_read"})
+     * @Groups({"anonymous_read", "me_write"})
      */
     private $name;
 
@@ -208,7 +208,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     /**
      * @inheritDoc
      *
-     * @Groups({"me_view"})
+     * @Groups({"me_read"})
      */
     public function getRoles() : array
     {
@@ -217,14 +217,14 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
             self::ROLE_AUTHENTICATED,
         ];
 
-        if ($email = $this->getPrimaryEmail()) {
-            if ($email->getVerified()) {
-                if ($this->getName()->getFirst() && $this->getName()->getLastName()) {
-                    if ($this->getFaith()) {
-                        $roles[] = self::ROLE_STANDARD;
-                    }
-                }
-            }
+        if ($this->getPrimaryEmail()
+            && $this->getPrimaryEmail()->getVerified()
+            && $this->getName()->getFirst()
+            && $this->getName()->getLast()
+            && $this->getFaith()
+            && $this->getLocation()
+        ) {
+            $roles[] = self::ROLE_STANDARD;
         }
 
         return $roles;
@@ -273,11 +273,19 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     /**
      * Set Name.
      *
-     * @param Name $name
+     * @param Name|array $name
      */
-    public function setName(Name $name) : self
+    public function setName($name) : self
     {
-        $this->name = $name;
+        if (!is_array($name) && !$name instanceof Name) {
+            throw new \InvalidArgumentException("name must be an array or a name.");
+        }
+
+        if (is_array($name)) {
+            $this->name = new Name($name);
+        } else {
+            $this->name = $name;
+        }
 
         return $this;
     }

@@ -3,16 +3,17 @@
 namespace Church\Controller;
 
 use Church\Entity\User\Login;
+use Church\Entity\User\User;
 use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\User\VerificationManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -35,15 +36,22 @@ class MeController extends Controller
      */
     protected $verificationManager;
 
+    /**
+     * @var CsrfTokenManagerInterface
+     */
+    protected $csrfTokenManager;
+
     public function __construct(
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         RegistryInterface $doctrine,
         TokenStorageInterface $tokenStorage,
-        VerificationManagerInterface $verificationManager
+        VerificationManagerInterface $verificationManager,
+        CsrfTokenManagerInterface $csrfTokenManager
     ) {
         parent::__construct($serializer, $validator, $doctrine, $tokenStorage);
         $this->verificationManager = $verificationManager;
+        $this->csrfTokenManager = $csrfTokenManager;
     }
 
    /**
@@ -58,6 +66,30 @@ class MeController extends Controller
     public function showAction(Request $request) : Response
     {
         return $this->reply($this->getUser(), $request->getRequestFormat(), ['me']);
+    }
+
+    /**
+     * Show the current user.
+     *
+     * @Route("/me.{_format}")
+     * @Method("PATCH")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function updateAction(Request $request) : Response
+    {
+        $em = $this->doctrine->getEntityManager();
+        $repository = $em->getRepository(User::class);
+        $user = $repository->find($this->getUser()->getId());
+        $user = $this->deserialize($request, $user, ['me']);
+
+        $em->flush();
+
+        // Refresh the user.
+        $this->tokenStorage->getToken()->setAuthenticated(false);
+
+        return $this->showAction($request);
     }
 
     /**
@@ -108,6 +140,8 @@ class MeController extends Controller
 
             $this->tokenStorage->getToken()->setAuthenticated(false);
         }
+
+        $this->csrfTokenManager->refreshToken(self::CSRF_TOKEN_ID);
 
         return $this->showAction($request);
     }

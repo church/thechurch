@@ -27,6 +27,7 @@ services:
         class: Church\Controller\MeController
         arguments:
             - "@church.verification_manager"
+            - '@security.csrf.token_manager'
 
   church.controller_user:
         parent: church.controller

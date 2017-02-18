@@ -18,11 +18,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CsrfController extends Controller
 {
     /**
-     * @var string
-     */
-    protected const CSRF_TOKEN_ID = 'api';
-
-    /**
      * @var \Symfony\Component\Security\Csrf\CsrfTokenManagerInterface
      */
     protected $csrfTokenManager;
@@ -40,11 +35,13 @@ class CsrfController extends Controller
 
     /**
      * @Route("/token.{_format}",
-   *  defaults= {
+     *  defaults= {
      *    "_format" = "json"
      *  }
      *)
      * @Method("GET")
+     *
+     * @param Request $request
      */
     public function showAction(Request $request) : Response
     {
