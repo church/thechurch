@@ -132,9 +132,6 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
             $this->name = new Name();
         }
 
-        $lastName = $data['lastName'] ?? null;
-        $this->lastName = is_string($lastName) ? $lastName : null;
-
         $emails = $data['emails'] ?? [];
         if (is_array($emails)) {
             $emails = array_map(function ($item) {
@@ -221,7 +218,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
             && $this->getPrimaryEmail()->getVerified()
             && $this->getName()->getFirst()
             && $this->getName()->getLast()
-            && $this->getFaith()
+            && $this->hasFaith()
             && $this->getLocation()
         ) {
             $roles[] = self::ROLE_STANDARD;
@@ -273,19 +270,11 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
     /**
      * Set Name.
      *
-     * @param Name|array $name
+     * @param Name $name
      */
-    public function setName($name) : self
+    public function setName(Name $name) : self
     {
-        if (!is_array($name) && !$name instanceof Name) {
-            throw new \InvalidArgumentException("name must be an array or a name.");
-        }
-
-        if (is_array($name)) {
-            $this->name = new Name($name);
-        } else {
-            $this->name = $name;
-        }
+        $this->name = $name;
 
         return $this;
     }
@@ -394,7 +383,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @return bool
      */
-    public function getFaith() :? bool
+    public function hasFaith() : bool
     {
         return $this->faith;
     }
