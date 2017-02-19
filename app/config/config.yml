@@ -26,6 +26,8 @@ framework:
     serializer:
         enabled: true
         enable_annotations: true
+    property_info:
+        enabled: true
     assets:
       enabled: false
     php_errors:

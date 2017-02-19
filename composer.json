@@ -41,7 +41,8 @@
         "prawnsalad/nexmo": "dev-master",
         "symfony/security": "^3.2",
         "symfony/expression-language": "^3.2",
-        "sendgrid/sendgrid": "^5.1"
+        "sendgrid/sendgrid": "^5.1",
+        "symfony/property-info": "^3.2"
      },
      "require-dev": {
        "symfony/debug-bundle": "~3.2",
