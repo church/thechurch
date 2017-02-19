@@ -5,6 +5,7 @@ namespace Church\Entity\User;
 use Church\Entity\EntityInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Defines a person's name.
@@ -18,6 +19,9 @@ class Name implements EntityInterface
      *
      * @ORM\Column(name="first", type="string", length=255, nullable=true)
      * @Groups({"anonymous_read", "me_write"})
+     * @Assert\Length(
+     *      max = 255
+     * )
      */
     private $first;
 
@@ -26,6 +30,9 @@ class Name implements EntityInterface
      *
      * @ORM\Column(name="last", type="string", length=255, nullable=true)
      * @Groups({"anonymous_read", "me_write"})
+     * @Assert\Length(
+     *      max = 255
+     * )
      */
     private $last;
 

@@ -66,7 +66,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      * @var Name
      *
      * @ORM\Embedded(class = "Name", columnPrefix = "name_")
-     * @Groups({"anonymous_read", "me_write"})
+     * @Groups({"anonymous_read"})
      */
     private $name;
 
@@ -75,7 +75,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @ORM\OneToMany(targetEntity="Email", mappedBy="user",  cascade={"all"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
-     * @Groups({"me_read", "me_write"})
+     * @Groups({"me_read"})
      */
     private $emails;
 
@@ -84,7 +84,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @ORM\OneToOne(targetEntity="Email", mappedBy="email", cascade={"all"})
      * @ORM\JoinColumn(name="primary_email", referencedColumnName="email")
-     * @Groups({"me_read", "me_write"})
+     * @Groups({"me_read"})
      */
     private $primaryEmail;
 
@@ -93,7 +93,7 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
      *
      * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
      * @ORM\JoinColumn(name="location", referencedColumnName="location_id")
-     * @Groups({"me_read", "me_write"})
+     * @Groups({"me_read"})
      */
     private $location;
 

@@ -2,8 +2,8 @@
 
 namespace Church\Controller;
 
-use Church\Entity\User\Login;
 use Church\Entity\User\User;
+use Church\Entity\User\Login;
 use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\User\VerificationManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -69,9 +69,9 @@ class MeController extends Controller
     }
 
     /**
-     * Show the current user.
+     * Update the current user.
      *
-     * @Route("/me.{_format}")
+     * @Route("/me")
      * @Method("PATCH")
      * @Security("has_role('authenticated')")
      *
@@ -90,6 +90,45 @@ class MeController extends Controller
         $this->tokenStorage->getToken()->setAuthenticated(false);
 
         return $this->showAction($request);
+    }
+
+    /**
+     * Show the user's real name
+     *
+     * @Route("/me/name.{_format}")
+     * @Method("GET")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function showNameAction(Request $request) : Response
+    {
+        return $this->reply($this->getUser()->getName(), $request->getRequestFormat(), ['me']);
+    }
+
+    /**
+     * Update the user's real name.
+     *
+     * @Route("/me/name")
+     * @Method("PATCH")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function updateNameAction(Request $request) : Response
+    {
+        $em = $this->doctrine->getEntityManager();
+        $repository = $em->getRepository(User::class);
+        $user = $repository->find($this->getUser()->getId());
+        $name = $this->deserialize($request, $user->getName(), ['me']);
+        $user->setName($name);
+
+        $em->flush();
+
+        // Refresh the user.
+        $this->tokenStorage->getToken()->setAuthenticated(false);
+
+        return $this->showNameAction($request);
     }
 
     /**
