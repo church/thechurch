@@ -3,6 +3,7 @@
 namespace Church\Entity\User;
 
 use Church\Entity\Location;
+use Church\Entity\AbstractEntity;
 use Church\Entity\User\Email;
 use Church\Entity\User\Name;
 use Church\Entity\EntityInterface;
@@ -22,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("primaryEmail")
  */
-class User implements EntityInterface, UserInterface, \Serializable, EquatableInterface
+class User extends AbstractEntity implements UserInterface, \Serializable, EquatableInterface
 {
     /**
      * User Role.
@@ -124,37 +125,20 @@ class User implements EntityInterface, UserInterface, \Serializable, EquatableIn
         $this->id = is_string($id) && uuid_is_valid($id) ? strtolower($id) : strtolower(uuid_create(UUID_TYPE_DEFAULT));
 
         $name = $data['name'] ?? null;
-        if ($name instanceof Name) {
-            $this->name = $name;
-        } elseif (is_array($name)) {
-            $this->name = new Name($name);
-        } else {
-            $this->name = new Name();
-        }
+        $name = $this->getSingle($name, Name::class);
+        $this->name = $name ? $name : new Name();
 
         $emails = $data['emails'] ?? [];
-        if (is_array($emails)) {
-            $emails = array_map(function ($item) {
-                if (!is_array($item)) {
-                    return $item;
-                }
-
-                return new Email($item);
-            }, $emails);
-            $emails = array_filter($emails, function ($email) {
-                return $email instanceof Email;
-            });
-        }
-        $this->emails = is_array($emails) ? new ArrayCollection($emails) : new ArrayCollection();
+        $this->emails = $this->getMultiple($emails, Email::class);
 
         $primaryEmail = $data['primaryEmail'] ?? null;
-        $this->primaryEmail = $primaryEmail instanceof Email ? $primaryEmail : null;
+        $this->primaryEmail = $this->getSingle($primaryEmail, Email::class);
 
         $faith = $data['faith'] ?? false;
         $this->faith = is_bool($faith) ? $faith : false;
 
         $location = $data['location'] ?? null;
-        $this->location = $location instanceof Location ? $location : null;
+        $this->location = $this->getSingle($location, Location::class);
 
         $created = $data['created'] ?? null;
         $this->created = $created instanceof \DateTimeInterface ? $created : null;

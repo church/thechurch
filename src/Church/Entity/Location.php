@@ -2,11 +2,8 @@
 
 namespace Church\Entity;
 
+use Church\Entity\Place\Place;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Church\Entity\Place;
-use Church\Entity\User;
 
 /**
  * Church\Entity\Location
@@ -15,37 +12,67 @@ use Church\Entity\User;
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="location")
  */
-class Location
+class Location extends AbstractEntity
 {
     /**
-     * @var integer $id
+     * @var string
      *
-     * @ORM\Column(name="location_id", type="integer")
+     * @ORM\Column(name="location_id", type="string", length=255)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Place", inversedBy="locations")
+     * @var Place
+     *
+     * @ORM\ManyToOne(targetEntity="Church\Entity\Place\Place", inversedBy="locations")
      * @ORM\JoinColumn(name="place_id", referencedColumnName="place_id")
      */
     private $place;
 
     /**
+     * @var float
+     *
      * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
      */
     private $latitude;
 
     /**
-     * @ORM\Column(type="decimal", precision=9, scale=6, nullable=true)
+     * @var float
+     *
+     * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
      */
     private $longitude;
 
     /**
+     * @var \DateTimeInterface
+     *
      * @ORM\Column(type="datetime")
      */
     private $created;
+
+    /**
+     * Create new Location.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        $id = $data['id'] ?? null;
+        $this->id = is_string($id) ? $id : '';
+
+        $place = $data['place'] ?? null;
+        $this->place = $this->getSingle($place, Place::class);
+
+        $latitude = $data['latitude'] ?? null;
+        $this->latitude = is_numeric($latitude) ? (float) $latitude : null;
+
+        $longitude = $data['longitude'] ?? null;
+        $this->longitude = is_numeric($longitude) ? (float) $longitude : null;
+
+        $created = $data['created'] ?? null;
+        $this->created = $created instanceof \DateTimeInterface ? $created : null;
+    }
 
     /**
      * @ORM\PrePersist
@@ -57,10 +84,8 @@ class Location
 
     /**
      * Get id
-     *
-     * @return integer
      */
-    public function getID()
+    public function getId() : string
     {
         return $this->id;
     }
@@ -68,10 +93,9 @@ class Location
     /**
      * Set id
      *
-     * @param integer $id
-     * @return Location
+     * @param string $id
      */
-    public function setID($id)
+    public function setId(string $id) : self
     {
         $this->id = $id;
 
@@ -82,9 +106,8 @@ class Location
      * Set place
      *
      * @param Place $place
-     * @return Location
      */
-    public function setPlace(Place $place)
+    public function setPlace(Place $place) : self
     {
         $this->place = $place;
 
@@ -94,9 +117,9 @@ class Location
     /**
      * Get place
      *
-     * @return Location
+     * @return Place
      */
-    public function getPlace()
+    public function getPlace() :? Place
     {
         return $this->place;
     }
@@ -105,9 +128,8 @@ class Location
      * Set latitude
      *
      * @param float $latitude
-     * @return Location
      */
-    public function setLatitude($latitude)
+    public function setLatitude(float $latitude) : self
     {
         $this->latitude = $latitude;
 
@@ -116,10 +138,8 @@ class Location
 
     /**
      * Get latitude
-     *
-     * @return float
      */
-    public function getLatitude()
+    public function getLatitude() :? float
     {
         return $this->latitude;
     }
@@ -128,9 +148,8 @@ class Location
      * Set longitude
      *
      * @param float $longitude
-     * @return Location
      */
-    public function setLongitude($longitude)
+    public function setLongitude(float $longitude) : self
     {
         $this->longitude = $longitude;
 
@@ -139,10 +158,8 @@ class Location
 
     /**
      * Get longitude
-     *
-     * @return float
      */
-    public function getLongitude()
+    public function getLongitude() :? float
     {
         return $this->longitude;
     }
@@ -150,10 +167,9 @@ class Location
     /**
      * Set created
      *
-     * @param \DateTime $verified
-     * @return Location
+     * @param \DateTimeInterface $created
      */
-    public function setCreated($created)
+    public function setCreated(\DateTimeInterface $created) : self
     {
         $this->created = $created;
 
@@ -161,11 +177,9 @@ class Location
     }
 
     /**
-     * Get created
-     *
-     * @return \DateTime
+     * Get created.
      */
-    public function getCreated()
+    public function getCreated() :? \DateTimeInterface
     {
         return $this->created;
     }

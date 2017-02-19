@@ -1,19 +1,20 @@
 <?php
 
-namespace Church\Entity;
+namespace Church\Entity\Place;
 
+use Church\Entity\AbstractEntity;
 use Doctrine\ORM\Mapping as ORM;
-
-use Church\Entity\Place;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="place_tree")
  */
-class PlaceTree
+class Tree extends AbstractEntity
 {
 
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\JoinColumn(name="ancestor", referencedColumnName="place_id")
      * @ORM\ManyToOne(targetEntity="Place")
@@ -21,6 +22,8 @@ class PlaceTree
     private $ancestor;
 
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\JoinColumn(name="descendant", referencedColumnName="place_id")
      * @ORM\ManyToOne(targetEntity="Place")
@@ -28,17 +31,35 @@ class PlaceTree
     private $descendant;
 
     /**
+     * @var int
+     *
      * @ORM\Column(type="integer")
      */
     private $depth;
 
     /**
+     * Create new Tree.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
+        $ancestor = $data['ancestor'] ?? null;
+        $this->ancestor = $this->getSingle($ancestor, Place::class);
+
+        $descendant = $data['descendant'] ?? null;
+        $this->descendant = $this->getSingle($descendant, Place::class);
+
+        $depth = $data['depth'] ?? null;
+        $this->depth = is_integer($depth) ? $depth : null;
+    }
+
+    /**
      * Set depth
      *
-     * @param integer $depth
-     * @return PlaceTree
+     * @param int $depth
      */
-    public function setDepth($depth)
+    public function setDepth(int $depth) : self
     {
         $this->depth = $depth;
 
@@ -47,10 +68,8 @@ class PlaceTree
 
     /**
      * Get depth
-     *
-     * @return integer
      */
-    public function getDepth()
+    public function getDepth() :? int
     {
         return $this->depth;
     }
@@ -59,9 +78,8 @@ class PlaceTree
      * Set ancestor
      *
      * @param Place $ancestor
-     * @return PlaceTree
      */
-    public function setAncestor(Place $ancestor)
+    public function setAncestor(Place $ancestor) : self
     {
         $this->ancestor = $ancestor;
 
@@ -70,10 +88,8 @@ class PlaceTree
 
     /**
      * Get ancestor
-     *
-     * @return Place
      */
-    public function getAncestor()
+    public function getAncestor() :? Place
     {
         return $this->ancestor;
     }
@@ -82,9 +98,8 @@ class PlaceTree
      * Set descendant
      *
      * @param Place $descendant
-     * @return PlaceTree
      */
-    public function setDescendant(Place $descendant)
+    public function setDescendant(Place $descendant) : self
     {
         $this->descendant = $descendant;
 
@@ -93,10 +108,8 @@ class PlaceTree
 
     /**
      * Get descendant
-     *
-     * @return Place
      */
-    public function getDescendant()
+    public function getDescendant() :? Place
     {
         return $this->descendant;
     }
