@@ -4,6 +4,7 @@ namespace Church\Controller;
 
 use Church\Entity\User\User;
 use Church\Entity\User\Login;
+use Church\Entity\User\Email;
 use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\User\VerificationManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -129,6 +131,127 @@ class MeController extends Controller
         $this->tokenStorage->getToken()->setAuthenticated(false);
 
         return $this->showNameAction($request);
+    }
+
+    /**
+     * Show the ueer's emails.
+     *
+     * @Route("/me/emails")
+     * @Method("GET")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function showEmails(Request $request) : Response
+    {
+        return $this->reply($this->getUser()->getEmails(), $request->getRequestFormat(), ['me']);
+    }
+
+    /**
+     * Add emails to the user.
+     *
+     * @Route("/me/emails")
+     * @Method("POST")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function createEmailAction(Request $request) : Response
+    {
+        $em = $this->doctrine->getEntityManager();
+        $repository = $em->getRepository(User::class);
+        $user = $repository->find($this->getUser()->getId());
+        $email = $this->deserialize($request, Email::class, ['me']);
+
+        $email->setUser($user);
+        $user->addEmail($email);
+        $em->flush();
+
+        // @TODO Send a verification.
+
+        // Refresh the user.
+        $this->tokenStorage->getToken()->setAuthenticated(false);
+
+        return $this->reply($email, $request->getRequestFormat(), ['me'], 201);
+    }
+
+    /**
+     * Shows the user's primary email.
+     *
+     * @Route("/me/primary-email")
+     * @Method("GET")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function showPrimaryEmailAction(Request $request) : Response
+    {
+        return $this->reply($this->getUser()->getPrimaryEmail(), $request->getRequestFormat(), ['me']);
+    }
+
+    /**
+     * Sets the user's primary email.
+     *
+     * @Route("/me/primary-email")
+     * @Method("POST")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function setPrimaryEmailAction(Request $request) : Response
+    {
+        $em = $this->doctrine->getEntityManager();
+        $repository = $em->getRepository(User::class);
+        $user = $repository->find($this->getUser()->getId());
+        $input = $this->deserialize($request, Email::class, ['me']);
+
+        $accepted = null;
+        foreach ($user->getEmails() as $email) {
+            if ($email->getEmail() === $input->getEmail()) {
+                $accepted = $email;
+            }
+        }
+
+        if (!$accepted) {
+            throw new BadRequestHttpException("Can only set primary email from user's existing emails");
+        }
+
+        if (!$accepted->getVerified()) {
+            throw new BadRequestHttpException("Can only set a verified email as the primary email");
+        }
+
+        $user->setPrimaryEmail($accepted);
+        $em->flush();
+
+        // Refresh the user.
+        $this->tokenStorage->getToken()->setAuthenticated(false);
+
+        return $this->showPrimaryEmailAction($request);
+    }
+
+    /**
+     * Removes an email.
+     *
+     * @Route("/me/emails/{email}")
+     * @Method("DELETE")
+     * @Security("has_role('authenticated')")
+     *
+     * @param string $email
+     * @param Request $request
+     */
+    public function removeEmailAction(string $email, Request $request) : Response
+    {
+        $em = $this->doctrine->getEntityManager();
+        $repository = $em->getRepository(Email::class);
+
+        $email = $repository->find($email);
+        $em->remove($email);
+        $em->flush();
+
+        // Refresh the user.
+        $this->tokenStorage->getToken()->setAuthenticated(false);
+
+        return $this->reply('', $request->getRequestFormat(), ["me"], 204);
     }
 
     /**

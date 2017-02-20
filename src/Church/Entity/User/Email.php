@@ -16,7 +16,6 @@ use Church\Entity\User\Verify\EmailVerify;
  * @ORM\Table(name="users_email")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("primary_email")
  */
 class Email
 {
@@ -73,7 +72,7 @@ class Email
     public function __construct(array $data = [])
     {
         $email = $data['email'] ?? null;
-        $this->email = is_string($data['email']) ? $data['email'] : null;
+        $this->email = is_string($email) ? $email : null;
 
         $user = $data['user'] ?? null;
         $this->user = $user instanceof User ? $user : null;
