@@ -3,174 +3,127 @@
 #parameters:
 
 services:
-
-  church.controller:
+    church.controller:
         abstract:  true
         arguments:
-          - '@serializer'
-          - '@validator'
-          - '@doctrine'
-          - '@security.token_storage'
+            - '@serializer'
+            - '@validator'
+            - '@doctrine'
+            - '@security.token_storage'
 
-  church.controller_default:
+    church.controller_default:
         parent: church.controller
         class: Church\Controller\DefaultController
 
-  church.controller_csrf:
+    church.controller_csrf:
         parent: church.controller
         class: Church\Controller\CsrfController
         arguments:
-          - '@security.csrf.token_manager'
+            - '@security.csrf.token_manager'
 
-  church.controller_me:
+    church.controller_me:
         parent: church.controller
         class: Church\Controller\MeController
         arguments:
             - "@church.verification_manager"
             - '@security.csrf.token_manager'
 
-  church.controller_user:
+    church.controller_user:
         parent: church.controller
         class: Church\Controller\UserController
 
-  church.normalizer_csrf_token:
+    church.normalizer_csrf_token:
         class: Church\Normalizer\CsrfTokenNormalizer
         public: false
         tags:
             - { name: serializer.normalizer }
 
-  church.exception_listener:
+    church.exception_listener:
         parent: church.controller
+        public: false
         class: Church\EventListener\ExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
-  church.csrf_token_listener:
-    class: Church\EventListener\CsrfToken
-    arguments:
-      - '@security.csrf.token_manager'
-    tags:
-        - { name: kernel.event_listener, event: kernel.request }
+    church.csrf_token_listener:
+        class: Church\EventListener\CsrfToken
+        public: false
+        arguments:
+            - '@security.csrf.token_manager'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
 
-  church.tree_maker:
-     class: Church\EventListener\TreeMaker
-     tags:
-         - { name: doctrine.event_listener, event: postPersist }
-         - { name: doctrine.event_listener, event: preUpdate }
-         - { name: doctrine.event_listener, event: preRemove }
+    church.tree_maker:
+        class: Church\EventListener\TreeMaker
+        public: false
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
 
-  church.code_authenticator:
+    church.code_authenticator:
         parent: church.controller
         class: Church\Security\CodeAuthenticator
         arguments:
-          - '@security.http_utils'
+            - '@security.http_utils'
 
-  church.verification_manager:
-      class: Church\Utils\User\VerificationManager
+    church.verification_manager:
+         class: Church\Utils\User\VerificationManager
 
-  church.verification_email:
-      class: Church\Utils\User\EmailVerification
-      arguments:
-          - '@doctrine'
-          - '@ircmaxell.random'
-          - '@church.dispatcher_email'
-      tags:
+    church.verification_email:
+        class: Church\Utils\User\EmailVerification
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@ircmaxell.random'
+            - '@church.dispatcher_email'
+        tags:
             - { name: church.verification, type: email }
 
-  church.dispatcher_email:
-      class: Church\Utils\Dispatcher\EmailDispatcher
-      arguments:
-          - '%dispatch%'
-          - '@sendgrid'
+    church.dispatcher_email:
+        class: Church\Utils\Dispatcher\EmailDispatcher
+        arguments:
+            - '%dispatch%'
+            - '@sendgrid'
 
-  church.place_finder:
-    class: Church\Utils\PlaceFinder
-    arguments:
-      - '@doctrine'
-      - '@church.client_yahoo_geoplanet'
-      - '@church.client_yahoo_placefinder'
-      - '@church.slug'
-    #church_place.consumer_key: ~
-    #church_place.consumer_secret: ~
-    #church_place.generic_appid: ~
+    # church.place_finder:
+    #     class: Church\Utils\PlaceFinder
+    #     arguments:
+    #         - '@doctrine'
+    #         - '@church.client_yahoo_geoplanet'
+    #         - '@church.client_yahoo_placefinder'
+    #         - '@church.slug'
 
-  church.client_yahoo_geoplanet:
-      class: Church\Client\Yahoo\GeoPlanet
-      arguments:
-        - '@guzzlehttp.client_yahoo_geoplanet'
+    church.slug:
+        class: Church\Utils\Slug
 
-  church.client_yahoo_placefinder:
-      class: Church\Client\Yahoo\PlaceFinder
-      arguments:
-        - '@guzzlehttp.client_yahoo_boss_placefinder'
-        - '@guzzlehttp.client_yahoo_yql_placefinder'
-        - '@guzzlehttp.oauth_yahoo'
-
-  church.slug:
-      class: Church\Utils\Slug
-
-  egulias.email_validator:
+    egulias.email_validator:
         class: Egulias\EmailValidator\EmailValidator
 
-  sendgrid:
+    sendgrid:
         class: SendGrid
         arguments:
             - '%sendgrid_api_key%'
 
-  ircmaxell.random_factory:
+    ircmaxell.random_factory:
         class: RandomLib\Factory
 
-  ircmaxell.random:
+    ircmaxell.random:
         class: RandomLib\Generator
         factory: ["@ircmaxell.random_factory", getMediumStrengthGenerator]
 
-  prawnsalad.nexmo:
-        class: NexmoMessage
+    # prawnsalad.nexmo:
+    #     class: NexmoMessage
+    #     arguments:
+    #         - '%nexmo_api_key%'
+    #         - '%nexmo_api_secret%'
+
+    guzzlehttp.client_mapzen:
+        class: GuzzleHttp\Client
         arguments:
-          - '%nexmo_api_key%'
-          - '%nexmo_api_secret%'
-
-  guzzlehttp.client_yahoo_geoplanet:
-       class: GuzzleHttp\Client
-       arguments:
-         -
-           base_url: http://where.yahooapis.com/v1/
-           defaults:
-             query:
-               format: json
-               appid: '%yahoo_consumer_key%'
-
-  guzzlehttp.oauth_yahoo:
-      class: GuzzleHttp\Subscriber\Oauth\Oauth1
-      arguments:
-        -
-          consumer_key: %yahoo_consumer_key%
-          consumer_secret: %yahoo_consumer_secret%
-
-  guzzlehttp.client_yahoo_geoplanet:
-       class: GuzzleHttp\Client
-       arguments:
-         -
-           base_url: http://where.yahooapis.com/v1/
-           defaults:
-             query:
-               format: json
-               appid: '%yahoo_consumer_key%'
-
-  guzzlehttp.client_yahoo_boss_placefinder:
-       class: GuzzleHttp\Client
-       arguments:
-         -
-           base_url: https://yboss.yahooapis.com/geo/placefinder
-           defaults:
-             auth: oauth
-
-  guzzlehttp.client_yahoo_yql_placefinder:
-       class: GuzzleHttp\Client
-       arguments:
-         -
-           base_url: https://query.yahooapis.com/v1/public/yql
-           defaults:
-             auth: oauth
-             query:
-               format: json
+            -
+                base_url: http://where.yahooapis.com/v1/
+                defaults:
+                    query:
+                        format: json
+                        appid: '%yahoo_consumer_key%'

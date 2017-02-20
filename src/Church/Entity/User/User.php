@@ -6,7 +6,6 @@ use Church\Entity\Location;
 use Church\Entity\AbstractEntity;
 use Church\Entity\User\Email;
 use Church\Entity\User\Name;
-use Church\Entity\EntityInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
