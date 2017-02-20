@@ -2,6 +2,7 @@
 
 namespace Church\Controller;
 
+use Church\Entity\Location;
 use Church\Entity\User\User;
 use Church\Entity\User\Login;
 use Church\Entity\User\Email;
@@ -227,6 +228,46 @@ class MeController extends Controller
         $this->tokenStorage->getToken()->setAuthenticated(false);
 
         return $this->showPrimaryEmailAction($request);
+    }
+
+    /**
+     * Shows the user's location.
+     *
+     * @Route("/me/location")
+     * @Method("GET")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function showLocaitonAction(Request $request) : Response
+    {
+        return $this->reply($this->getUser()->getLocation(), $request->getRequestFormat(), ['me']);
+    }
+
+    /**
+     * Sets the user's location
+     *
+     * @Route("/me/location")
+     * @Method("POST")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function setLocationAction(Request $request) : Response
+    {
+        $em = $this->doctrine->getEntityManager();
+        $repository = $em->getRepository(User::class);
+        $user = $repository->find($this->getUser()->getId());
+
+        $input = $this->deserialize($request, Location::class, ['me']);
+
+        dump($input);
+        exit;
+
+        // Refresh the user.
+        $this->tokenStorage->getToken()->setAuthenticated(false);
+
+        return $this->showLocation($request);
     }
 
     /**

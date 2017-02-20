@@ -40,14 +40,12 @@ services:
 
     church.exception_listener:
         parent: church.controller
-        public: false
         class: Church\EventListener\ExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
     church.csrf_token_listener:
         class: Church\EventListener\CsrfToken
-        public: false
         arguments:
             - '@security.csrf.token_manager'
         tags:
@@ -118,12 +116,23 @@ services:
     #         - '%nexmo_api_key%'
     #         - '%nexmo_api_secret%'
 
-    guzzlehttp.client_mapzen:
+    church.client_mapzen_search:
+        class: Church\Client\Mapzen\Search
+        arguments:
+            - '@guzzlehttp.client_mapzen_search'
+            - '@serializer'
+
+    church.serializer_mapzen_search:
+        class: Church\Serializer\Mapzen\SearchDenormalizer
+        public: false
+        tags:
+            - { name: serializer.normalizer }
+
+    guzzlehttp.client_mapzen_search:
         class: GuzzleHttp\Client
         arguments:
             -
-                base_url: http://where.yahooapis.com/v1/
+                base_url: https://search.mapzen.com/v1/
                 defaults:
                     query:
-                        format: json
-                        appid: '%yahoo_consumer_key%'
+                        api_key: '%mapzen_api_key%'

@@ -4,6 +4,7 @@ namespace Church\Entity;
 
 use Church\Entity\Place\Place;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Church\Entity\Location
@@ -19,6 +20,7 @@ class Location extends AbstractEntity
      *
      * @ORM\Column(name="location_id", type="string", length=255)
      * @ORM\Id
+     * @Groups({"me_read", "me_write"})
      */
     private $id;
 

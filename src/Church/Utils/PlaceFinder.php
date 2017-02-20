@@ -283,39 +283,4 @@ class PlaceFinder
 
     }
     */
-
-    /**
-     * Get all Place Types.
-     *
-     * @return array List of PlaceTypes
-     */
-    public function getPlaceTypes()
-    {
-
-        $em = $this->getDoctrine()->getManager();
-        $repository = $em->getRepository('Church\Entity\PlaceType');
-
-        if ($types = $repository->findAll()) {
-            return $types;
-        }
-
-        foreach ($this->getGeoPlanet()->getPlaceTypes() as $type) {
-            if (empty($type['placeTypeName'])) {
-                continue;
-            }
-
-            if (empty($type['placeTypeName attrs']['code'])) {
-                continue;
-            }
-
-            $place_type = new PlaceType();
-            $place_type->setID($type['placeTypeName attrs']['code']);
-            $place_type->setName($type['placeTypeName']);
-            $em->persist($place_type);
-        }
-
-        $em->flush();
-
-        return $repository->findAll();
-    }
 }

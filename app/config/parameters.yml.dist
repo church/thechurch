@@ -15,12 +15,11 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
+    mapzen_api_key: ~
+
     dispatch: false
     sendgrid_api_key: ~
 
-    nexmo_api_key: ~
-    nexmo_api_secret: ~
-    nexmo_sender: ~
-
-    yahoo_consumer_key: ~
-    yahoo_consumer_secret: ~
+    # nexmo_api_key: ~
+    # nexmo_api_secret: ~
+    # nexmo_sender: ~

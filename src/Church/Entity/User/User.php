@@ -28,8 +28,6 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
      * User Role.
      *
      * Granted to everyone.
-     * @todo Granting this to everyone also grants them write access to
-     *       everything. :(
      *
      * @var string.
      */
