@@ -27,13 +27,14 @@ services:
         arguments:
             - "@church.verification_manager"
             - '@security.csrf.token_manager'
+            - '@church.client_mapzen_search'
 
     church.controller_user:
         parent: church.controller
         class: Church\Controller\UserController
 
     church.normalizer_csrf_token:
-        class: Church\Normalizer\CsrfTokenNormalizer
+        class: Church\Serializer\CsrfTokenNormalizer
         public: false
         tags:
             - { name: serializer.normalizer }

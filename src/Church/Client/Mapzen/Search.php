@@ -43,7 +43,7 @@ class Search implements SearchInterface
      */
     public function get(string $id) : Location
     {
-        $response = $this->client->get('/place', [
+        $response = $this->client->get('place', [
             'query' => [
                 'ids' => $id
             ],
@@ -51,6 +51,6 @@ class Search implements SearchInterface
 
         // @TODO convert the denomrlaizer in the controller to a custom
         //       service.
-        return $this->serializer->denmoralize($response->getBody(), Location::class);
+        return $this->serializer->deserialize((string) $response->getBody(), Location::class, 'json');
     }
 }

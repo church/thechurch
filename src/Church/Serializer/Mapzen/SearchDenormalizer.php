@@ -12,6 +12,28 @@ class SearchDenormalizer implements DenormalizerInterface
 {
 
     /**
+     * @var string[]
+     */
+    const PLACE_TYPES = [
+        'venue',
+        'address',
+        'building',
+        'campus',
+        'microhood',
+        'neighbourhood',
+        'macrohood',
+        'locality',
+        'metro_area',
+        'county',
+        'macrocounty',
+        'region',
+        'macroregion',
+        'country',
+        'empire',
+        'continent',
+    ];
+
+    /**
      * {@inheritdoc}
      */
     public function denormalize($data, $class, $format = null, array $context = array())
@@ -19,18 +41,18 @@ class SearchDenormalizer implements DenormalizerInterface
         if (substr($class, -2) === '[]') {
             $class = substr($class, -2) === '[]' ? substr($type, 0, -2) : $class;
             $locaitons = [];
-            foreach ($data['geocoding']['features'] as $feature) {
+            foreach ($data['features'] as $feature) {
                 $locaitons[] = $this->createLocationFromFeature($feature);
             }
 
             return $locations;
         }
 
-        if (empty($data['geocoding']['features'])) {
+        if (empty($data['features'])) {
             return new Location();
         }
 
-        return $this->createLocationFromFeature($data['geocoding']['features'][0]);
+        return $this->createLocationFromFeature($data['features'][0]);
     }
 
     /**
@@ -40,10 +62,26 @@ class SearchDenormalizer implements DenormalizerInterface
      */
     protected function createLocationFromFeature(array $feature) : Location
     {
+
+        $place_id = null;
+        foreach (self::PLACE_TYPES as $type) {
+            if (isset($feature['properties'][$type . '_gid'])) {
+                $pieces = explode(':', $feature['properties'][$type . '_gid']);
+                if ($pieces[0] !== 'whosonfirst') {
+                    continue;
+                }
+                $place_id = (int) end($pieces);
+                break;
+            }
+        }
+
         return new Location([
-            'id' => $feature['gid'] ?? null,
-            'latitude' => $feature['cordinates'][0] ?? null,
-            'longitude' => $feature['cordinates'][1] ?? null,
+            'id' => $feature['properties']['gid'] ?? null,
+            'latitude' => $feature['geometry']['coordinates'][0] ?? null,
+            'longitude' => $feature['geometry']['coordinates'][1] ?? null,
+            'place' => [
+                'id' => $place_id,
+            ],
         ]);
     }
 
@@ -52,7 +90,7 @@ class SearchDenormalizer implements DenormalizerInterface
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        if (isset($data['geocoding']) && isset($data['geocoding']['features'])) {
+        if (isset($data['type']) && $data['type'] === 'FeatureCollection' && isset($data['features'])) {
             if ($type === Location::class) {
                 return true;
             }

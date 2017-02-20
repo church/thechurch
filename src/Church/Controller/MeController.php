@@ -2,6 +2,7 @@
 
 namespace Church\Controller;
 
+use Church\Client\Mapzen\SearchInterface;
 use Church\Entity\Location;
 use Church\Entity\User\User;
 use Church\Entity\User\Login;
@@ -44,17 +45,24 @@ class MeController extends Controller
      */
     protected $csrfTokenManager;
 
+    /**
+     * @var SearchInterface
+     */
+    protected $location;
+
     public function __construct(
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         RegistryInterface $doctrine,
         TokenStorageInterface $tokenStorage,
         VerificationManagerInterface $verificationManager,
-        CsrfTokenManagerInterface $csrfTokenManager
+        CsrfTokenManagerInterface $csrfTokenManager,
+        SearchInterface $location
     ) {
         parent::__construct($serializer, $validator, $doctrine, $tokenStorage);
         $this->verificationManager = $verificationManager;
         $this->csrfTokenManager = $csrfTokenManager;
+        $this->location = $location;
     }
 
    /**
@@ -261,7 +269,9 @@ class MeController extends Controller
 
         $input = $this->deserialize($request, Location::class, ['me']);
 
-        dump($input);
+        $location = $this->location->get($input->getId());
+
+        dump($location);
         exit;
 
         // Refresh the user.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Normalizer;
+namespace Church\Serializer;
 
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
