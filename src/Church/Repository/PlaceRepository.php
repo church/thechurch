@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Entity;
+namespace Church\Repository;
 
 use Doctrine\ORM\EntityRepository;
 

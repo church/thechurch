@@ -203,6 +203,7 @@ abstract class Controller
 
         $context = [
             'groups' => $this->getGroups(self::OPERATION_READ, $roles),
+            'enable_max_depth' => true,
         ];
         return new Response(
             $this->serializer->serialize($data, $format, $context),

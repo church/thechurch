@@ -2,13 +2,12 @@
 
 namespace Church\Entity\Place;
 
+use Church\Entity\Location;
 use Church\Entity\AbstractEntity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Church\Entity\Place\Tree;
-use Church\Entity\Location;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Church\Entity\Place
@@ -16,7 +15,7 @@ use Church\Entity\Location;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="place")
- * @ORM\Entity(repositoryClass="Church\Entity\PlaceRepository")
+ * @ORM\Entity(repositoryClass="Church\Repository\PlaceRepository")
  */
 class Place extends AbstractEntity
 {
@@ -25,13 +24,20 @@ class Place extends AbstractEntity
      *
      * @ORM\Column(name="place_id", type="integer")
      * @ORM\Id
+     * @Groups({"anonymous_read"})
      */
     private $id;
 
     /**
      * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
      *
      * @ORM\Column(type="string", unique=true, length=255)
+     * @Groups({"anonymous_read"})
      */
     private $slug;
 
@@ -84,6 +90,9 @@ class Place extends AbstractEntity
         $id = $data['id'] ?? null;
         $this->id = is_integer($id) ? $id : null;
 
+        $name = $data['name'] ?? '';
+        $this->name = is_string($name) ? $name : null;
+
         $slug = $data['slug'] ?? null;
         $this->slug = is_string($slug) ? $slug : null;
 
@@ -124,11 +133,31 @@ class Place extends AbstractEntity
      *
      * @param int $id
      */
-    public function setID(int $id) : self
+    public function setId(int $id) : self
     {
         $this->id = $id;
 
         return $this;
+    }
+
+    /**
+     * Set Name.
+     *
+     * @param string $name
+     */
+    public function setName(string $name) : self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get Name.
+     */
+    public function getName() :? string
+    {
+        return $this->name;
     }
 
     /**

@@ -49,7 +49,7 @@ class SearchDenormalizer implements DenormalizerInterface
         }
 
         if (empty($data['features'])) {
-            return new Location();
+            return new $class();
         }
 
         return $this->createLocationFromFeature($data['features'][0]);
@@ -86,8 +86,8 @@ class SearchDenormalizer implements DenormalizerInterface
 
         return new Location([
             'id' => $feature['properties']['gid'] ?? null,
-            'latitude' => $feature['geometry']['coordinates'][0] ?? null,
-            'longitude' => $feature['geometry']['coordinates'][1] ?? null,
+            'longitude' => $feature['geometry']['coordinates'][0] ?? null,
+            'latitude' => $feature['geometry']['coordinates'][1] ?? null,
             'place' => [
                 'id' => $place_id,
                 'parent' => !empty($ancestors) ? reset($ancestors)['ancestor'] : [],

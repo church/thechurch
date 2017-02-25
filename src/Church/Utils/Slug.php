@@ -11,7 +11,7 @@ class Slug implements SlugInterface
     /**
     * {@inheritdoc}
      */
-    public function create($text)
+    public function create($text) : string
     {
         $slug = trim($text);
         $slug = mb_strtolower($slug);

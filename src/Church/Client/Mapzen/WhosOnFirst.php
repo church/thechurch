@@ -19,9 +19,6 @@ class WhosOnFirst extends AbstractClient implements WhosOnFirstInterface
         $path = implode('/', str_split($id, 3));
         $response = $this->client->get($path . '/' . $id . '.geojson');
 
-        dump((string) $response->getBody());
-        exit;
-
         return $this->serializer->deserialize((string) $response->getBody(), Place::class, 'json');
     }
 }

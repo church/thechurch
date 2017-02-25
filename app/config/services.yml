@@ -27,7 +27,7 @@ services:
         arguments:
             - "@church.verification_manager"
             - '@security.csrf.token_manager'
-            - '@church.client_mapzen_search'
+            - '@church.place_finder'
 
     church.controller_user:
         parent: church.controller
@@ -85,13 +85,13 @@ services:
             - '%dispatch%'
             - '@sendgrid'
 
-    # church.place_finder:
-    #     class: Church\Utils\PlaceFinder
-    #     arguments:
-    #         - '@doctrine'
-    #         - '@church.client_yahoo_geoplanet'
-    #         - '@church.client_yahoo_placefinder'
-    #         - '@church.slug'
+    church.place_finder:
+        class: Church\Utils\PlaceFinder
+        arguments:
+            - '@doctrine'
+            - '@church.client_mapzen_search'
+            - '@church.client_mapzen_whos_on_first'
+            - '@church.slug'
 
     church.slug:
         class: Church\Utils\Slug
@@ -131,6 +131,12 @@ services:
 
     church.serializer_mapzen_search:
         class: Church\Serializer\Mapzen\SearchDenormalizer
+        public: false
+        tags:
+            - { name: serializer.normalizer }
+
+    church.serializer_mapzen_whos_on_first:
+        class: Church\Serializer\Mapzen\WhosOnFirstDenormalizer
         public: false
         tags:
             - { name: serializer.normalizer }

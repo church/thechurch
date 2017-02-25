@@ -2,22 +2,30 @@
 
 namespace Church\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Church\Entity\Place;
-use Church\Entity\PlaceTree;
+use Church\Entity\Place\Place;
+use Church\Entity\Place\Tree;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 
+/**
+ * Creates the Tree.
+ */
 class TreeMaker
 {
 
+    /**
+     * Post Persist hook.
+     *
+     * @param LifecycleEventArgs $args
+     */
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
 
         if ($entity instanceof Place) {
             $em = $args->getEntityManager();
-            $repository = $em->getRepository('Church:PlaceTree');
+            $repository = $em->getRepository(Tree::class);
 
-            $tree = new PlaceTree();
+            $tree = new Tree();
             $tree->setAncestor($entity);
             $tree->setDescendant($entity);
             $tree->setDepth(0);
@@ -39,6 +47,11 @@ class TreeMaker
         }
     }
 
+    /**
+     * Pre Update
+     *
+     * @param LifecycleEventArgs $args
+     */
     public function preUpdate(LifecycleEventArgs $args)
     {
 
@@ -46,7 +59,7 @@ class TreeMaker
 
         if ($entity instanceof Place) {
             $em = $args->getEntityManager();
-            $repository = $em->getRepository('Church:Place');
+            $repository = $em->getRepository(Place::class);
 
             $original = $repository->find($entity->getId());
 
@@ -58,7 +71,7 @@ class TreeMaker
 
             // Make sure there was a change in Parents before proceeding.
             if ($original_parent_id != $new_parent_id) {
-                $repository = $em->getRepository('Church:PlaceTree');
+                $repository = $em->getRepository(Tree::class);
 
                 // First Get the comment's tree below itself.
                 $descendants = $repository->findByAncestor($entity->getID());
@@ -69,7 +82,7 @@ class TreeMaker
                 }
 
                 // Then delete the comment tree above the current comment.
-                $qb = $em->createQueryBuilder('PlaceTree');
+                $qb = $em->createQueryBuilder(Tree::class);
                 $qb->remove();
                 $qb->field('descendant')->in($descendant_ids);
                 $qb->field('ancestor')->notIn($descendant_ids);
@@ -93,12 +106,17 @@ class TreeMaker
         }
     }
 
+    /**
+     * Pre Remove.
+     *
+     * @param LifecycleEventArgs $args
+     */
     public function preRemove(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
 
         if ($entity instanceof Place) {
-            $qb = $em->createQueryBuilder('PlaceTree');
+            $qb = $em->createQueryBuilder(Tree::class);
             $qb->remove();
             $qb->addOr($qb->expr()->field('ancestor')->equals($place->getId()));
             $qb->addOr($qb->expr()->field('descendant')->equals($place->getId()));

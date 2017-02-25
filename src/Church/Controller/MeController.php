@@ -2,12 +2,12 @@
 
 namespace Church\Controller;
 
-use Church\Client\Mapzen\SearchInterface;
 use Church\Entity\Location;
 use Church\Entity\User\User;
 use Church\Entity\User\Login;
 use Church\Entity\User\Email;
 use Church\Entity\User\Verify\EmailVerify;
+use Church\Utils\PlaceFinderInterface;
 use Church\Utils\User\VerificationManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,9 +46,9 @@ class MeController extends Controller
     protected $csrfTokenManager;
 
     /**
-     * @var SearchInterface
+     * @var PlaceFinderInterface
      */
-    protected $location;
+    protected $placeFinder;
 
     public function __construct(
         SerializerInterface $serializer,
@@ -57,12 +57,12 @@ class MeController extends Controller
         TokenStorageInterface $tokenStorage,
         VerificationManagerInterface $verificationManager,
         CsrfTokenManagerInterface $csrfTokenManager,
-        SearchInterface $location
+        PlaceFinderInterface $placeFinder
     ) {
         parent::__construct($serializer, $validator, $doctrine, $tokenStorage);
         $this->verificationManager = $verificationManager;
         $this->csrfTokenManager = $csrfTokenManager;
-        $this->location = $location;
+        $this->placeFinder = $placeFinder;
     }
 
    /**
@@ -269,15 +269,15 @@ class MeController extends Controller
 
         $input = $this->deserialize($request, Location::class, ['me']);
 
-        $location = $this->location->get($input->getId());
+        $location = $this->placeFinder->find($input);
 
-        dump($location);
-        exit;
+        $user->setLocation($location);
+        $em->flush();
 
         // Refresh the user.
         $this->tokenStorage->getToken()->setAuthenticated(false);
 
-        return $this->showLocation($request);
+        return $this->showLocaitonAction($request);
     }
 
     /**
