@@ -2,44 +2,17 @@
 
 namespace Church\Client\Mapzen;
 
+use Church\Client\AbstractClient;
 use Church\Entity\Location;
-use GuzzleHttp\ClientInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Search Client.
  */
-class Search implements SearchInterface
+class Search extends AbstractClient implements SearchInterface
 {
 
     /**
-     * @var ClientInterface
-     */
-    protected $client;
-
-    /**
-     * @var SerializerInterface
-     */
-    protected $serializer;
-
-    /**
-     * Create a new Search client.
-     *
-     * @param ClientInterface $client
-     * @param SerializerInterface $serializer
-     */
-    public function __construct(
-        ClientInterface $client,
-        SerializerInterface $serializer
-    ) {
-        $this->client = $client;
-        $this->serializer = $serializer;
-    }
-
-    /**
-     * Get a place by id.
-     *
-     * @param string $id
+     * {@inheritdoc}
      */
     public function get(string $id) : Location
     {

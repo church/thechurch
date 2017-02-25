@@ -39,10 +39,10 @@ abstract class AbstractEntity implements EntityInterface
         if ($data instanceof Collection) {
             return $data;
         } elseif (is_array($data)) {
-            $data = array_map(function ($item) {
+            $data = array_map(function ($item) use ($class) {
                 return $this->getSingle($item, $class);
             }, $data);
-            $data = array_filter($data, function ($item) {
+            $data = array_filter($data, function ($item) use ($class) {
                 return $item instanceof $class;
             });
             return new ArrayCollection($data);

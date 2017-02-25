@@ -64,14 +64,23 @@ class SearchDenormalizer implements DenormalizerInterface
     {
 
         $place_id = null;
+        $ancestors = [];
         foreach (self::PLACE_TYPES as $type) {
             if (isset($feature['properties'][$type . '_gid'])) {
                 $pieces = explode(':', $feature['properties'][$type . '_gid']);
                 if ($pieces[0] !== 'whosonfirst') {
                     continue;
                 }
-                $place_id = (int) end($pieces);
-                break;
+                if (!$place_id) {
+                    $place_id = (int) end($pieces);
+                    continue;
+                }
+
+                $ancestors[] = [
+                    'ancestor' => [
+                        'id' => (int) end($pieces),
+                    ],
+                ];
             }
         }
 
@@ -81,6 +90,8 @@ class SearchDenormalizer implements DenormalizerInterface
             'longitude' => $feature['geometry']['coordinates'][1] ?? null,
             'place' => [
                 'id' => $place_id,
+                'parent' => !empty($ancestors) ? reset($ancestors)['ancestor'] : [],
+                'ancestor' => $ancestors,
             ],
         ]);
     }

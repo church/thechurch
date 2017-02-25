@@ -2,17 +2,14 @@
 
 namespace Church\Utils;
 
-use Patchwork\Utf8;
-
-class Slug
+/**
+ * Slug Utility.
+ */
+class Slug implements SlugInterface
 {
 
     /**
-     * Generate a Slug.
-     *
-     * @param string $text Text to be slugged.
-     *
-     * @return string Ready to use slug.
+    * {@inheritdoc}
      */
     public function create($text)
     {

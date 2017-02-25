@@ -2,84 +2,55 @@
 
 namespace Church\Utils;
 
+use Church\Client\Mapzen\SearchInterface;
+use Church\Client\Mapzen\WhosOnFirstInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Patchwork\Utf8;
 
-use Church\Client\Yahoo\GeoPlanet as YahooGeoPlanet;
-use Church\Client\Yahoo\PlaceFinder as YahooPlaceFinder;
-use Church\Entity\Place;
-use Church\Entity\PlaceName;
-use Church\Entity\PlaceType;
-use Church\Entity\City;
-
+/**
+ * Place Finder.
+ */
 class PlaceFinder
 {
 
+    /**
+     * @var RegistryInterface
+     */
     protected $doctrine;
 
-    protected $geo;
+    /**
+     * @var SearchInterface
+     */
+    protected $search;
 
-    protected $finder;
+    /**
+     * @var WhosOnFirstInterface
+     */
+    protected $whosonfirst;
 
+    /**
+     * @var SlugInterface
+     */
     protected $slug;
 
-
+    /**
+     * Creates a Place Finder.
+     *
+     * @param RegistryInterface $doctrine
+     * @param SearchInterface $search
+     * @param WhosOnFirstInterface $whosonfirst
+     * @param SlugInterface $slug
+     */
     public function __construct(
         RegistryInterface $doctrine,
-        YahooGeoPlanet $geo,
-        YahooPlaceFinder $finder,
-        Slug $slug
+        SearchInterface $search,
+        WhosOnFirstInterface $whosonfirst,
+        SlugInterface $slug
     ) {
 
-        // @TODO oh dear god.. this is such a bad class... what was I thinking?
-
         $this->doctrine = $doctrine;
-
-        $this->geo = $geo;
-
-        $this->finder = $finder;
-
+        $this->search = $search;
+        $this->whosonfirst = $whosonfirst;
         $this->slug = $slug;
-    }
-
-    /**
-     * Get Doctrine
-     *
-     * @return RegistryInterface
-     */
-    public function getDoctrine()
-    {
-        return $this->doctrine;
-    }
-
-    /**
-     * Get GeoPlanet
-     *
-     * @return YahooGeoPlanet
-     */
-    public function getGeoPlanet()
-    {
-        return $this->geo;
-    }
-
-    /**
-     * Get Finder
-     *
-     * @return YahooPlaceFinder
-     */
-    public function getFinder()
-    {
-        return $this->finder;
-    }
-
-    /**
-     * Get Slug
-     *
-     * @return Slug
-     */
-    public function getSlug()
-    {
-        return $this->slug;
     }
 
     /*
