@@ -41,7 +41,15 @@ class SlugTest extends \PHPUnit_Framework_TestCase
                 'orlando',
             ],
             [
+                'Orlando-',
+                'orlando',
+            ],
+            [
                 'Saint Petersburg',
+                'saint-petersburg',
+            ],
+            [
+                'Saint  Petersburg',
                 'saint-petersburg'
             ],
             [
