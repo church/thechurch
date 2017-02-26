@@ -36,14 +36,14 @@ class Location extends AbstractEntity
     /**
      * @var float
      *
-     * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
+     * @ORM\Column(type="decimal", precision=9, scale=6, nullable=true)
      */
     private $latitude;
 
     /**
      * @var float
      *
-     * @ORM\Column(type="decimal", precision=8, scale=6, nullable=true)
+     * @ORM\Column(type="decimal", precision=9, scale=6, nullable=true)
      */
     private $longitude;
 
