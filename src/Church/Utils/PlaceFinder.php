@@ -83,14 +83,18 @@ class PlaceFinder implements PlaceFinderInterface
         // Loop through the ancestors to find a place since it's possible for a
         // place to not exist.
         $place = null;
-        $ancestor = $input->getPlace()->getAncestor()->first();
-        while ($ancestor) {
-            try {
-                $place = $this->getPlace($ancestor->getAncestor());
-                break;
-            } catch (ClientException $e) {
-                $ancestor = $input->getPlace()->getAncestor()->next();
-                continue;
+        try {
+            $place = $this->getPlace($input->getPlace());
+        } catch (ClientException $e) {
+            $ancestor = $input->getPlace()->getAncestor()->first();
+            while ($ancestor) {
+                try {
+                    $place = $this->getPlace($ancestor->getAncestor());
+                    break;
+                } catch (ClientException $e) {
+                    $ancestor = $input->getPlace()->getAncestor()->next();
+                    continue;
+                }
             }
         }
 
