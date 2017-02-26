@@ -12,28 +12,6 @@ class SearchDenormalizer implements DenormalizerInterface
 {
 
     /**
-     * @var string[]
-     */
-    const PLACE_TYPES = [
-        'venue',
-        'address',
-        'building',
-        'campus',
-        'microhood',
-        'neighbourhood',
-        'macrohood',
-        'locality',
-        'metro_area',
-        'county',
-        'macrocounty',
-        'region',
-        'macroregion',
-        'country',
-        'empire',
-        'continent',
-    ];
-
-    /**
      * {@inheritdoc}
      */
     public function denormalize($data, $class, $format = null, array $context = array())
@@ -65,34 +43,35 @@ class SearchDenormalizer implements DenormalizerInterface
 
         $place_id = null;
         $ancestors = [];
-        foreach (self::PLACE_TYPES as $type) {
-            if (isset($feature['properties'][$type . '_gid'])) {
-                $pieces = explode(':', $feature['properties'][$type . '_gid']);
-                if ($pieces[0] !== 'whosonfirst') {
-                    continue;
-                }
-                if (!$place_id) {
-                    $place_id = (int) end($pieces);
-                    continue;
-                }
+        foreach ($feature['properties'] as $property => $value) {
+            $pieces = explode('_', $property);
 
-                $ancestors[] = [
-                    'ancestor' => [
-                        'id' => (int) end($pieces),
-                    ],
-                ];
+            if (end($pieces) !== 'gid') {
+                continue;
             }
+
+            $pieces = explode(':', $value);
+            if ($pieces[0] !== 'whosonfirst') {
+                continue;
+            }
+
+            $ancestors[] = [
+                'ancestor' => [
+                    'id' => (int) end($pieces),
+                ],
+            ];
         }
+
+        $ancestors = array_reverse($ancestors);
+        $place = array_shift($ancestors)['ancestor'];
+        $place['parent'] = !empty($ancestors) ? reset($ancestors)['ancestor'] : [];
+        $place['ancestor'] = $ancestors;
 
         return new Location([
             'id' => $feature['properties']['gid'] ?? null,
             'longitude' => $feature['geometry']['coordinates'][0] ?? null,
             'latitude' => $feature['geometry']['coordinates'][1] ?? null,
-            'place' => [
-                'id' => $place_id,
-                'parent' => !empty($ancestors) ? reset($ancestors)['ancestor'] : [],
-                'ancestor' => $ancestors,
-            ],
+            'place' => $place,
         ]);
     }
 

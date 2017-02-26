@@ -6,6 +6,8 @@ use Church\Client\Mapzen\SearchInterface;
 use Church\Client\Mapzen\WhosOnFirstInterface;
 use Church\Entity\Location;
 use Church\Entity\Place\Place;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use GuzzleHttp\Exception\ClientException;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -67,13 +69,8 @@ class PlaceFinder implements PlaceFinderInterface
         $input = $this->search->get($input->getId());
 
         // Check to see if a location already exists.
-        if ($location = $repository->find($input->getId())) {
-            // If a location already exists and the places match, then there
-            // isn't anything left to do.
-            if ($location->getPlace() && $location->getPlace()->getId() === $input->getPlace()->getId()) {
-                return $location;
-            }
-        } else {
+        $location = $repository->find($input->getId());
+        if (!$location) {
             $location = new Location([
                 'id' => $input->getId(),
                 'latitude' => $input->getLatitude(),
@@ -83,7 +80,23 @@ class PlaceFinder implements PlaceFinderInterface
             $em->flush();
         }
 
-        $place = $this->getPlace($input->getPlace());
+        // Loop through the ancestors to find a place since it's possible for a
+        // place to not exist.
+        $place = null;
+        $ancestor = $input->getPlace()->getAncestor()->first();
+        while ($ancestor) {
+            try {
+                $place = $this->getPlace($ancestor->getAncestor());
+                break;
+            } catch (ClientException $e) {
+                $ancestor = $input->getPlace()->getAncestor()->next();
+                continue;
+            }
+        }
+
+        if (!$place) {
+            throw new \Exception("No Place Found.");
+        }
 
         $location->setPlace($place);
         $em->flush();
@@ -103,31 +116,64 @@ class PlaceFinder implements PlaceFinderInterface
         $input = $this->whosonfirst->get($input->getId());
 
         $place = $repository->find($input->getId());
-        if ($place = $repository->find($input->getId())) {
-            if (!$place->getParent() && !$input->getParent()) {
-                return $place;
-            }
-
-            if ($place->getParent() && $place->getParent()->getId() === $input->getParent()->getId()) {
-                return $place;
-            }
-        }
 
         $parent = null;
         if ($input->getParent()) {
             $parent = $this->getPlace($input->getParent());
         }
 
-        $place = new Place([
-            'id' => $input->getId(),
-            'parent' => $parent,
-            'slug' => $this->slug->create($input->getName()),
-            'name' => $input->getName(),
-        ]);
+        if ($parent && $place) {
+            $place->setParent($parent);
+            $em->flush();
+        }
 
-        $em->persist($place);
-        $em->flush();
+        if (!$place) {
+            $place = new Place([
+                'id' => $input->getId(),
+                'slug' => $this->slug->create($input->getName()),
+                'parent' => $parent,
+                'name' => $input->getName(),
+            ]);
+
+            foreach ($this->getSlugs($place) as $slug) {
+                try {
+                    $place->setSlug($slug);
+                    $em->persist($place);
+                    $em->flush();
+                    break;
+                } catch (UniqueConstraintViolationException $e) {
+                    // Try again.
+                }
+            }
+        }
+
+        if (!$place->getCreated()) {
+            throw new \Exception("Place was not created.");
+        }
 
         return $place;
+    }
+
+    /**
+     * Get slug appends.
+     *
+     * @param Place $place
+     * @param string $previous
+     * @param array $slugs
+     */
+    protected function getSlugs(Place $place, string $previous = '', array $slugs = []) : array
+    {
+        if (!$previous) {
+            $previous = $place->getSlug();
+            $slugs[] = $previous;
+        }
+
+        if ($parent = $place->getParent()) {
+            $slug = $previous . '-' . $parent->getSlug();
+            $slugs[] = $slug;
+            $slugs = $this->getSlugs($parent, $slug, $slugs);
+        }
+
+        return $slugs;
     }
 }
