@@ -146,6 +146,11 @@ class PlaceFinder implements PlaceFinderInterface
                     $em->flush();
                     break;
                 } catch (UniqueConstraintViolationException $e) {
+                    $em = $this->doctrine->resetManager();
+                    if ($parent = $place->getParent()) {
+                        $parent = $em->merge($parent);
+                        $place->setParent($parent);
+                    }
                     // Try again.
                 }
             }

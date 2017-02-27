@@ -100,6 +100,10 @@ class SlugTest extends \PHPUnit_Framework_TestCase
                 '東京',
                 '%E6%9D%B1%E4%BA%AC',
             ],
+            [
+                'Sydney (C)',
+                'sydney-c',
+            ],
         ];
     }
 }
