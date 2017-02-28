@@ -154,4 +154,7 @@ services:
         class: GuzzleHttp\Client
         arguments:
             -
-                base_url: https://whosonfirst.mapzen.com/data/
+                base_url: https://whosonfirst-api.mapzen.com
+                defaults:
+                    query:
+                        api_key: '%mapzen_api_key%'

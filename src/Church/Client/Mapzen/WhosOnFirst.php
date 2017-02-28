@@ -16,8 +16,13 @@ class WhosOnFirst extends AbstractClient implements WhosOnFirstInterface
      */
     public function get(string $id) : Place
     {
-        $path = implode('/', str_split($id, 3));
-        $response = $this->client->get($path . '/' . $id . '.geojson');
+        $response = $this->client->get(null, [
+            'query' => [
+                'method' => 'whosonfirst.places.getInfo',
+                'extras' => 'name:,wof:lang,wof:lang_x_official',
+                'id' => $id,
+            ],
+        ]);
 
         return $this->serializer->deserialize((string) $response->getBody(), Place::class, 'json');
     }
