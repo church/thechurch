@@ -35,7 +35,6 @@ class ExceptionListener extends Controller
                 'code' => $exception->getCode(),
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
-                'trace' => $exception->getTrace(),
             ];
         }
 

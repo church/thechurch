@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="place")
- * @ORM\Entity(repositoryClass="Church\Repository\PlaceRepository")
+ * @ORM\Entity()
  */
 class Place extends AbstractEntity
 {

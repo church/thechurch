@@ -86,12 +86,18 @@ class PlaceFinder implements PlaceFinderInterface
         try {
             $place = $this->getPlace($input->getPlace());
         } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() !== 404) {
+                throw $e;
+            }
             $ancestor = $input->getPlace()->getAncestor()->first();
             while ($ancestor) {
                 try {
                     $place = $this->getPlace($ancestor->getAncestor());
                     break;
                 } catch (ClientException $e) {
+                    if ($e->getResponse()->getStatusCode() !== 404) {
+                        throw $e;
+                    }
                     $ancestor = $input->getPlace()->getAncestor()->next();
                     continue;
                 }
