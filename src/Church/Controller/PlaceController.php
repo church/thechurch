@@ -7,12 +7,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Place actions.
  *
  * @Route(
- *    "/place",
  *    service="church.controller_place",
  *    defaults = {
  *       "version" = "1.0",
@@ -24,7 +25,31 @@ class PlaceController extends Controller
 {
 
     /**
-     * @Route("/{place}.{_format}")
+     * @Route("/place.{_format}")
+     * @Method("GET")
+     *
+     * @param Request $request
+     */
+    public function indexAction(Request $request) : Response
+    {
+        if (!$request->query->has('slug')) {
+            throw new BadRequestHttpException('Slug is a required paramater');
+        }
+
+        $repository = $this->doctrine->getRepository(Place::class);
+
+        // @TODO should we be storing slugs in a url encoded format?
+        $place = $repository->findOneBySlug(rawurlencode($request->query->get('slug')));
+
+        if (!$place) {
+            throw new NotFoundHttpException('Place Not Found');
+        }
+
+        return $this->reply($place, $request->getRequestFormat());
+    }
+
+    /**
+     * @Route("/place/{place}.{_format}")
      * @Method("GET")
      *
      * @param Place $place
