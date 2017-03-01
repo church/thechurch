@@ -100,9 +100,6 @@ services:
     church.slug:
         class: Church\Utils\Slug
 
-    egulias.email_validator:
-        class: Egulias\EmailValidator\EmailValidator
-
     sendgrid:
         class: SendGrid
         arguments:
