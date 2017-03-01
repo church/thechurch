@@ -58,47 +58,47 @@ class SlugTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'Orléans',
-                'orl%C3%A9ans',
+                'orléans',
             ],
             [
                 'Āhualoa',
-                '%C4%81hualoa',
+                'āhualoa',
             ],
             [
                 'Hōnaunau-Napoʻopoʻo',
-                'h%C5%8Dnaunau-napo%CA%BBopo%CA%BBo',
+                'hōnaunau-napoʻopoʻo',
             ],
             [
                 'Béal Feirste',
-                'b%C3%A9al-feirste',
+                'béal-feirste',
             ],
             [
                 'Llandygái',
-                'llandyg%C3%A1i',
+                'llandygái',
             ],
             [
                 'Caersŵs',
-                'caers%C5%B5s',
+                'caersŵs',
             ],
             [
                 'Aberdâr',
-                'aberd%C3%A2r',
+                'aberdâr',
             ],
             [
                 'Pentredŵr',
-                'pentred%C5%B5r',
+                'pentredŵr',
             ],
             [
                 'Llannerch-y-môr',
-                'llannerch-y-m%C3%B4r',
+                'llannerch-y-môr',
             ],
             [
                 '香港',
-                '%E9%A6%99%E6%B8%AF',
+                '香港',
             ],
             [
                 '東京',
-                '%E6%9D%B1%E4%BA%AC',
+                '東京',
             ],
             [
                 'Sydney (C)',

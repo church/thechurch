@@ -20,6 +20,6 @@ class Slug implements SlugInterface
         $slug = preg_replace('/-{2,}/u', '-', $slug);
         $slug = trim($slug, '-');
 
-        return rawurlencode($slug);
+        return $slug;
     }
 }

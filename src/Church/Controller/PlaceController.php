@@ -38,8 +38,7 @@ class PlaceController extends Controller
 
         $repository = $this->doctrine->getRepository(Place::class);
 
-        // @TODO should we be storing slugs in a url encoded format?
-        $place = $repository->findOneBySlug(rawurlencode($request->query->get('slug')));
+        $place = $repository->findOneBySlug($request->query->get('slug'));
 
         if (!$place) {
             throw new NotFoundHttpException('Place Not Found');
