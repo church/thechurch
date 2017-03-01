@@ -18,27 +18,11 @@ class DefaultController extends Controller
      *    "_format" = "json"
      *  }
      *)
+     *
+     * @param Request $request
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request) : Response
     {
-
-        /*
-        $auth = $this->get('security.authorization_checker');
-
-        if (!$auth->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->forward('Church:User:login');
-
-        } elseif ($auth->isGranted('ROLE_FAITH')) {
-            return $this->forward('Church:Place:nearby');
-
-        } elseif (!$auth->isGranted('ROLE_NAME')) {
-            return $this->redirect($this->generateUrl('user_name'));
-
-        } elseif (!$auth->isGranted('ROLE_FAITH')) {
-            return $this->redirect($this->generateUrl('user_faith'));
-        }
-        */
-
         return $this->reply(['hello' => 'world!'], $request->getRequestFormat());
     }
 }

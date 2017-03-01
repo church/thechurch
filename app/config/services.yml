@@ -33,6 +33,10 @@ services:
         parent: church.controller
         class: Church\Controller\UserController
 
+    church.controller_place:
+        parent: church.controller
+        class: Church\Controller\PlaceController
+
     church.normalizer_csrf_token:
         class: Church\Serializer\CsrfTokenNormalizer
         public: false
