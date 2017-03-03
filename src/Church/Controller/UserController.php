@@ -2,7 +2,6 @@
 
 namespace Church\Controller;
 
-use SampleClass;
 use Church\Entity\User\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
