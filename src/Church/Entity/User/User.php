@@ -13,8 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-
-// @TODO Add usernames.
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Church\Entity\User\User
@@ -22,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="Church\Repository\User\UserRepository")
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("primaryEmail")
+ * @UniqueEntity({"primaryEmail", "username"})
  */
 class User extends AbstractEntity implements UserInterface, \Serializable, EquatableInterface
 {
@@ -69,6 +68,23 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
      * @Groups({"anonymous_read"})
      */
     private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=15, unique=true, nullable=true)
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 15
+     * )
+     * @Assert\Regex(
+     *     pattern="/^[a-z\d][a-z\d_]*[a-z\d]$/",
+     *     match=true,
+     *     message="Username must consist of alphanumeric characters and underscores"
+     * )
+     * @Groups({"anonymous_read", "me_write"})
+     */
+    private $username;
 
     /**
      * @var ArrayCollection
@@ -127,6 +143,9 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
         $name = $this->getSingle($name, Name::class);
         $this->name = $name ? $name : new Name();
 
+        $username = $data['username'] ?? null;
+        $this->username = is_string($username) ? $username : null;
+
         $emails = $data['emails'] ?? [];
         $this->emails = $this->getMultiple($emails, Email::class);
 
@@ -162,11 +181,23 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
     }
 
     /**
+     * Set Username.
+     *
+     * @param string $username
+     */
+    public function setUsername(string $username) : self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getUsername() :? string
     {
-        return null;
+        return $this->username;
     }
 
     /**
@@ -202,6 +233,7 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
             && $this->getName()->getFirst()
             && $this->getName()->getLast()
             && $this->hasFaith()
+            && $this->getUsername()
             && $this->getLocation()
         ) {
             $roles[] = self::ROLE_STANDARD;
