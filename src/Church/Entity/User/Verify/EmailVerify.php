@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Church\Entity\User\Email;
 
+// @TODO hash token and code on persist.
+
 /**
  * Church\Entity\User\EmailVerify
  *

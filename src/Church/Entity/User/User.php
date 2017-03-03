@@ -14,6 +14,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+// @TODO Add usernames.
+
 /**
  * Church\Entity\User\User
  *
