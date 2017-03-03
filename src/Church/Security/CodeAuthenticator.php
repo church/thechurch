@@ -2,11 +2,11 @@
 
 namespace Church\Security;
 
-use Church\Controller\Controller;
 use Church\Entity\User\User;
 use Church\Entity\User\Verify\EmailVerify;
+use Church\Serializer\SerializerInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -15,34 +15,41 @@ use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\HttpUtils;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Code Authenticator.
  */
-
-class CodeAuthenticator extends Controller implements
-    SimplePreAuthenticatorInterface,
-    AuthenticationFailureHandlerInterface
+class CodeAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
+     * @var RegistryInterface
+     */
+    protected $doctrine;
+
     /**
      * @var HttpUtils
      */
     protected $http;
 
     /**
-     * {@inheritdoc}
+     * Creates the Code Authenticator
+     *
+     * @param SerializerInterface $serializer
+     * @param RegistryInterface $doctrine
+     * @param HttpUtils $http
      */
     public function __construct(
         SerializerInterface $serializer,
-        ValidatorInterface $validator,
         RegistryInterface $doctrine,
-        TokenStorageInterface $tokenStorage,
         HttpUtils $http
     ) {
-        parent::__construct($serializer, $validator, $doctrine, $tokenStorage);
+        $this->serializer = $serializer;
+        $this->doctrine = $doctrine;
         $this->http = $http;
     }
 
@@ -56,7 +63,7 @@ class CodeAuthenticator extends Controller implements
             return;
         }
 
-        $input = $this->deserialize($request, EmailVerify::class);
+        $input = $this->serializer->deserialize($request, EmailVerify::class);
 
         $credentials = [
             'token' => $input->getToken(),

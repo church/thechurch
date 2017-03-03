@@ -6,8 +6,7 @@ services:
     church.controller:
         abstract:  true
         arguments:
-            - '@serializer'
-            - '@validator'
+            - '@church.serializer'
             - '@doctrine'
             - '@security.token_storage'
 
@@ -43,9 +42,18 @@ services:
         tags:
             - { name: serializer.normalizer }
 
+    church.serializer:
+        class: Church\Serializer\Serializer
+        arguments:
+            - '@serializer'
+            - '@validator'
+            - '@security.token_storage'
+            - '%cors_origin%'
+
     church.exception_listener:
-        parent: church.controller
         class: Church\EventListener\ExceptionListener
+        arguments:
+            - '@church.serializer'
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
@@ -65,9 +73,10 @@ services:
             - { name: doctrine.event_listener, event: preRemove }
 
     church.code_authenticator:
-        parent: church.controller
         class: Church\Security\CodeAuthenticator
         arguments:
+            - '@church.serializer'
+            - '@doctrine'
             - '@security.http_utils'
 
     church.verification_manager:

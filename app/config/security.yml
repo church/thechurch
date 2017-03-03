@@ -33,8 +33,8 @@ security:
                 #check_path: _demo_security_check
                 #login_path: _demo_login
             logout:
-                path: user_logout
-                target: user_login
+                path: /logout
+                target: /
             #http_basic:
             #    realm: "Secured Demo Area"
 

@@ -44,7 +44,7 @@ class PlaceController extends Controller
             throw new NotFoundHttpException('Place Not Found');
         }
 
-        return $this->reply($place, $request->getRequestFormat());
+        return $this->serializer->serialize($place, $request->getRequestFormat());
     }
 
     /**
@@ -56,6 +56,6 @@ class PlaceController extends Controller
      */
     public function showAction(Place $place, Request $request) : Response
     {
-        return $this->reply($place, $request->getRequestFormat());
+        return $this->serializer->serialize($place, $request->getRequestFormat());
     }
 }

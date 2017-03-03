@@ -37,8 +37,6 @@ class Search extends AbstractClient implements SearchInterface
             }
         }
 
-        // @TODO convert the denomrlaizer in the controller to a custom
-        //       service.
         return $this->serializer->deserialize((string) $response->getBody(), Location::class, 'json');
     }
 }

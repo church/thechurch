@@ -7,6 +7,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Csrf\CsrfToken as Token;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
+/**
+ * Csrf Token Listner.
+ */
 class CsrfToken
 {
 
@@ -30,12 +33,20 @@ class CsrfToken
      */
     protected $tokenManager;
 
-    public function __construct(
-        CsrfTokenManagerInterface $tokenManager
-    ) {
+    /**
+     * Creates the Csrf Token Listner.
+     *
+     * @param CsrfTokenManagerInterface $tokenManager
+     */
+    public function __construct(CsrfTokenManagerInterface $tokenManager)
+    {
         $this->tokenManager = $tokenManager;
     }
 
+    /**
+     * onKernelRequest even.
+     * @param GetResponseEvent $event
+     */
     public function onKernelRequest(GetResponseEvent $event) : void
     {
         $request = $event->getRequest();

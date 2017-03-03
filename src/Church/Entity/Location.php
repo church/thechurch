@@ -29,7 +29,7 @@ class Location extends AbstractEntity
      *
      * @ORM\ManyToOne(targetEntity="Church\Entity\Place\Place", inversedBy="locations")
      * @ORM\JoinColumn(name="place_id", referencedColumnName="place_id")
-     * @Groups({"me_read"})
+     * @Groups({"me_read", "neighbor_read"})
      */
     private $place;
 

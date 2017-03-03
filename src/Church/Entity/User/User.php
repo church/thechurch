@@ -91,7 +91,7 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
      *
      * @ORM\ManyToOne(targetEntity="Church\Entity\Location")
      * @ORM\JoinColumn(name="location", referencedColumnName="location_id")
-     * @Groups({"me_read"})
+     * @Groups({"me_read", "neighbor_read"})
      */
     private $location;
 

@@ -20,6 +20,8 @@ parameters:
     dispatch: false
     sendgrid_api_key: ~
 
+    cors_origin: 127.0.0.1:8000
+
     # nexmo_api_key: ~
     # nexmo_api_secret: ~
     # nexmo_sender: ~

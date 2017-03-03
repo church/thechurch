@@ -2,7 +2,7 @@
 
 namespace Church\EventListener;
 
-use Church\Controller\Controller;
+use Church\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -10,8 +10,22 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 /**
  * Listen for Exceptions.
  */
-class ExceptionListener extends Controller
+class ExceptionListener
 {
+    /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
+     * Creates the Controller.
+     *
+     * @param SerializerInterface $serializer
+     */
+    public function __construct(SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
 
     /**
      * Handle the Kernel Exception.
@@ -45,7 +59,7 @@ class ExceptionListener extends Controller
         }
 
         if ($exception instanceof HttpExceptionInterface) {
-            $response = $this->reply(
+            $response = $this->serializer->serialize(
                 $data,
                 $request->getRequestFormat(),
                 [],
@@ -53,7 +67,7 @@ class ExceptionListener extends Controller
                 $exception->getHeaders()
             );
         } else {
-            $response = $this->reply(
+            $response = $this->serializer->serialize(
                 $data,
                 $request->getRequestFormat(),
                 [],
