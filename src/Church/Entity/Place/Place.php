@@ -3,7 +3,7 @@
 namespace Church\Entity\Place;
 
 use Church\Entity\Location;
-use Church\Entity\AbstractEntity;
+use Church\Entity\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="place")
  * @ORM\Entity()
  */
-class Place extends AbstractEntity
+class Place extends Entity
 {
     /**
      * @var int

@@ -2,14 +2,14 @@
 
 namespace Church\Entity\Place;
 
-use Church\Entity\AbstractEntity;
+use Church\Entity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="place_tree")
  */
-class Tree extends AbstractEntity
+class Tree extends Entity
 {
 
     /**
