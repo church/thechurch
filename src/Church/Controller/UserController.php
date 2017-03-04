@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @Route(
@@ -20,6 +21,28 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class UserController extends Controller
 {
+    /**
+     * @Route("/user.{_format}")
+     * @Method("GET")
+     *
+     * @param Request $request
+     */
+    public function indexAction(Request $request) : Response
+    {
+        if (!$request->query->has('username')) {
+            throw new BadRequestHttpException("Missing Username Paramter");
+        }
+
+        $repository = $this->doctrine->getRepository(User::class);
+
+        $user = $repository->findOneByUsername($request->query->get('username'));
+
+        if (!$user) {
+            throw new NotFoundHttpException("No user found");
+        }
+
+        return $this->showAction($user, $request);
+    }
 
   /**
    * @Route("/user/{user}.{_format}")
@@ -35,8 +58,12 @@ class UserController extends Controller
         }
 
         $roles = [];
-        if ($this->isLoggedIn() && $this->getUser()->isNeighbor($user)) {
-            $roles[] = 'neighbor';
+        if ($this->isLoggedIn()) {
+            if ($this->getUser()->isEqualTo($user)) {
+                $roles[] = 'me';
+            } elseif ($this->getUser()->isNeighbor($user)) {
+                $roles[] = 'neighbor';
+            }
         }
 
         return $this->serializer->serialize($user, $request->getRequestFormat(), $roles);

@@ -65,7 +65,7 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
      * @var Name
      *
      * @ORM\Embedded(class = "Name", columnPrefix = "name_")
-     * @Groups({"anonymous_read"})
+     * @Groups({"standard_read"})
      */
     private $name;
 
@@ -314,6 +314,14 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
         }
 
         if (!$user->getLocation()->getPlace()) {
+            return false;
+        }
+
+        if (!in_array(self::ROLE_STANDARD, $this->getRoles())) {
+            return false;
+        }
+
+        if (!in_array(self::ROLE_STANDARD, $user->getRoles())) {
             return false;
         }
 
