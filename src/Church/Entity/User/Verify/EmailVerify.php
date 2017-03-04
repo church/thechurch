@@ -32,7 +32,7 @@ class EmailVerify implements VerifyInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="token", type="string", length=6, unique=true)
+     * @ORM\Column(type="string", length=6, unique=true)
      * @Groups({"anonymous_read", "anonymous_write"})
      * @Assert\NotBlank()
      */
