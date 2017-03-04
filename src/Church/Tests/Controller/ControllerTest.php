@@ -4,6 +4,7 @@ namespace Church\Tests\Controller;
 
 use Church\Serializer\SerializerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class ControllerTest extends \PHPUnit_Framework_TestCase
@@ -36,5 +37,13 @@ abstract class ControllerTest extends \PHPUnit_Framework_TestCase
     protected function getTokenStorage()
     {
         return $this->createMock(TokenStorageInterface::class);
+    }
+
+    /**
+     * Gets the mock token.
+     */
+    protected function getToken()
+    {
+        return $this->createMock(TokenInterface::class);
     }
 }

@@ -19,10 +19,11 @@ class CsrfControllerTest extends ControllerTest
         $request = new Request();
         $request->setRequestFormat(self::FORMAT);
 
-        $id = 'api';
-        $value = '12345';
-        $token = new CsrfToken($id, $value);
-        $data = [$id, $value];
+        $data = [
+            'id' => 'api',
+            'value' => '12345',
+        ];
+        $token = new CsrfToken($data['id'], $data['value']);
         $response = new Response(json_encode($data));
 
         $serializer = $this->getSerializer();
@@ -34,7 +35,7 @@ class CsrfControllerTest extends ControllerTest
         $tokenManager = $this->createMock(CsrfTokenManagerInterface::class);
         $tokenManager->expects($this->once())
                      ->method('getToken')
-                     ->with($id)
+                     ->with($token->getId())
                      ->willReturn($token);
 
         $default = new CsrfController($serializer, $this->getDoctrine(), $this->getTokenStorage(), $tokenManager);

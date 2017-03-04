@@ -70,13 +70,13 @@ abstract class Controller
     protected function getUser() : User
     {
         if (null === $token = $this->tokenStorage->getToken()) {
-            throw new \Exception('Not Logged In.');
+            throw new \Exception('Not Logged In');
         }
 
         $user = $token->getUser();
 
         if (!is_object($user)) {
-            throw new \Exception('Not Logged In.');
+            throw new \Exception('Not Logged In');
         }
 
         return $user;
