@@ -122,6 +122,14 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
     private $faith;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", options={"default" = 1})
+     * @Groups({"me_read", "me_write"})
+     */
+    private $enabled;
+
+    /**
      * @var \DateTimeInterface
      *
      * @ORM\Column(type="datetime")
@@ -154,6 +162,9 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
 
         $faith = $data['faith'] ?? false;
         $this->faith = is_bool($faith) ? $faith : false;
+
+        $enabled = $data['enabled'] ?? true;
+        $this->enabled = is_bool($enabled) ? $enabled : true;
 
         $location = $data['location'] ?? null;
         $this->location = $this->getSingle($location, Location::class);
@@ -283,6 +294,33 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
     }
 
     /**
+     * Determine if the current user and the requested user are in the same
+     * place.
+     *
+     * @param User $user
+     */
+    public function isNeighbor(User $user) : bool
+    {
+        if (!$this->location) {
+            return false;
+        }
+
+        if (!$this->location->getPlace()) {
+            return false;
+        }
+
+        if (!$user->getLocation()) {
+            return false;
+        }
+
+        if (!$user->getLocation()->getPlace()) {
+            return false;
+        }
+
+        return $this->location->getPlace()->getId() === $user->getLocation()->getPlace()->getId();
+    }
+
+    /**
      * Set Name.
      *
      * @param Name $name
@@ -401,6 +439,28 @@ class User extends AbstractEntity implements UserInterface, \Serializable, Equat
     public function hasFaith() : bool
     {
         return $this->faith;
+    }
+
+    /**
+     * Set faith
+     *
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled) : self
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get Enabled.
+     *
+     * @return bool
+     */
+    public function isEnabled() : bool
+    {
+        return $this->enabled;
     }
 
     /**

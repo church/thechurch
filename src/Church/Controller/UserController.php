@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 
 /**
  * @Route(
@@ -29,42 +30,15 @@ class UserController extends Controller
    */
     public function showAction(User $user, Request $request) : Response
     {
+        if (!$user->isEnabled()) {
+            throw new GoneHttpException("User account is disabled");
+        }
+
         $roles = [];
-        if ($this->isNeighbor($user)) {
+        if ($this->isLoggedIn() && $this->getUser()->isNeighbor($user)) {
             $roles[] = 'neighbor';
         }
+
         return $this->serializer->serialize($user, $request->getRequestFormat(), $roles);
-    }
-
-
-    /**
-     * Determine if the current user and the requested user are in the same
-     * place.
-     *
-     * @param User $user
-     */
-    protected function isNeighbor(User $user) : bool
-    {
-        if (!$this->isLoggedIn()) {
-            return false;
-        }
-
-        if (!$this->getUser()->getLocation()) {
-            return false;
-        }
-
-        if (!$this->getUser()->getLocation()->getPlace()) {
-            return false;
-        }
-
-        if (!$user->getLocation()) {
-            return false;
-        }
-
-        if (!$user->getLocation()->getPlace()) {
-            return false;
-        }
-
-        return $this->getUser()->getLocation()->getPlace()->getId() === $user->getLocation()->getPlace()->getId();
     }
 }
