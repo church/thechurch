@@ -3,7 +3,7 @@
 namespace Church\Entity\User;
 
 use Church\Entity\Location;
-use Church\Entity\AbstractEntity;
+use Church\Entity\Entity;
 use Church\Entity\User\Email;
 use Church\Entity\User\Name;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity({"primaryEmail", "username"})
  */
-class User extends AbstractEntity implements UserInterface, \Serializable, EquatableInterface
+class User extends Entity implements UserInterface, \Serializable, EquatableInterface
 {
     /**
      * User Role.

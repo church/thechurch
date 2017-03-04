@@ -4,15 +4,16 @@ namespace Church\Serializer;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterface;
 
 /**
  * Deserializes a request body with validaiton.
  */
-interface SerializerInterface
+interface SerializerInterface extends SymfonySerializerInterface
 {
 
     /**
-     * Deserialize and validate an object.
+     * Deserialize and validate a request.
      *
      * This method exists to prevent validation from being skipped by mistake.
      *
@@ -20,7 +21,7 @@ interface SerializerInterface
      * @param string|object $type
      * @param array $roles
      */
-    public function deserialize(Request $request, $type, array $roles = []);
+    public function request(Request $request, $type, array $roles = []);
 
     /**
      * Reply action that serializes the data passed.
@@ -31,7 +32,7 @@ interface SerializerInterface
      * @param int $status
      * @param array $headers
      */
-    public function serialize(
+    public function respond(
         $data,
         string $format,
         array $roles = [],

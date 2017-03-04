@@ -63,7 +63,7 @@ class CodeAuthenticator implements SimplePreAuthenticatorInterface, Authenticati
             return;
         }
 
-        $credentials = $this->serializer->deserialize($request, EmailVerify::class);
+        $credentials = $this->serializer->request($request, EmailVerify::class);
 
         return new PreAuthenticatedToken('anon.', $credentials, $providerKey);
     }

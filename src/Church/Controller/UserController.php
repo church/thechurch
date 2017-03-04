@@ -66,6 +66,6 @@ class UserController extends Controller
             }
         }
 
-        return $this->serializer->serialize($user, $request->getRequestFormat(), $roles);
+        return $this->serializer->respond($user, $request->getRequestFormat(), $roles);
     }
 }

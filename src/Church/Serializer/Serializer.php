@@ -71,6 +71,22 @@ class Serializer implements SerializerInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function serialize($data, $format, array $context = array())
+    {
+        $this->serializer->serialize($data, $format, $context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deserialize($data, $type, $format, array $context = array())
+    {
+        $this->serializer->deserialize($data, $type, $format, $context);
+    }
+
+    /**
      * Get a user from the Security Token Storage.
      */
     protected function getUser() :? User
@@ -110,7 +126,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function deserialize(Request $request, $type, array $roles = [])
+    public function request(Request $request, $type, array $roles = [])
     {
 
         if (!is_string($type) && !is_object($type)) {
@@ -161,7 +177,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function serialize(
+    public function respond(
         $data,
         string $format,
         array $roles = [],

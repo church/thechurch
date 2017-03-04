@@ -2,7 +2,7 @@
 
 namespace Church\Entity\Message;
 
-class EmailMessage extends AbstractMessage
+class EmailMessage extends Message
 {
 
     /**

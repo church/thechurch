@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="location")
  */
-class Location extends AbstractEntity
+class Location extends Entity
 {
     /**
      * @var string

@@ -59,7 +59,7 @@ class ExceptionListener
         }
 
         if ($exception instanceof HttpExceptionInterface) {
-            $response = $this->serializer->serialize(
+            $response = $this->serializer->respond(
                 $data,
                 $request->getRequestFormat(),
                 [],
@@ -67,7 +67,7 @@ class ExceptionListener
                 $exception->getHeaders()
             );
         } else {
-            $response = $this->serializer->serialize(
+            $response = $this->serializer->respond(
                 $data,
                 $request->getRequestFormat(),
                 [],

@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Abstract Entity.
  */
-abstract class AbstractEntity implements EntityInterface
+abstract class Entity implements EntityInterface
 {
 
     /**

@@ -78,7 +78,7 @@ class MeController extends Controller
     */
     public function showAction(Request $request) : Response
     {
-        return $this->serializer->serialize($this->getUser(), $request->getRequestFormat(), ['me']);
+        return $this->serializer->respond($this->getUser(), $request->getRequestFormat(), ['me']);
     }
 
     /**
@@ -98,7 +98,7 @@ class MeController extends Controller
         $em = $this->doctrine->getEntityManager();
         $repository = $em->getRepository(User::class);
         $user = $repository->find($this->getUser()->getId());
-        $user = $this->serializer->deserialize($request, $user, ['me']);
+        $user = $this->serializer->request($request, $user, ['me']);
 
         $em->flush();
 
@@ -119,7 +119,7 @@ class MeController extends Controller
      */
     public function showNameAction(Request $request) : Response
     {
-        return $this->reply($this->getUser()->getName(), $request->getRequestFormat(), ['me']);
+        return $this->serializer->respond($this->getUser()->getName(), $request->getRequestFormat(), ['me']);
     }
 
     /**
@@ -136,7 +136,7 @@ class MeController extends Controller
         $em = $this->doctrine->getEntityManager();
         $repository = $em->getRepository(User::class);
         $user = $repository->find($this->getUser()->getId());
-        $name = $this->serializer->deserialize($request, $user->getName(), ['me']);
+        $name = $this->serializer->request($request, $user->getName(), ['me']);
         $user->setName($name);
 
         $em->flush();
@@ -158,7 +158,7 @@ class MeController extends Controller
      */
     public function showEmails(Request $request) : Response
     {
-        return $this->serializer->serialize($this->getUser()->getEmails(), $request->getRequestFormat(), ['me']);
+        return $this->serializer->respond($this->getUser()->getEmails(), $request->getRequestFormat(), ['me']);
     }
 
     /**
@@ -175,7 +175,7 @@ class MeController extends Controller
         $em = $this->doctrine->getEntityManager();
         $repository = $em->getRepository(User::class);
         $user = $repository->find($this->getUser()->getId());
-        $email = $this->serializer->deserialize($request, Email::class, ['me']);
+        $email = $this->serializer->request($request, Email::class, ['me']);
 
         $email->setUser($user);
         $user->addEmail($email);
@@ -190,7 +190,7 @@ class MeController extends Controller
         // Refresh the user.
         $this->tokenStorage->getToken()->setAuthenticated(false);
 
-        return $this->serializer->serialize($verify, $request->getRequestFormat(), ['me'], 201);
+        return $this->serializer->respond($verify, $request->getRequestFormat(), ['me'], 201);
     }
 
     /**
@@ -204,7 +204,7 @@ class MeController extends Controller
      */
     public function showPrimaryEmailAction(Request $request) : Response
     {
-        return $this->serializer->serialize($this->getUser()->getPrimaryEmail(), $request->getRequestFormat(), ['me']);
+        return $this->serializer->respond($this->getUser()->getPrimaryEmail(), $request->getRequestFormat(), ['me']);
     }
 
     /**
@@ -221,7 +221,7 @@ class MeController extends Controller
         $em = $this->doctrine->getEntityManager();
         $repository = $em->getRepository(User::class);
         $user = $repository->find($this->getUser()->getId());
-        $input = $this->serializer->deserialize($request, Email::class, ['me']);
+        $input = $this->serializer->request($request, Email::class, ['me']);
 
         $accepted = $this->search($user->getEmails(), function ($item) use ($input) {
             return $item->getEmail() === $input->getEmail();
@@ -255,7 +255,7 @@ class MeController extends Controller
      */
     public function showLocaitonAction(Request $request) : Response
     {
-        return $this->serializer->serialize($this->getUser()->getLocation(), $request->getRequestFormat(), ['me']);
+        return $this->serializer->respond($this->getUser()->getLocation(), $request->getRequestFormat(), ['me']);
     }
 
     /**
@@ -273,7 +273,7 @@ class MeController extends Controller
         $repository = $em->getRepository(User::class);
         $user = $repository->find($this->getUser()->getId());
 
-        $input = $this->serializer->deserialize($request, Location::class, ['me']);
+        $input = $this->serializer->request($request, Location::class, ['me']);
 
         $location = $this->placeFinder->find($input);
 
@@ -293,22 +293,20 @@ class MeController extends Controller
      * @Method("DELETE")
      * @Security("has_role('authenticated')")
      *
-     * @param string $email
+     * @param Email $email
      * @param Request $request
      */
-    public function removeEmailAction(string $email, Request $request) : Response
+    public function removeEmailAction(Email $email, Request $request) : Response
     {
         $em = $this->doctrine->getEntityManager();
-        $repository = $em->getRepository(Email::class);
 
-        $email = $repository->find($email);
         $em->remove($email);
         $em->flush();
 
         // Refresh the user.
         $this->tokenStorage->getToken()->setAuthenticated(false);
 
-        return $this->serializer->serialize('', $request->getRequestFormat(), ["me"], 204);
+        return $this->serializer->respond('', $request->getRequestFormat(), ["me"], 204);
     }
 
     /**
@@ -322,7 +320,7 @@ class MeController extends Controller
      */
     public function loginAction(Request $request) : Response
     {
-        $login = $this->serializer->deserialize($request, Login::class);
+        $login = $this->serializer->request($request, Login::class);
 
         $verification = $this->verificationManager->getVerification($login->getType());
 
@@ -330,7 +328,7 @@ class MeController extends Controller
 
         $verification->send($verify);
 
-        return $this->serializer->serialize($verify, $request->getRequestFormat());
+        return $this->serializer->respond($verify, $request->getRequestFormat());
     }
 
     /**
@@ -344,7 +342,7 @@ class MeController extends Controller
      */
     public function verifyEmailAction(Request $request) : Response
     {
-        $input = $this->serializer->deserialize($request, EmailVerify::class);
+        $input = $this->serializer->request($request, EmailVerify::class);
         $em = $this->doctrine->getEntityManager();
         $repository = $this->doctrine->getRepository(EmailVerify::class);
 
@@ -390,7 +388,7 @@ class MeController extends Controller
      */
     public function loginEmailAction(Request $request) : Response
     {
-        $input = $this->serializer->deserialize($request, EmailVerify::class);
+        $input = $this->serializer->request($request, EmailVerify::class);
         $em = $this->doctrine->getEntityManager();
         $repository = $this->doctrine->getRepository(EmailVerify::class);
 

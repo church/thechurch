@@ -5,7 +5,7 @@ namespace Church\Entity\Message;
 /**
  * Interface for Messages.
  */
-abstract class AbstractMessage implements MessageInterface
+abstract class Message implements MessageInterface
 {
     /**
      * @var string
