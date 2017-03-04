@@ -59,7 +59,7 @@ class CodeAuthenticator implements SimplePreAuthenticatorInterface, Authenticati
     public function createToken(Request $request, $providerKey)
     {
         // Only Create a Token when on a verify path and get the type.
-        if (!$this->http->checkRequestPath($request, 'me_verify_email')) {
+        if (!$this->http->checkRequestPath($request, 'me_login_email')) {
             return;
         }
 

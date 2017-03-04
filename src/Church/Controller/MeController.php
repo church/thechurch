@@ -10,6 +10,7 @@ use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\PlaceFinderInterface;
 use Church\Utils\User\VerificationManagerInterface;
 use Church\Serializer\SerializerInterface;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -180,12 +181,16 @@ class MeController extends Controller
         $user->addEmail($email);
         $em->flush();
 
-        // @TODO Send a verification.
+        $verification = $this->verificationManager->getVerification('email');
+
+        $verify = $verification->create($email);
+
+        $verification->send($verify);
 
         // Refresh the user.
         $this->tokenStorage->getToken()->setAuthenticated(false);
 
-        return $this->serializer->serialize($email, $request->getRequestFormat(), ['me'], 201);
+        return $this->serializer->serialize($verify, $request->getRequestFormat(), ['me'], 201);
     }
 
     /**
@@ -218,12 +223,9 @@ class MeController extends Controller
         $user = $repository->find($this->getUser()->getId());
         $input = $this->serializer->deserialize($request, Email::class, ['me']);
 
-        $accepted = null;
-        foreach ($user->getEmails() as $email) {
-            if ($email->getEmail() === $input->getEmail()) {
-                $accepted = $email;
-            }
-        }
+        $accepted = $this->search($user->getEmails(), function ($item) use ($input) {
+            return $item->getEmail() === $input->getEmail();
+        });
 
         if (!$accepted) {
             throw new BadRequestHttpException("Can only set primary email from user's existing emails");
@@ -334,13 +336,59 @@ class MeController extends Controller
     /**
      * Verify Email.
      *
-     * @Route("/verify/email", name="me_verify_email")
+     * @Route("/me/emails/verify", name="me_verify_email")
      * @Method("POST")
      * @Security("has_role('authenticated')")
      *
      * @param Request $request
      */
     public function verifyEmailAction(Request $request) : Response
+    {
+        $input = $this->serializer->deserialize($request, EmailVerify::class);
+        $em = $this->doctrine->getEntityManager();
+        $repository = $this->doctrine->getRepository(EmailVerify::class);
+
+        $verify = $repository->findOneByToken($input->getToken());
+        if (!$verify) {
+            throw new BadRequestHttpException("Token does not exist'");
+        }
+
+        $created = clone $verify->getCreated();
+        $created->add(new \DateInterval('PT1H'));
+
+        $now = new \DateTime('now');
+
+        if ($created < $now) {
+            throw new BadRequestHttpException('Verification Code is older than 1 hour');
+        }
+
+        if ($verify->isEqualTo($input)) {
+            throw new BadRequestHttpException('Token & Verification Code do not match');
+        }
+
+        $email = $verify->getEmail();
+
+        $email->setVerified(new \DateTime());
+
+        $em->persist($email);
+        $em->remove($verify);
+        $em->flush();
+
+        $this->tokenStorage->getToken()->setAuthenticated(false);
+
+        return $this->showEmails($request);
+    }
+
+    /**
+     * Verify Email.
+     *
+     * @Route("/login/email", name="me_login_email")
+     * @Method("POST")
+     * @Security("has_role('authenticated')")
+     *
+     * @param Request $request
+     */
+    public function loginEmailAction(Request $request) : Response
     {
         $input = $this->serializer->deserialize($request, EmailVerify::class);
         $em = $this->doctrine->getEntityManager();
@@ -358,8 +406,28 @@ class MeController extends Controller
             $this->tokenStorage->getToken()->setAuthenticated(false);
         }
 
+        // Always generate a new CSRF Token on successful login.
         $this->csrfTokenManager->refreshToken(self::CSRF_TOKEN_ID);
 
         return $this->showAction($request);
+    }
+
+    /**
+     * Search through a colleciton and return the first instance.
+     *
+     * @param Collection $collection
+     * @param callable $callback
+     */
+    protected function search(Collection $collection, callable $callback)
+    {
+        $item = $collection->first();
+        while ($item) {
+            if ($callback($item)) {
+                return $item;
+            };
+            $item = $collection->next();
+        }
+
+        return null;
     }
 }

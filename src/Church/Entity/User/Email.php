@@ -4,7 +4,6 @@ namespace Church\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 use Church\Entity\User\User;
@@ -52,7 +51,11 @@ class Email
     /**
      * @var EmailVerify
      *
-     * @ORM\OneToOne(targetEntity="\Church\Entity\User\Verify\EmailVerify", mappedBy="email")
+     * @ORM\OneToOne(
+     *  targetEntity="\Church\Entity\User\Verify\EmailVerify",
+     *  mappedBy="email",
+     *  cascade={"remove"}
+     * )
      */
     private $verify;
 
@@ -206,5 +209,13 @@ class Email
     public function getVerify() :? EmailVerify
     {
         return $this->verify;
+    }
+
+    /**
+     * Convers the email object to a string.
+     */
+    public function __toString() : string
+    {
+        return $this->email;
     }
 }

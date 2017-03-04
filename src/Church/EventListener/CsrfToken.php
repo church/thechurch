@@ -63,7 +63,7 @@ class CsrfToken
 
         $token = new Token(self::CSRF_TOKEN_ID, $request->headers->get(self::CSRF_TOKEN_HEADER));
         if (!$this->tokenManager->isTokenValid($token)) {
-            throw new BadRequestHttpException('CSRF Token is not valid.');
+            throw new BadRequestHttpException('CSRF Token is not valid');
         }
     }
 }
