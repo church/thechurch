@@ -10,6 +10,11 @@ abstract class ControllerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * @var string
+     */
+    const FORMAT = 'json';
+
+    /**
      * Gets the mock serializer.
      */
     protected function getSerializer()

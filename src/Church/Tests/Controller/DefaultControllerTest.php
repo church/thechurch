@@ -14,9 +14,8 @@ class DefaultControllerTest extends ControllerTest
      */
     public function testIndexAction()
     {
-        $format = 'json';
         $request = new Request();
-        $request->setRequestFormat($format);
+        $request->setRequestFormat(self::FORMAT);
         $data = [
             'hello' => 'world!',
         ];
@@ -25,7 +24,7 @@ class DefaultControllerTest extends ControllerTest
         $serializer = $this->getSerializer();
         $serializer->expects($this->once())
                    ->method('respond')
-                   ->with($data, $format)
+                   ->with($data, self::FORMAT)
                    ->willReturn($response);
 
         $default = new DefaultController($serializer, $this->getDoctrine(), $this->getTokenStorage());
