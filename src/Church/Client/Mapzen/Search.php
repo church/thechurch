@@ -27,7 +27,7 @@ class Search extends Client implements SearchInterface
                 ]);
             } catch (ClientException $e) {
                 // Wait a second and try again.
-                if ($e->getResponse()->getStatusCode() == 429) {
+                if ($e->getResponse()->getStatusCode() === 429) {
                     $response = null;
                     sleep(1);
                     continue;
