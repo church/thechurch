@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @Route(
@@ -31,7 +31,7 @@ class UserController extends Controller
     public function showAction(User $user, Request $request) : Response
     {
         if (!$user->isEnabled()) {
-            throw new GoneHttpException("User account is disabled");
+            throw new NotFoundHttpException("User account is disabled");
         }
 
         $roles = [];
