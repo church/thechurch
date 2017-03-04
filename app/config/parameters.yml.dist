@@ -17,7 +17,6 @@ parameters:
 
     mapzen_api_key: ~
 
-    dispatch: false
     sendgrid_api_key: ~
 
     cors_origin: 127.0.0.1:8000

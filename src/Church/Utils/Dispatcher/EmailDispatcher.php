@@ -15,11 +15,6 @@ class EmailDispatcher implements DispatcherInterface
 {
 
     /**
-     * @var bool
-     */
-    protected $dispatch;
-
-    /**
      * @var \SendGrid
      */
     protected $sendGrid;
@@ -27,12 +22,10 @@ class EmailDispatcher implements DispatcherInterface
     /**
      * Creates an email dispatcher.
      *
-     * @param bool $dispatch
      * @param \SendGrid $sendGrid
      */
-    public function __construct(bool $dispatch, \SendGrid $sendGrid)
+    public function __construct(\SendGrid $sendGrid)
     {
-        $this->dispatch = $dispatch;
         $this->sendGrid = $sendGrid;
     }
 
@@ -41,9 +34,6 @@ class EmailDispatcher implements DispatcherInterface
      */
     public function send(MessageInterface $message) : bool
     {
-        if (!$this->dispatch) {
-            return false;
-        }
 
         $mail = $this->convertMessage($message);
 
@@ -60,7 +50,6 @@ class EmailDispatcher implements DispatcherInterface
     protected function convertMessage(EmailMessage $message) : Mail
     {
         $from = new Email(null, "church@thechur.ch");
-        $subject = "Hello World from the SendGrid PHP Library!";
         $to = new Email(null, $message->getTo());
         $content = new Content("text/plain", $message->getTextString());
 

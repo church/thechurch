@@ -102,7 +102,7 @@ class EmailVerification implements VerificationInterface
     {
         $message = new EmailMessage([
             'to' => $verify->getEmail()->getEmail(),
-            'subject' => 'Confirm Your Email',
+            'subject' => 'Confirm Your Email (' . $verify->getCode()  . ')',
             'text' => [
                 'Please visit the following location to verify your email:',
                 'https://thechur.ch/v/e/' . $verify->getToken() . '/' . $verify->getCode(),

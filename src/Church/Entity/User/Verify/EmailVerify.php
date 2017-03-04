@@ -32,7 +32,7 @@ class EmailVerify implements VerifyInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=6, unique=true)
+     * @ORM\Column(name="token", type="string", length=6, unique=true)
      * @Groups({"anonymous_read", "anonymous_write"})
      * @Assert\NotBlank()
      */
@@ -41,11 +41,17 @@ class EmailVerify implements VerifyInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=6, unique=true)
-     * @Assert\NotBlank()
      * @Groups({"anonymous_write"})
+     * @Assert\NotBlank()
      */
     private $code;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=255, unique=true)
+     */
+    private $hashedCode;
 
     /**
      * @var \DateTimeInterface
@@ -83,6 +89,28 @@ class EmailVerify implements VerifyInterface
         $this->created = new \DateTime();
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function hashData() : self
+    {
+        if ($this->code) {
+            $this->hashedCode = $this->hash($this->code);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Hash data.
+     *
+     * @param string $data
+     */
+    protected function hash(string $data) : string
+    {
+        return password_hash($data, PASSWORD_DEFAULT);
     }
 
     /**
@@ -163,5 +191,30 @@ class EmailVerify implements VerifyInterface
     public function getCreated() :? \DateTimeInterface
     {
         return $this->created;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEqualTo(VerifyInterface $verify) : bool
+    {
+
+        if (!$verify instanceof EmailVerify) {
+            return false;
+        }
+
+        if ($this->token === $verify->getToken()) {
+            return false;
+        }
+
+        if (!$this->hashedCode || !$verify->getCode()) {
+            return false;
+        }
+
+        if (!password_verify($verify->getCode(), $this->hashedCode)) {
+            return false;
+        }
+
+        return true;
     }
 }

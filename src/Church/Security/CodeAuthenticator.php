@@ -63,12 +63,7 @@ class CodeAuthenticator implements SimplePreAuthenticatorInterface, Authenticati
             return;
         }
 
-        $input = $this->serializer->deserialize($request, EmailVerify::class);
-
-        $credentials = [
-            'token' => $input->getToken(),
-            'code' => $input->getCode(),
-        ];
+        $credentials = $this->serializer->deserialize($request, EmailVerify::class);
 
         return new PreAuthenticatedToken('anon.', $credentials, $providerKey);
     }
@@ -92,7 +87,7 @@ class CodeAuthenticator implements SimplePreAuthenticatorInterface, Authenticati
 
         $repository = $this->doctrine->getRepository(EmailVerify::class);
 
-        if ($verify = $repository->findOneByToken($credentials['token'])) {
+        if ($verify = $repository->findOneByToken($credentials->getToken())) {
             $created = clone $verify->getCreated();
             $created->add(new \DateInterval('PT1H'));
 
@@ -102,7 +97,7 @@ class CodeAuthenticator implements SimplePreAuthenticatorInterface, Authenticati
                 throw new AuthenticationException('Verification Code is older than 1 hour');
             }
 
-            if ($verify->getCode() != $credentials['code']) {
+            if ($verify->isEqualTo($credentials)) {
                 throw new AuthenticationException('Token & Verification Code do not match');
             }
         } else {

@@ -95,7 +95,6 @@ services:
     church.dispatcher_email:
         class: Church\Utils\Dispatcher\EmailDispatcher
         arguments:
-            - '%dispatch%'
             - '@sendgrid'
 
     church.place_finder:
