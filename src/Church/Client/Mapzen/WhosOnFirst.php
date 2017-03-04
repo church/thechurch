@@ -2,14 +2,14 @@
 
 namespace Church\Client\Mapzen;
 
-use Church\Client\AbstractClient;
+use Church\Client\Client;
 use Church\Entity\Place\Place;
 use GuzzleHttp\Exception\ClientException;
 
 /**
  * Who's on First.
  */
-class WhosOnFirst extends AbstractClient implements WhosOnFirstInterface
+class WhosOnFirst extends Client implements WhosOnFirstInterface
 {
 
     /**

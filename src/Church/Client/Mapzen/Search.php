@@ -2,14 +2,14 @@
 
 namespace Church\Client\Mapzen;
 
-use Church\Client\AbstractClient;
+use Church\Client\Client;
 use Church\Entity\Location;
 use GuzzleHttp\Exception\ClientException;
 
 /**
  * Search Client.
  */
-class Search extends AbstractClient implements SearchInterface
+class Search extends Client implements SearchInterface
 {
 
     /**
