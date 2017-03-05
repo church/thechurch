@@ -60,6 +60,10 @@ class PlaceFinder implements PlaceFinderInterface
         // Get all of the details from Mapzen.
         $input = $this->search->get($input->getId());
 
+        if (!$input->getPlace()) {
+            throw new \Exception('Place is missing from input');
+        }
+
         // Check to see if a location already exists.
         $location = $repository->find($input->getId());
         if (!$location) {
@@ -154,8 +158,8 @@ class PlaceFinder implements PlaceFinderInterface
             }
         }
 
-        if (!$place->getCreated()) {
-            throw new \Exception("Place was not created.");
+        if (!$repository->find($place->getId())) {
+            throw new \Exception("Place was not created");
         }
 
         return $place;
