@@ -44,7 +44,8 @@ class CsrfToken
     }
 
     /**
-     * onKernelRequest even.
+     * onKernelRequest event
+     *
      * @param GetResponseEvent $event
      */
     public function onKernelRequest(GetResponseEvent $event) : void
