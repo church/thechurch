@@ -37,14 +37,6 @@ class PlaceFinderTest extends \PHPUnit_Framework_TestCase
             ->willReturn('123');
         $location->method('getPlace')
             ->willReturn($place);
-        $location = new Location([
-            'id' => '123',
-            'place' => [
-                'id' => 321,
-                'name' => 'Orlando',
-                'created' => new \DateTime(),
-            ],
-        ]);
 
         $locationRepository = $this->createMock(ObjectRepository::class);
 
@@ -89,6 +81,7 @@ class PlaceFinderTest extends \PHPUnit_Framework_TestCase
 
         $result = $placeFinder->find($location);
 
-        $this->assertEquals($location, $result);
+        $this->assertInstanceOf(Location::class, $result);
+        $this->assertEquals($location->getId(), $result->getId());
     }
 }
