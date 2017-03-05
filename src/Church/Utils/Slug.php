@@ -9,9 +9,11 @@ class Slug
 {
 
     /**
-    * {@inheritdoc}
+     * Generates a slug from a string.
+     *
+     * @param string $text
      */
-    public static function create($text) : string
+    public static function create(string $text) : string
     {
         $slug = trim($text);
         $slug = mb_strtolower($slug);
