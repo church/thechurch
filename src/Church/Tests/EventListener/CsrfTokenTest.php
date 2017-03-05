@@ -18,13 +18,22 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnKernelRequest()
     {
+        $token = new Token('api', '12345');
         $tokenManager = $this->createMock(CsrfTokenManagerInterface::class);
+        $tokenManager->expects($this->once())
+            ->method('isTokenValid')
+            ->willReturn(true);
         $listener = new CsrfToken($tokenManager);
 
         $kernel = $this->createMock(KernelInterface::class);
         $request = new Request();
         $event = new GetResponseEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST);
 
+        $result = $listener->onKernelRequest($event);
+        $this->assertNull($result);
+
+        $request->setMethod('POST');
+        $request->headers->set('X-Csrf-Token', $token->getValue());
         $result = $listener->onKernelRequest($event);
         $this->assertNull($result);
     }
@@ -62,7 +71,7 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
         $kernel = $this->createMock(KernelInterface::class);
         $request = new Request();
         $request->setMethod('POST');
-        $request->headers->set('X-CSRF-Token', $token->getId());
+        $request->headers->set('X-CSRF-Token', $token->getValue());
         $event = new GetResponseEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST);
 
         $this->expectException(BadRequestHttpException::class);
