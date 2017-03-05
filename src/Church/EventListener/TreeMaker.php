@@ -25,7 +25,7 @@ class TreeMaker
             return;
         }
 
-        $em = $args->getObjectManager();
+        $em = $args->getEntityManager();
         $repository = $em->getRepository(Tree::class);
 
         $tree = new Tree();
@@ -63,7 +63,7 @@ class TreeMaker
             return;
         }
 
-        $em = $args->getObjectManager();
+        $em = $args->getEntityManager();
         $repository = $em->getRepository(Place::class);
 
         $original = $repository->find($entity->getId());
