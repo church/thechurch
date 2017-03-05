@@ -59,7 +59,7 @@ class CsrfToken
         }
 
         if (!$request->headers->has(self::CSRF_TOKEN_HEADER)) {
-            throw new BadRequestHttpException('Missing X-CSRF-Token Header.');
+            throw new BadRequestHttpException('Missing X-CSRF-Token Header');
         }
 
         $token = new Token(self::CSRF_TOKEN_ID, $request->headers->get(self::CSRF_TOKEN_HEADER));
