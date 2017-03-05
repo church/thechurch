@@ -4,13 +4,13 @@ namespace Church\Test\Client\Mapzen;
 
 // use Church\Client\Mapzen\Search;
 // use Church\Entity\Location;
-// use Church\Tests\Client\ClientTest;
 // use GuzzleHttp\ClientInterface;
 // use GuzzleHttp\Exception\ClientException;
 // use GuzzleHttp\Message\RequestInterface;
 // use GuzzleHttp\Message\MessageInterface;
 // use GuzzleHttp\Message\ResponseInterface;
 // use Symfony\Component\Serializer\SerializerInterface;
+use Church\Tests\Client\ClientTest;
 
 class SearchTest extends ClientTest
 {
