@@ -20,9 +20,12 @@ class WhosOnFirstTest extends ClientTest
      */
     public function testGet()
     {
-        $place = new Place([
-            'id' => 1234,
-        ]);
+        $id = 1234;
+        $place = $this->getMockBuilder(Place::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $place->method('getId')
+            ->willReturn($id);
 
         $response = $this->createMock(MessageInterface::class);
         $client = $this->createMock(ClientInterface::class);
@@ -36,10 +39,10 @@ class WhosOnFirstTest extends ClientTest
                   ->willReturn($place);
 
         $search = new WhosOnFirst($client, $serialzer);
-        $response = $search->get($place->getId());
+        $response = $search->get($id);
 
         $this->assertInstanceOf(Place::class, $response);
-        $this->assertEquals($place->getId(), $response->getId());
+        $this->assertEquals($id, $response->getId());
     }
 
     /**
@@ -47,9 +50,12 @@ class WhosOnFirstTest extends ClientTest
      */
     public function testGetLoop()
     {
-        $place = new Place([
-            'id' => 1234,
-        ]);
+        $id = 1234;
+        $place = $this->getMockBuilder(Place::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $place->method('getId')
+            ->willReturn($id);
 
         $request = $this->createMock(RequestInterface::class);
         $badResponse = $this->createMock(ResponseInterface::class);
@@ -68,10 +74,10 @@ class WhosOnFirstTest extends ClientTest
                   ->willReturn($place);
 
         $search = new WhosOnFirst($client, $serialzer);
-        $response = $search->get($place->getId());
+        $response = $search->get($id);
 
         $this->assertInstanceOf(Place::class, $response);
-        $this->assertEquals($place->getId(), $response->getId());
+        $this->assertEquals($id, $response->getId());
     }
 
     /**
@@ -79,9 +85,12 @@ class WhosOnFirstTest extends ClientTest
      */
     public function testGetFailure()
     {
-        $place = new Place([
-            'id' => 1234,
-        ]);
+        $id = 1234;
+        $place = $this->getMockBuilder(Place::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $place->method('getId')
+            ->willReturn($id);
 
         $request = $this->createMock(RequestInterface::class);
         $badResponse = $this->createMock(ResponseInterface::class);
@@ -100,6 +109,6 @@ class WhosOnFirstTest extends ClientTest
         $search = new WhosOnFirst($client, $serialzer);
 
         $this->expectException(ClientException::class);
-        $response = $search->get($place->getId());
+        $response = $search->get($id);
     }
 }

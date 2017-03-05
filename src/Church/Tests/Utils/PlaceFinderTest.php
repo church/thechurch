@@ -22,6 +22,21 @@ class PlaceFinderTest extends \PHPUnit_Framework_TestCase
     public function testFind()
     {
 
+        $place = $this->getMockBuilder(Place::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $place->method('getId')
+            ->willReturn(321);
+        $place->method('getName')
+            ->willReturn('Orlando');
+
+        $location = $this->getMockBuilder(Location::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $location->method('getId')
+            ->willReturn('123');
+        $location->method('getPlace')
+            ->willReturn($place);
         $location = new Location([
             'id' => '123',
             'place' => [

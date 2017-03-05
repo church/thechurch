@@ -3,8 +3,6 @@
 namespace Church\Tests;
 
 use Church\Church;
-use Church\DependencyInjection\Compiler\VerificationPass;
-use Church\Utils\ArrayUtils;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ChurchTest extends \PHPUnit_Framework_TestCase
@@ -15,15 +13,12 @@ class ChurchTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuild()
     {
-        $container = new ContainerBuilder();
+        $container = $this->getMockBuilder(ContainerBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $church = new Church();
-        $church->build($container);
+        $result = $church->build($container);
 
-        $passes = $container->getCompilerPassConfig()->getPasses();
-        $pass = ArrayUtils::search($passes, function ($item) {
-            return $item instanceof VerificationPass;
-        });
-
-        $this->assertInstanceOf(VerificationPass::class, $pass);
+        $this->assertNull($result);
     }
 }

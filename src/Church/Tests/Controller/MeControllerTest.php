@@ -18,14 +18,24 @@ class MeControllerTest extends ControllerTest
      */
     public function testshowAction()
     {
-        $request = new Request();
-        $request->setRequestFormat(self::FORMAT);
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->method('getRequestFormat')
+            ->willReturn(self::FORMAT);
 
         $data = [
-            'id' => '12345'
+            'id' => '427bb4c4-4481-41b2-88f4-ce1980598208'
         ];
-        $user = new User($data);
-        $response = new Response(json_encode($data));
+        $user = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->method('getId')
+            ->willReturn($data['id']);
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $token = $this->getToken();
         $token->expects($this->once())
@@ -65,13 +75,20 @@ class MeControllerTest extends ControllerTest
      */
     public function testshowActionNoUserFailure()
     {
-        $request = new Request();
-        $request->setRequestFormat(self::FORMAT);
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->method('getRequestFormat')
+            ->willReturn(self::FORMAT);
 
         $data = [
-            'id' => '12345'
+            'id' => '427bb4c4-4481-41b2-88f4-ce1980598208'
         ];
-        $user = new User($data);
+        $user = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->method('getId')
+            ->willReturn($data['id']);
 
         $token = $this->getToken();
         $token->expects($this->once())
@@ -105,13 +122,20 @@ class MeControllerTest extends ControllerTest
      */
     public function testshowActionNoTokenFailure()
     {
-        $request = new Request();
-        $request->setRequestFormat(self::FORMAT);
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->method('getRequestFormat')
+            ->willReturn(self::FORMAT);
 
         $data = [
-            'id' => '12345'
+            'id' => '427bb4c4-4481-41b2-88f4-ce1980598208'
         ];
-        $user = new User($data);
+        $user = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->method('getId')
+            ->willReturn($data['id']);
 
         $tokenStorage = $this->getTokenStorage();
         $tokenStorage->expects($this->once())
@@ -140,19 +164,31 @@ class MeControllerTest extends ControllerTest
      */
     public function testUpdateAction()
     {
-        $request = new Request();
-        $request->setRequestFormat(self::FORMAT);
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->method('getRequestFormat')
+            ->willReturn(self::FORMAT);
 
         $data = [
             'id' => '427bb4c4-4481-41b2-88f4-ce1980598208',
-            'name' => 'test',
+            'username' => 'test',
         ];
-        $user = new User($data);
+        $user = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->method('getId')
+            ->willReturn($data['id']);
 
-        $updated = $data;
-        $updated['name'] = 'test2';
-        $new = new User($updated);
-        $response = new Response(json_encode($updated));
+        $new = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $new->method('getId')
+            ->willReturn($data['id']);
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $token = $this->getToken();
         $token->expects($this->exactly(2))

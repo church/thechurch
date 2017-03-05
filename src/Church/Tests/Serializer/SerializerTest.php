@@ -21,8 +21,13 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $data = new \stdClass();
         $data->id = 123;
 
-        $request = new Request([], [], [], [], [], [], json_encode($data));
-        $request->setRequestFormat('json');
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->method('getRequestFormat')
+            ->willReturn('json');
+        $request->method('getContent')
+            ->willReturn(json_encode($data));
 
         $s = $this->createMock(SerializerInterface::class);
         $s->expects($this->once())

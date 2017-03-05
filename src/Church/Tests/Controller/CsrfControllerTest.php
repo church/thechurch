@@ -16,15 +16,25 @@ class CsrfControllerTest extends ControllerTest
      */
     public function testShowAction()
     {
-        $request = new Request();
-        $request->setRequestFormat(self::FORMAT);
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->method('getRequestFormat')
+            ->willReturn(self::FORMAT);
 
         $data = [
             'id' => 'api',
             'value' => '12345',
         ];
-        $token = new CsrfToken($data['id'], $data['value']);
-        $response = new Response(json_encode($data));
+        $token = $this->getMockBuilder(CsrfToken::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $token->method('getId')
+            ->willReturn($data['id']);
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $serializer = $this->getSerializer();
         $serializer->expects($this->once())

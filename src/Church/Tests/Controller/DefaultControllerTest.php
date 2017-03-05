@@ -14,12 +14,18 @@ class DefaultControllerTest extends ControllerTest
      */
     public function testIndexAction()
     {
-        $request = new Request();
-        $request->setRequestFormat(self::FORMAT);
         $data = [
             'hello' => 'world!',
         ];
-        $response = new Response(json_encode($data));
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->method('getRequestFormat')
+            ->willReturn(self::FORMAT);
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $serializer = $this->getSerializer();
         $serializer->expects($this->once())
