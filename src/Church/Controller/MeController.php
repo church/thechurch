@@ -7,10 +7,10 @@ use Church\Entity\User\User;
 use Church\Entity\User\Login;
 use Church\Entity\User\Email;
 use Church\Entity\User\Verify\EmailVerify;
+use Church\Utils\SearchTrait;
 use Church\Utils\PlaceFinderInterface;
 use Church\Utils\User\VerificationManagerInterface;
 use Church\Serializer\SerializerInterface;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +34,8 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  */
 class MeController extends Controller
 {
+
+    use SearchTrait;
 
     /**
      * @var VerificationManagerInterface
@@ -408,24 +410,5 @@ class MeController extends Controller
         $this->csrfTokenManager->refreshToken(self::CSRF_TOKEN_ID);
 
         return $this->showAction($request);
-    }
-
-    /**
-     * Search through a colleciton and return the first instance.
-     *
-     * @param Collection $collection
-     * @param callable $callback
-     */
-    protected function search(Collection $collection, callable $callback)
-    {
-        $item = $collection->first();
-        while ($item) {
-            if ($callback($item)) {
-                return $item;
-            };
-            $item = $collection->next();
-        }
-
-        return null;
     }
 }
