@@ -2,6 +2,8 @@
 
 namespace Church\Utils;
 
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Array Trait
  */
@@ -16,6 +18,7 @@ class ArrayUtils
      */
     public static function search(iterable $collection, callable $callback)
     {
+        $collection = $collection instanceof Collection ? $collection->toArray() : $collection;
         $item = reset($collection);
         while ($item !== false) {
             if ($callback($item)) {
