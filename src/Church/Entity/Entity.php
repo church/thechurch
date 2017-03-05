@@ -4,9 +4,12 @@ namespace Church\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 
 /**
  * Abstract Entity.
+ *
+ * @MappedSuperclass
  */
 abstract class Entity implements EntityInterface
 {
