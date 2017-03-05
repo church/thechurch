@@ -6,7 +6,6 @@ use Church\Client\Mapzen\Search;
 use Church\Entity\Location;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\MessageInterface;
 use GuzzleHttp\Message\ResponseInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -20,9 +19,12 @@ class SearchTest extends ClientTest
      */
     public function testGet()
     {
-        $location = new Location([
-            'id' => '1234',
-        ]);
+        $id = '1234';
+        $location = $this->getMockBuilder(Location::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $location->method('getId')
+            ->willReturn($id);
 
         $response = $this->createMock(MessageInterface::class);
         $client = $this->createMock(ClientInterface::class);
@@ -36,10 +38,10 @@ class SearchTest extends ClientTest
                   ->willReturn($location);
 
         $search = new Search($client, $serialzer);
-        $response = $search->get($location->getId());
+        $response = $search->get($id);
 
         $this->assertInstanceOf(Location::class, $response);
-        $this->assertEquals($location->getId(), $response->getId());
+        $this->assertEquals($id, $response->getId());
     }
 
     /**
@@ -47,15 +49,23 @@ class SearchTest extends ClientTest
      */
     public function testGetLoop()
     {
-        $location = new Location([
-            'id' => '1234',
-        ]);
+        $id = '1234';
+        $location = $this->getMockBuilder(Location::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $location->method('getId')
+            ->willReturn($id);
 
-        $request = $this->createMock(RequestInterface::class);
         $badResponse = $this->createMock(ResponseInterface::class);
         $badResponse->method('getStatusCode')
                     ->willReturn(429);
-        $exception = new ClientException('Too Many Requests', $request, $badResponse);
+
+        $exception = $this->getMockBuilder(ClientException::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $exception->method('getResponse')
+            ->willReturn($badResponse);
+
         $response = $this->createMock(MessageInterface::class);
         $client = $this->createMock(ClientInterface::class);
         $client->expects($this->exactly(2))
@@ -68,10 +78,10 @@ class SearchTest extends ClientTest
                   ->willReturn($location);
 
         $search = new Search($client, $serialzer);
-        $response = $search->get($location->getId());
+        $response = $search->get($id);
 
         $this->assertInstanceOf(Location::class, $response);
-        $this->assertEquals($location->getId(), $response->getId());
+        $this->assertEquals($id, $response->getId());
     }
 
     /**
@@ -79,15 +89,23 @@ class SearchTest extends ClientTest
      */
     public function testGetFailure()
     {
-        $location = new Location([
-            'id' => '1234',
-        ]);
+        $id = '1234';
+        $location = $this->getMockBuilder(Location::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $location->method('getId')
+            ->willReturn($id);
 
-        $request = $this->createMock(RequestInterface::class);
         $badResponse = $this->createMock(ResponseInterface::class);
         $badResponse->method('getStatusCode')
                     ->willReturn(500);
-        $exception = new ClientException('Server Error', $request, $badResponse);
+
+        $exception = $this->getMockBuilder(ClientException::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $exception->method('getResponse')
+            ->willReturn($badResponse);
+
         $client = $this->createMock(ClientInterface::class);
         $client->expects($this->once())
                ->method('get')
@@ -100,6 +118,6 @@ class SearchTest extends ClientTest
         $search = new Search($client, $serialzer);
 
         $this->expectException(ClientException::class);
-        $response = $search->get($location->getId());
+        $response = $search->get($id);
     }
 }
