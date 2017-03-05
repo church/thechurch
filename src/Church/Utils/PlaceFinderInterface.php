@@ -9,7 +9,7 @@ use Church\Entity\Location;
  */
 interface PlaceFinderInterface
 {
-    /*
+    /**
      * Get a fully loaded location from an input Location.
      *
      * @param Location $input
