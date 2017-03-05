@@ -5,13 +5,13 @@ namespace Church\Utils;
 /**
  * Slug Utility.
  */
-class Slug implements SlugInterface
+class Slug
 {
 
     /**
     * {@inheritdoc}
      */
-    public function create($text) : string
+    public static function create($text) : string
     {
         $slug = trim($text);
         $slug = mb_strtolower($slug);

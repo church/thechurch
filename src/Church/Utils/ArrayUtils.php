@@ -3,9 +3,9 @@
 namespace Church\Utils;
 
 /**
- * Search Trait
+ * Array Trait
  */
-trait SearchTrait
+class ArrayUtils
 {
 
     /**
@@ -14,7 +14,7 @@ trait SearchTrait
      * @param iterable $collection
      * @param callable $callback
      */
-    protected function search(iterable $collection, callable $callback)
+    public static function search(iterable $collection, callable $callback)
     {
         $item = reset($collection);
         while ($item !== false) {

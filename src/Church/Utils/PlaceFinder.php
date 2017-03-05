@@ -32,29 +32,21 @@ class PlaceFinder implements PlaceFinderInterface
     protected $whosonfirst;
 
     /**
-     * @var SlugInterface
-     */
-    protected $slug;
-
-    /**
      * Creates a Place Finder.
      *
      * @param RegistryInterface $doctrine
      * @param SearchInterface $search
      * @param WhosOnFirstInterface $whosonfirst
-     * @param SlugInterface $slug
      */
     public function __construct(
         RegistryInterface $doctrine,
         SearchInterface $search,
-        WhosOnFirstInterface $whosonfirst,
-        SlugInterface $slug
+        WhosOnFirstInterface $whosonfirst
     ) {
 
         $this->doctrine = $doctrine;
         $this->search = $search;
         $this->whosonfirst = $whosonfirst;
-        $this->slug = $slug;
     }
 
     /**
@@ -140,7 +132,7 @@ class PlaceFinder implements PlaceFinderInterface
         if (!$place) {
             $place = new Place([
                 'id' => $input->getId(),
-                'slug' => $this->slug->create($input->getName()),
+                'slug' => Slug::create($input->getName()),
                 'parent' => $parent,
                 'name' => $input->getName(),
             ]);

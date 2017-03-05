@@ -7,7 +7,7 @@ use Church\Entity\User\User;
 use Church\Entity\User\Login;
 use Church\Entity\User\Email;
 use Church\Entity\User\Verify\EmailVerify;
-use Church\Utils\SearchTrait;
+use Church\Utils\ArrayUtils;
 use Church\Utils\PlaceFinderInterface;
 use Church\Utils\User\VerificationManagerInterface;
 use Church\Serializer\SerializerInterface;
@@ -34,8 +34,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  */
 class MeController extends Controller
 {
-
-    use SearchTrait;
 
     /**
      * @var VerificationManagerInterface
@@ -225,7 +223,7 @@ class MeController extends Controller
         $user = $repository->find($this->getUser()->getId());
         $input = $this->serializer->request($request, Email::class, ['me']);
 
-        $accepted = $this->search($user->getEmails(), function ($item) use ($input) {
+        $accepted = ArrayUtils::search($user->getEmails(), function ($item) use ($input) {
             return $item->getEmail() === $input->getEmail();
         });
 

@@ -8,16 +8,6 @@ class SlugTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var Slug
-     */
-    protected $slug;
-
-    protected function setUp()
-    {
-        $this->slug = new Slug();
-    }
-
-    /**
      * @dataProvider slugs
      *
      * @param string $text
@@ -25,7 +15,7 @@ class SlugTest extends \PHPUnit_Framework_TestCase
      */
     public function testSlug(string $text, string $slug) : void
     {
-        $created = $this->slug->create($text);
+        $created = Slug::create($text);
 
         $this->assertEquals($slug, $created);
     }

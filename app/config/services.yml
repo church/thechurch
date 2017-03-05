@@ -103,10 +103,6 @@ services:
             - '@doctrine'
             - '@church.client_mapzen_search'
             - '@church.client_mapzen_whos_on_first'
-            - '@church.slug'
-
-    church.slug:
-        class: Church\Utils\Slug
 
     sendgrid:
         class: SendGrid

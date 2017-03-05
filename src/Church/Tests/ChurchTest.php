@@ -4,13 +4,11 @@ namespace Church\Tests;
 
 use Church\Church;
 use Church\DependencyInjection\Compiler\VerificationPass;
-use Church\Utils\SearchTrait;
+use Church\Utils\ArrayUtils;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ChurchTest extends \PHPUnit_Framework_TestCase
 {
-
-    use SearchTrait;
 
     /**
      * Build Test.
@@ -22,7 +20,7 @@ class ChurchTest extends \PHPUnit_Framework_TestCase
         $church->build($container);
 
         $passes = $container->getCompilerPassConfig()->getPasses();
-        $pass = $this->search($passes, function ($item) {
+        $pass = ArrayUtils::search($passes, function ($item) {
             return $item instanceof VerificationPass;
         });
 
