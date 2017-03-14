@@ -48,7 +48,6 @@ services:
             - '@serializer'
             - '@validator'
             - '@security.token_storage'
-            - '%cors_origin%'
 
     church.exception_listener:
         class: Church\EventListener\ExceptionListener

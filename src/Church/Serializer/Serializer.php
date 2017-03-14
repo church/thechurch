@@ -46,28 +46,20 @@ class Serializer implements SerializerInterface
     protected $tokenStorage;
 
     /**
-     * @var string
-     */
-    protected $corsOrigin;
-
-    /**
      * Creates the Controller.
      *
      * @param SymfonySerializerInterface $serializer
      * @param ValidatorInterface $validator
      * @param TokenStorageInterface $tokenStorage
-     * @param string $corsOrigin
      */
     public function __construct(
         SymfonySerializerInterface $serializer,
         ValidatorInterface $validator,
-        TokenStorageInterface $tokenStorage,
-        string $corsOrigin
+        TokenStorageInterface $tokenStorage
     ) {
         $this->serializer = $serializer;
         $this->validator = $validator;
         $this->tokenStorage = $tokenStorage;
-        $this->corsOrigin = $corsOrigin;
     }
 
     /**
@@ -184,10 +176,6 @@ class Serializer implements SerializerInterface
         int $status = 200,
         array $headers = []
     ) : Response {
-
-        $headers = array_merge([
-            'Access-Control-Allow-Origin' => $this->corsOrigin,
-        ], $headers);
 
         $context = [
             'groups' => $this->getGroups(self::OPERATION_READ, $roles),
