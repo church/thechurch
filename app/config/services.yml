@@ -14,18 +14,18 @@ services:
         parent: church.controller
         class: Church\Controller\DefaultController
 
-    church.controller_csrf:
+    church.controller_auth:
         parent: church.controller
-        class: Church\Controller\CsrfController
+        class: Church\Controller\AuthController
         arguments:
-            - '@security.csrf.token_manager'
+            - "@church.verification_manager"
+            - '@lexik_jwt_authentication.jwt_manager'
 
     church.controller_me:
         parent: church.controller
         class: Church\Controller\MeController
         arguments:
             - "@church.verification_manager"
-            - '@security.csrf.token_manager'
             - '@church.place_finder'
 
     church.controller_user:
@@ -35,12 +35,6 @@ services:
     church.controller_place:
         parent: church.controller
         class: Church\Controller\PlaceController
-
-    church.normalizer_csrf_token:
-        class: Church\Serializer\CsrfTokenNormalizer
-        public: false
-        tags:
-            - { name: serializer.normalizer }
 
     church.serializer:
         class: Church\Serializer\Serializer
@@ -55,13 +49,6 @@ services:
             - '@church.serializer'
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
-
-    church.csrf_token_listener:
-        class: Church\EventListener\CsrfToken
-        arguments:
-            - '@security.csrf.token_manager'
-        tags:
-            - { name: kernel.event_listener, event: kernel.request }
 
     church.tree_maker:
         class: Church\EventListener\TreeMaker

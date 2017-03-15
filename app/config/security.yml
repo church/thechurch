@@ -14,29 +14,39 @@ security:
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         main:
-            entity: { class: Church:User\User }
+            entity:
+                class: Church\Entity\User\User
+                property: id
 
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
     firewalls:
-        # disables authentication for assets and the profiler, adapt it according to your needs
-        dev:
-            pattern:  ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+        login:
+            pattern:  ^/login
+            stateless: true
+            anonymous: true
 
-        secured_area:
-            pattern:    ^/
-            anonymous: ~
-            simple_preauth:
-                authenticator: church.code_authenticator
-            #form_login:
-                #check_path: _demo_security_check
-                #login_path: _demo_login
-            logout:
-                path: /logout
-                target: /
-            #http_basic:
-            #    realm: "Secured Demo Area"
+        token:
+            pattern: ^/token
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
+        read:
+            pattern:   ^/
+            stateless: true
+            anonymous: true
+            methods: [GET, HEAD]
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+        write:
+            pattern:   ^/
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
     # with these settings you can restrict or allow access for different parts
     # of your application based on roles, ip, host or methods
@@ -44,4 +54,4 @@ security:
     access_control:
         # - { path: ^/u/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         # - { path: ^/nearby, roles: ROLE_FAITH}
-        - { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
+        # - { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }

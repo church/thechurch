@@ -58,7 +58,7 @@ class UserController extends Controller
         }
 
         $roles = [];
-        if ($this->isLoggedIn()) {
+        if ($this->getUser()) {
             if ($this->getUser()->isEqualTo($user)) {
                 $roles[] = 'me';
             } elseif ($this->getUser()->isNeighbor($user)) {

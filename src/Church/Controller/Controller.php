@@ -51,32 +51,18 @@ abstract class Controller
     }
 
     /**
-     * Determine if current user is logged in.
-     */
-    protected function isLoggedIn() : bool
-    {
-        try {
-            $this->getUser();
-        } catch (\Exception $e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Get a user from the Security Token Storage.
      */
-    protected function getUser() : User
+    protected function getUser() :? User
     {
         if (null === $token = $this->tokenStorage->getToken()) {
-            throw new \Exception('Not Logged In');
+            return null;
         }
 
         $user = $token->getUser();
 
         if (!is_object($user)) {
-            throw new \Exception('Not Logged In');
+            return null;
         }
 
         return $user;

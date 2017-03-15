@@ -4,7 +4,6 @@ namespace Church\Controller;
 
 use Church\Entity\Location;
 use Church\Entity\User\User;
-use Church\Entity\User\Login;
 use Church\Entity\User\Email;
 use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\ArrayUtils;
@@ -19,7 +18,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
  * Current User actions.
@@ -41,11 +39,6 @@ class MeController extends Controller
     protected $verificationManager;
 
     /**
-     * @var CsrfTokenManagerInterface
-     */
-    protected $csrfTokenManager;
-
-    /**
      * @var PlaceFinderInterface
      */
     protected $placeFinder;
@@ -58,12 +51,10 @@ class MeController extends Controller
         RegistryInterface $doctrine,
         TokenStorageInterface $tokenStorage,
         VerificationManagerInterface $verificationManager,
-        CsrfTokenManagerInterface $csrfTokenManager,
         PlaceFinderInterface $placeFinder
     ) {
         parent::__construct($serializer, $doctrine, $tokenStorage);
         $this->verificationManager = $verificationManager;
-        $this->csrfTokenManager = $csrfTokenManager;
         $this->placeFinder = $placeFinder;
     }
 
@@ -310,28 +301,6 @@ class MeController extends Controller
     }
 
     /**
-     * Login Action.
-     *
-     * @Route("/login")
-     * @Method("POST")
-     * @Security("!has_role('authenticated')")
-     *
-     * @param Request $request
-     */
-    public function loginAction(Request $request) : Response
-    {
-        $login = $this->serializer->request($request, Login::class);
-
-        $verification = $this->verificationManager->getVerification($login->getType());
-
-        $verify = $verification->create($login);
-
-        $verification->send($verify);
-
-        return $this->serializer->respond($verify, $request->getRequestFormat());
-    }
-
-    /**
      * Verify Email.
      *
      * @Route("/me/emails/verify", name="me_verify_email")
@@ -375,38 +344,5 @@ class MeController extends Controller
         $this->tokenStorage->getToken()->setAuthenticated(false);
 
         return $this->showEmails($request);
-    }
-
-    /**
-     * Verify Email.
-     *
-     * @Route("/login/email", name="me_login_email")
-     * @Method("POST")
-     * @Security("has_role('authenticated')")
-     *
-     * @param Request $request
-     */
-    public function loginEmailAction(Request $request) : Response
-    {
-        $input = $this->serializer->request($request, EmailVerify::class);
-        $em = $this->doctrine->getEntityManager();
-        $repository = $this->doctrine->getRepository(EmailVerify::class);
-
-        if ($verify = $repository->findOneByToken($input->getToken())) {
-            $email = $verify->getEmail();
-
-            $email->setVerified(new \DateTime());
-
-            $em->persist($email);
-            $em->remove($verify);
-            $em->flush();
-
-            $this->tokenStorage->getToken()->setAuthenticated(false);
-        }
-
-        // Always generate a new CSRF Token on successful login.
-        $this->csrfTokenManager->refreshToken(self::CSRF_TOKEN_ID);
-
-        return $this->showAction($request);
     }
 }

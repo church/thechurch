@@ -4,34 +4,22 @@ imports:
     - { resource: services.yml }
 
 framework:
-    #esi:             ~
-    #translator:      { fallback: "%locale%" }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
-    csrf_protection: ~
-    validation:      { enable_annotations: true }
-    templating:
-      enabled: false
+    validation:
+        enable_annotations: true
     default_locale:  "%locale%"
     trusted_hosts:   ~
     trusted_proxies: ~
-    session:
-        # handler_id set to null will use default session handler from php.ini
-        handler_id:  ~
-        cookie_lifetime: 3456000 # 40 days
     fragments:       ~
-    http_method_override: true
+    http_method_override: false
     serializer:
         enabled: true
         enable_annotations: true
     property_info:
         enabled: true
-    assets:
-      enabled: false
-    php_errors:
-      log: true
 
 # Doctrine Configuration
 doctrine:
@@ -59,3 +47,4 @@ lexik_jwt_authentication:
     public_key_path:  '%jwt_public_key_path%'
     pass_phrase:      '%jwt_key_pass_phrase%'
     token_ttl:        '%jwt_token_ttl%'
+    user_identity_field: id
