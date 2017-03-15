@@ -1,3 +1,7 @@
+default:
+    resource: '@Church/Controller/DefaultController.php'
+    type:     annotation
+
 auth:
     resource: '@Church/Controller/AuthController.php'
     type:     annotation
@@ -6,17 +10,6 @@ user:
     resource: '@Church/Controller/UserController.php'
     type:     annotation
 
-me:
-    resource: '@Church/Controller/MeController.php'
-    type:     annotation
-
-me_logout:
-    path: /logout
-
 place:
     resource: '@Church/Controller/PlaceController.php'
-    type:     annotation
-
-default:
-    resource: '@Church/Controller/DefaultController.php'
     type:     annotation

@@ -2,15 +2,14 @@
 
 namespace Church\Tests\Controller;
 
-use Church\Controller\MeController;
+use Church\Controller\UserController;
 use Church\Entity\User\User;
 use Church\Utils\PlaceFinderInterface;
 use Church\Utils\User\VerificationManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-class MeControllerTest extends ControllerTest
+class UserControllerTest extends ControllerTest
 {
 
     /**
@@ -32,18 +31,25 @@ class MeControllerTest extends ControllerTest
             ->getMock();
         $user->method('getId')
             ->willReturn($data['id']);
+        $user->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
+        $user->expects($this->once())
+            ->method('isEqualTo')
+            ->with($user)
+            ->willReturn(true);
 
         $response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $token = $this->getToken();
-        $token->expects($this->once())
+        $token->expects($this->exactly(2))
               ->method('getUser')
               ->willReturn($user);
 
         $tokenStorage = $this->getTokenStorage();
-        $tokenStorage->expects($this->once())
+        $tokenStorage->expects($this->exactly(2))
                      ->method('getToken')
                      ->willReturn($token);
 
@@ -54,18 +60,16 @@ class MeControllerTest extends ControllerTest
                    ->willReturn($response);
 
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
-        $csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
-        $me = new MeController(
+        $controller = new UserController(
             $serializer,
             $this->getDoctrine(),
             $tokenStorage,
             $verificationManager,
-            $csrfTokenManager,
             $placeFinder
         );
-        $result = $me->showAction($request);
+        $result = $controller->showAction($user, $request);
 
         $this->assertEquals($response, $result);
     }
@@ -91,30 +95,26 @@ class MeControllerTest extends ControllerTest
             ->willReturn($data['id']);
 
         $token = $this->getToken();
-        $token->expects($this->once())
-              ->method('getUser')
-              ->willReturn(null);
+        $token->expects($this->never())
+              ->method('getUser');
 
         $tokenStorage = $this->getTokenStorage();
-        $tokenStorage->expects($this->once())
-                     ->method('getToken')
-                     ->willReturn($token);
+        $tokenStorage->expects($this->never())
+                     ->method('getToken');
 
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
-        $csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
-        $me = new MeController(
+        $controller = new UserController(
             $this->getSerializer(),
             $this->getDoctrine(),
             $tokenStorage,
             $verificationManager,
-            $csrfTokenManager,
             $placeFinder
         );
 
         $this->expectException(\Exception::class);
-        $result = $me->showAction($request);
+        $result = $controller->showAction($user, $request);
     }
 
     /**
@@ -138,25 +138,22 @@ class MeControllerTest extends ControllerTest
             ->willReturn($data['id']);
 
         $tokenStorage = $this->getTokenStorage();
-        $tokenStorage->expects($this->once())
-                     ->method('getToken')
-                     ->willReturn(null);
+        $tokenStorage->expects($this->never())
+                     ->method('getToken');
 
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
-        $csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
-        $me = new MeController(
+        $controller = new UserController(
             $this->getSerializer(),
             $this->getDoctrine(),
             $tokenStorage,
             $verificationManager,
-            $csrfTokenManager,
             $placeFinder
         );
 
         $this->expectException(\Exception::class);
-        $result = $me->showAction($request);
+        $result = $controller->showAction($user, $request);
     }
 
     /**
@@ -179,24 +176,31 @@ class MeControllerTest extends ControllerTest
             ->getMock();
         $user->method('getId')
             ->willReturn($data['id']);
+        $user->expects($this->exactly(3))
+            ->method('isEqualTo')
+            ->with($user)
+            ->willReturn(true);
 
         $new = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
             ->getMock();
         $new->method('getId')
             ->willReturn($data['id']);
+        $new->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $token = $this->getToken();
-        $token->expects($this->exactly(2))
+        $token->expects($this->exactly(5))
             ->method('getUser')
             ->willReturn($user);
 
         $tokenStorage = $this->getTokenStorage();
-        $tokenStorage->expects($this->exactly(3))
+        $tokenStorage->expects($this->exactly(5))
             ->method('getToken')
             ->willReturn($token);
 
@@ -212,16 +216,12 @@ class MeControllerTest extends ControllerTest
             ->willReturn($response);
 
         $repository = $this->getRepository();
-        $repository->expects($this->once())
-            ->method('find')
-            ->with($user->getId())
-            ->willReturn($user);
+        $repository->expects($this->never())
+            ->method('find');
 
         $em = $this->getEntityManager();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with(User::class)
-            ->willReturn($repository);
+        $em->expects($this->never())
+            ->method('getRepository');
 
         $doctrine = $this->getDoctrine();
         $doctrine->expects($this->once())
@@ -229,18 +229,16 @@ class MeControllerTest extends ControllerTest
                  ->willReturn($em);
 
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
-        $csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
-        $me = new MeController(
+        $controller = new UserController(
             $serializer,
             $doctrine,
             $tokenStorage,
             $verificationManager,
-            $csrfTokenManager,
             $placeFinder
         );
-        $result = $me->updateAction($request);
+        $result = $controller->updateAction($user, $request);
 
         $this->assertEquals($response, $result);
     }

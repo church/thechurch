@@ -21,16 +21,12 @@ services:
             - "@church.verification_manager"
             - '@lexik_jwt_authentication.jwt_manager'
 
-    church.controller_me:
-        parent: church.controller
-        class: Church\Controller\MeController
-        arguments:
-            - "@church.verification_manager"
-            - '@church.place_finder'
-
     church.controller_user:
         parent: church.controller
         class: Church\Controller\UserController
+        arguments:
+            - "@church.verification_manager"
+            - '@church.place_finder'
 
     church.controller_place:
         parent: church.controller

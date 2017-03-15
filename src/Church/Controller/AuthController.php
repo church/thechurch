@@ -134,6 +134,8 @@ class AuthController extends Controller
      */
     public function tokenAction(Request $request) : Response
     {
-        return new Response();
+        return $this->serializer->respond([
+            'token' => $this->jwtManager->create($this->getUser()),
+        ], $request->getRequestFormat());
     }
 }
