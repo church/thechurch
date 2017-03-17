@@ -119,7 +119,7 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
      * @ORM\Column(type="boolean", options={"default" = 0})
      * @Groups({"me_read", "me_write"})
      */
-    private $faith;
+    private $orthodox;
 
     /**
      * @var bool
@@ -160,8 +160,8 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
         $primaryEmail = $data['primaryEmail'] ?? null;
         $this->primaryEmail = $this->getSingle($primaryEmail, Email::class);
 
-        $faith = $data['faith'] ?? false;
-        $this->faith = is_bool($faith) ? $faith : false;
+        $orthodox = $data['orthodox'] ?? false;
+        $this->orthodox = is_bool($orthodox) ? $orthodox : false;
 
         $enabled = $data['enabled'] ?? true;
         $this->enabled = is_bool($enabled) ? $enabled : true;
@@ -243,7 +243,7 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
             && $this->getPrimaryEmail()->getVerified()
             && $this->getName()->getFirst()
             && $this->getName()->getLast()
-            && $this->hasFaith()
+            && $this->isOrthodox()
             && $this->getUsername()
             && $this->getLocation()
         ) {
@@ -427,30 +427,29 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
     }
 
     /**
-     * Set faith
+     * Set Orthodox
      *
-     * @param bool $faith
-     * @return User
+     * @param bool $orthodox
      */
-    public function setFaith(bool $faith) : self
+    public function setOrthodox(bool $orthodox) : self
     {
-        $this->faith = $faith;
+        $this->orthodox = $orthodox;
 
         return $this;
     }
 
     /**
-     * Get faith
+     * Get Orthodox
      *
      * @return bool
      */
-    public function hasFaith() : bool
+    public function isOrthodox() : bool
     {
-        return $this->faith;
+        return $this->orthodox;
     }
 
     /**
-     * Set faith
+     * Set Enabled
      *
      * @param bool $enabled
      */
