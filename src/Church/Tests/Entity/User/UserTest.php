@@ -17,5 +17,28 @@ class UserTest extends EntityTest
             'anonymous',
             'authenticated',
         ], $roles);
+
+        $user = new User([
+            'name' => [
+                'first' => 'Test',
+                'last' => 'User',
+            ],
+            'primaryEmail' => [
+                'email' => 'test@example.com',
+                'verified' => new \DateTime()
+            ],
+            'orthodox' => true,
+            'username' => 'test',
+            'location' => [
+                'id' => 1234,
+            ],
+        ]);
+
+        $roles = $user->getRoles();
+        $this->assertEquals([
+            'anonymous',
+            'authenticated',
+            'standard',
+        ], $roles);
     }
 }
