@@ -65,7 +65,7 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
      * @var Name
      *
      * @ORM\Embedded(class = "Name", columnPrefix = "name_")
-     * @Groups({"standard_read"})
+     * @Groups({"me_read", "neighbor_read"})
      */
     private $name;
 
@@ -490,5 +490,15 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
     public function getCreated() :? \DateTimeInterface
     {
         return $this->created;
+    }
+
+    /**
+     * Get Color.
+     *
+     * @Groups({"anonymous_read"})
+     */
+    public function getColor() :? string
+    {
+        return $this->username ? '#' . substr(md5($this->username), 0, 6) : null;
     }
 }
