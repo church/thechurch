@@ -7,7 +7,6 @@ use Church\Entity\User\Email;
 use Church\Repository\User\UserRepository;
 use Church\Utils\Dispatcher\DispatcherInterface;
 use Church\Utils\User\EmailVerification;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use RandomLib\Generator;
