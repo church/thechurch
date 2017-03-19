@@ -4,6 +4,7 @@ namespace Church\Tests\Controller;
 
 use Church\Serializer\SerializerInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -46,7 +47,9 @@ abstract class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getRepository()
     {
-        return $this->createMock(ObjectRepository::class);
+        return $this->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
