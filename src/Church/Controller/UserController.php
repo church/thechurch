@@ -354,17 +354,12 @@ class UserController extends Controller
             throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
-        $created = clone $verify->getCreated();
-        $created->add(new \DateInterval('PT1H'));
-
-        $now = new \DateTime('now');
-
-        if ($created < $now) {
-            throw new BadRequestHttpException('Verification Code is older than 1 hour');
+        if (!$verify->isEqualTo($input)) {
+            throw new BadRequestHttpException('Token & Verification Code do not match');
         }
 
-        if ($verify->isEqualTo($input)) {
-            throw new BadRequestHttpException('Token & Verification Code do not match');
+        if (!$verify->isFresh()) {
+            throw new BadRequestHttpException('Verification Code is older than 1 hour');
         }
 
         $email = $verify->getEmail();

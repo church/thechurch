@@ -81,9 +81,6 @@ class AuthControllerTest extends ControllerTest
 
         $token = 'abc';
 
-        $created = $this->getMockBuilder(\DateTime::class)
-            ->getMock();
-
         $user = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -102,11 +99,15 @@ class AuthControllerTest extends ControllerTest
             ->method('getToken')
             ->willReturn($token);
         $verify->expects($this->once())
-            ->method('getCreated')
-            ->willReturn($created);
+            ->method('isFresh')
+            ->willReturn(true);
         $verify->expects($this->once())
             ->method('getEmail')
             ->willReturn($email);
+        $verify->expects($this->once())
+            ->method('isEqualTo')
+            ->with($verify)
+            ->willReturn(true);
 
         $serializer->expects($this->once())
             ->method('request')

@@ -218,4 +218,24 @@ class Email
     {
         return $this->email;
     }
+
+    /**
+     * Determines if one email is equal to another.
+     */
+    public function isEqualTo(Email $email) : bool
+    {
+        if ($this->email !== $email->getEmail()) {
+            return false;
+        }
+
+        if (!$this->user || !$email->getUser()) {
+            return false;
+        }
+
+        if (!$this->user->isEqualTo($email->getUser())) {
+            return false;
+        }
+
+        return true;
+    }
 }

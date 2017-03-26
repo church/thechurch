@@ -4,8 +4,12 @@ namespace Church\Tests\Controller;
 
 use Church\Controller\UserController;
 use Church\Entity\User\User;
+use Church\Entity\User\Email;
+use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\PlaceFinderInterface;
 use Church\Utils\User\VerificationManagerInterface;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -241,5 +245,102 @@ class UserControllerTest extends ControllerTest
         $result = $controller->updateAction($user, $request);
 
         $this->assertEquals($response, $result);
+    }
+
+    public function testVerifyEmailAction()
+    {
+        $serializer = $this->getSerializer();
+
+        $user = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->expects($this->exactly(3))
+            ->method('isEqualTo')
+            ->with($user)
+            ->willReturn(true);
+
+        $email = $this->getMockBuilder(Email::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $email->expects($this->once())
+            ->method('getUser')
+            ->willReturn($user);
+
+        $token = 'abc';
+        $verify = $this->getMockBuilder(EmailVerify::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $verify->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+        $verify->expects($this->exactly(2))
+            ->method('getEmail')
+            ->willReturn($email);
+        $verify->expects($this->once())
+            ->method('isEqualTo')
+            ->with($verify)
+            ->willReturn(true);
+        $verify->expects($this->once())
+            ->method('isFresh')
+            ->willReturn(true);
+
+        $repository = $this->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())
+            ->method('__call')
+            ->with('findOneByToken', [$token])
+            ->willReturn($verify);
+
+        $em = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrine = $this->getDoctrine();
+        $doctrine->expects($this->once())
+            ->method('getRepository')
+            ->with(EmailVerify::class)
+            ->willReturn($repository);
+        $doctrine->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($em);
+
+        $tokenStorage = $this->getTokenStorage();
+
+        $token = $this->getToken();
+        $token->expects($this->exactly(4))
+            ->method('getUser')
+            ->willReturn($user);
+
+        $tokenStorage->expects($this->exactly(5))
+            ->method('getToken')
+            ->willReturn($token);
+
+        $verificationManager = $this->createMock(VerificationManagerInterface::class);
+        $placeFinder = $this->createMock(PlaceFinderInterface::class);
+
+        $controller = new UserController(
+            $serializer,
+            $doctrine,
+            $tokenStorage,
+            $verificationManager,
+            $placeFinder
+        );
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->once())
+            ->method('getRequestFormat')
+            ->willReturn('test');
+
+        $serializer->expects($this->once())
+            ->method('request')
+            ->with($request, EmailVerify::class)
+            ->willReturn($verify);
+
+        $response = $controller->verifyEmailAction($user, $request);
+
+        $this->assertInstanceOf(Response::class, $response);
     }
 }

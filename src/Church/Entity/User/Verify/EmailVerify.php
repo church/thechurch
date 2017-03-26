@@ -203,6 +203,18 @@ class EmailVerify implements VerifyInterface
             return false;
         }
 
+        if (!$this->email || !$verify->getEmail()) {
+            return false;
+        }
+
+        if (!$this->email->isEqualTo($verify->getEmail())) {
+            return false;
+        }
+
+        if (!$this->token || !$verify->getToken()) {
+            return false;
+        }
+
         if ($this->token === $verify->getToken()) {
             return false;
         }
@@ -211,7 +223,30 @@ class EmailVerify implements VerifyInterface
             return false;
         }
 
+
         if (!password_verify($verify->getCode(), $this->hashedCode)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Determine if verification is fresh.
+     */
+    public function isFresh()
+    {
+        if (!$this->created) {
+            throw new \LogicException("Missing Created");
+        }
+
+        $created = clone $this->created;
+        // It might be neccesary to inject the \DateInterval in the future.
+        $created->add(new \DateInterval('PT1H'));
+
+        $now = new \DateTime('now');
+
+        if ($created < $now) {
             return false;
         }
 
