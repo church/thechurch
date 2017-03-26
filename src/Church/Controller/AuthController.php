@@ -46,13 +46,14 @@ class AuthController extends Controller
     public function __construct(
         SerializerInterface $serializer,
         RegistryInterface $doctrine,
+        TokenStorageInterface $tokenStorage,
         VerificationManagerInterface $verificationManager,
-        JWTManagerInterface $jwtManager,
-        TokenStorageInterface $tokenStorage
+        JWTManagerInterface $jwtManager
     ) {
         parent::__construct($serializer, $doctrine, $tokenStorage);
         $this->verificationManager = $verificationManager;
         $this->jwtManager = $jwtManager;
+        // https://thechur.ch/v/e/8586hw/941125
     }
 
     /**

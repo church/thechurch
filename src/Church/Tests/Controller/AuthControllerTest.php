@@ -20,7 +20,14 @@ class AuthControllerTest extends ControllerTest
         $jwtManager = $this->createMock(JWTManagerInterface::class);
         $tokenStorage = $this->createMock(TokenStorageInterface::class);
 
-        $controller = new AuthController($serializer, $doctrine, $verificationManager, $jwtManager, $tokenStorage);
+        $controller = new AuthController(
+            $serializer,
+            $doctrine,
+            $tokenStorage,
+            $verificationManager,
+            $jwtManager,
+            $tokenStorage
+        );
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()

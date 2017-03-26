@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
     api:
         ports:
@@ -6,3 +6,5 @@ services:
         build: ./
         volumes:
             - './:/var/www'
+        deploy:
+            replicas: 1
