@@ -47,16 +47,6 @@ class UserControllerTest extends ControllerTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $token = $this->getToken();
-        $token->expects($this->exactly(2))
-              ->method('getUser')
-              ->willReturn($user);
-
-        $tokenStorage = $this->getTokenStorage();
-        $tokenStorage->expects($this->exactly(2))
-                     ->method('getToken')
-                     ->willReturn($token);
-
         $serializer = $this->getSerializer();
         $serializer->expects($this->once())
                    ->method('respond')
@@ -69,11 +59,10 @@ class UserControllerTest extends ControllerTest
         $controller = new UserController(
             $serializer,
             $this->getDoctrine(),
-            $tokenStorage,
             $verificationManager,
             $placeFinder
         );
-        $result = $controller->showAction($user, $request);
+        $result = $controller->showAction($user, $request, $user);
 
         $this->assertEquals($response, $result);
     }
@@ -98,21 +87,12 @@ class UserControllerTest extends ControllerTest
         $user->method('getId')
             ->willReturn($data['id']);
 
-        $token = $this->getToken();
-        $token->expects($this->never())
-              ->method('getUser');
-
-        $tokenStorage = $this->getTokenStorage();
-        $tokenStorage->expects($this->never())
-                     ->method('getToken');
-
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
         $controller = new UserController(
             $this->getSerializer(),
             $this->getDoctrine(),
-            $tokenStorage,
             $verificationManager,
             $placeFinder
         );
@@ -141,17 +121,12 @@ class UserControllerTest extends ControllerTest
         $user->method('getId')
             ->willReturn($data['id']);
 
-        $tokenStorage = $this->getTokenStorage();
-        $tokenStorage->expects($this->never())
-                     ->method('getToken');
-
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
         $controller = new UserController(
             $this->getSerializer(),
             $this->getDoctrine(),
-            $tokenStorage,
             $verificationManager,
             $placeFinder
         );
@@ -198,16 +173,6 @@ class UserControllerTest extends ControllerTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $token = $this->getToken();
-        $token->expects($this->exactly(5))
-            ->method('getUser')
-            ->willReturn($user);
-
-        $tokenStorage = $this->getTokenStorage();
-        $tokenStorage->expects($this->exactly(5))
-            ->method('getToken')
-            ->willReturn($token);
-
         $serializer = $this->getSerializer();
         $serializer->expects($this->once())
             ->method('request')
@@ -238,11 +203,10 @@ class UserControllerTest extends ControllerTest
         $controller = new UserController(
             $serializer,
             $doctrine,
-            $tokenStorage,
             $verificationManager,
             $placeFinder
         );
-        $result = $controller->updateAction($user, $request);
+        $result = $controller->updateAction($user, $user, $request);
 
         $this->assertEquals($response, $result);
     }
@@ -254,7 +218,7 @@ class UserControllerTest extends ControllerTest
         $user = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $user->expects($this->exactly(3))
+        $user->expects($this->exactly(2))
             ->method('isEqualTo')
             ->with($user)
             ->willReturn(true);
@@ -262,9 +226,6 @@ class UserControllerTest extends ControllerTest
         $email = $this->getMockBuilder(Email::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $email->expects($this->once())
-            ->method('getUser')
-            ->willReturn($user);
 
         $token = 'abc';
         $verify = $this->getMockBuilder(EmailVerify::class)
@@ -273,7 +234,7 @@ class UserControllerTest extends ControllerTest
         $verify->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
-        $verify->expects($this->exactly(2))
+        $verify->expects($this->once())
             ->method('getEmail')
             ->willReturn($email);
         $verify->expects($this->once())
@@ -305,24 +266,12 @@ class UserControllerTest extends ControllerTest
             ->method('getEntityManager')
             ->willReturn($em);
 
-        $tokenStorage = $this->getTokenStorage();
-
-        $token = $this->getToken();
-        $token->expects($this->exactly(4))
-            ->method('getUser')
-            ->willReturn($user);
-
-        $tokenStorage->expects($this->exactly(5))
-            ->method('getToken')
-            ->willReturn($token);
-
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
         $controller = new UserController(
             $serializer,
             $doctrine,
-            $tokenStorage,
             $verificationManager,
             $placeFinder
         );
@@ -339,7 +288,7 @@ class UserControllerTest extends ControllerTest
             ->with($request, EmailVerify::class)
             ->willReturn($verify);
 
-        $response = $controller->verifyEmailAction($user, $request);
+        $response = $controller->verifyEmailAction($user, $user, $request);
 
         $this->assertInstanceOf(Response::class, $response);
     }

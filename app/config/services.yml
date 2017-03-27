@@ -3,12 +3,18 @@
 #parameters:
 
 services:
+    church.authenticated_user_resolver.user:
+        class: Church\ArgumentResolver\AuthenticatedUserResolver
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: controller.argument_value_resolver, priority: 50 }
+
     church.controller:
         abstract:  true
         arguments:
             - '@church.serializer'
             - '@doctrine'
-            - '@security.token_storage'
 
     church.controller_default:
         parent: church.controller

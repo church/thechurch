@@ -19,7 +19,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @Route(
@@ -49,11 +48,10 @@ class UserController extends Controller
     public function __construct(
         SerializerInterface $serializer,
         RegistryInterface $doctrine,
-        TokenStorageInterface $tokenStorage,
         VerificationManagerInterface $verificationManager,
         PlaceFinderInterface $placeFinder
     ) {
-        parent::__construct($serializer, $doctrine, $tokenStorage);
+        parent::__construct($serializer, $doctrine);
         $this->verificationManager = $verificationManager;
         $this->placeFinder = $placeFinder;
     }
@@ -64,7 +62,7 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function indexAction(Request $request) : Response
+    public function indexAction(Request $request, User $authenticated = null) : Response
     {
         if (!$request->query->has('username')) {
             throw new BadRequestHttpException("Missing Username Paramter");
@@ -78,7 +76,7 @@ class UserController extends Controller
             throw new NotFoundHttpException("No user found");
         }
 
-        return $this->showAction($user, $request);
+        return $this->showAction($user, $request, $authenticated);
     }
 
   /**
@@ -88,13 +86,13 @@ class UserController extends Controller
    * @param User $user
    * @param Request $request
    */
-    public function showAction(User $user, Request $request) : Response
+    public function showAction(User $user, Request $request, User $authenticated = null) : Response
     {
         if (!$user->isEnabled()) {
             throw new NotFoundHttpException("User account is disabled");
         }
 
-        return $this->serializer->respond($user, $request->getRequestFormat(), $this->getRoles($user));
+        return $this->serializer->respond($user, $request->getRequestFormat(), $this->getRoles($authenticated, $user));
     }
 
     /**
@@ -106,18 +104,18 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function updateAction(User $user, Request $request) : Response
+    public function updateAction(User $authenticated, User $user, Request $request) : Response
     {
-        if (!$this->getUser()->isEqualTo($user)) {
+        if (!$authenticated->isEqualTo($user)) {
             throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
         $em = $this->doctrine->getEntityManager();
-        $user = $this->serializer->request($request, $user, $this->getRoles($user));
+        $user = $this->serializer->request($request, $user, $this->getRoles($authenticated, $user));
 
         $em->flush();
 
-        return $this->showAction($user, $request);
+        return $this->showAction($user, $request, $authenticated);
     }
 
     /**
@@ -129,9 +127,16 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function showNameAction(User $user, Request $request) : Response
-    {
-        return $this->serializer->respond($user->getName(), $request->getRequestFormat(), $this->getRoles($user));
+    public function showNameAction(
+        User $authenticated,
+        User $user,
+        Request $request
+    ) : Response {
+        return $this->serializer->respond(
+            $user->getName(),
+            $request->getRequestFormat(),
+            $this->getRoles($authenticated, $user)
+        );
     }
 
     /**
@@ -143,14 +148,14 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function updateNameAction(User $user, Request $request) : Response
+    public function updateNameAction(User $authenticated, User $user, Request $request) : Response
     {
-        if (!$this->getUser()->isEqualTo($user)) {
+        if (!$authenticated->isEqualTo($user)) {
             throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
         $em = $this->doctrine->getEntityManager();
-        $name = $this->serializer->request($request, $user->getName(), $this->getRoles($user));
+        $name = $this->serializer->request($request, $user->getName(), $this->getRoles($authenticated, $user));
         $user->setName($name);
 
         $em->flush();
@@ -167,9 +172,13 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function showEmails(User $user, Request $request) : Response
+    public function showEmails(User $authenticated, User $user, Request $request) : Response
     {
-        return $this->serializer->respond($user->getEmails(), $request->getRequestFormat(), $this->getRoles($user));
+        return $this->serializer->respond(
+            $user->getEmails(),
+            $request->getRequestFormat(),
+            $this->getRoles($authenticated, $user)
+        );
     }
 
     /**
@@ -181,14 +190,18 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function createEmailAction(User $user, Request $request) : Response
+    public function createEmailAction(User $authenticated, User $user, Request $request) : Response
     {
-        if (!$this->getUser()->isEqualTo($user)) {
+        if (!$authenticated->isEqualTo($user)) {
             throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
         $em = $this->doctrine->getEntityManager();
-        $email = $this->serializer->request($request, Email::class, $this->getRoles($user));
+        $email = $this->serializer->request(
+            $request,
+            Email::class,
+            $this->getRoles($authenticated, $user)
+        );
 
         $email->setUser($user);
         $user->addEmail($email);
@@ -200,7 +213,12 @@ class UserController extends Controller
 
         $verification->send($verify);
 
-        return $this->serializer->respond($verify, $request->getRequestFormat(), $this->getRoles($user), 201);
+        return $this->serializer->respond(
+            $verify,
+            $request->getRequestFormat(),
+            $this->getRoles($authenticated, $user),
+            201
+        );
     }
 
     /**
@@ -212,12 +230,12 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function showPrimaryEmailAction(User $user, Request $request) : Response
+    public function showPrimaryEmailAction(User $authenticcated = null, User $user, Request $request) : Response
     {
         return $this->serializer->respond(
             $user->getPrimaryEmail(),
             $request->getRequestFormat(),
-            $this->getRoles($user)
+            $this->getRoles($authenticated, $user)
         );
     }
 
@@ -230,13 +248,13 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function setPrimaryEmailAction(User $user, Request $request) : Response
+    public function setPrimaryEmailAction(User $authenticated, User $user, Request $request) : Response
     {
-        if (!$this->getUser()->isEqualTo($user)) {
+        if (!$authenticated->isEqualTo($user)) {
             throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
-        $input = $this->serializer->request($request, Email::class, $this->getRoles($user));
+        $input = $this->serializer->request($request, Email::class, $this->getRoles($authenticated, $user));
 
         $accepted = ArrayUtils::search($user->getEmails(), function ($item) use ($input) {
             return $item->getEmail() === $input->getEmail();
@@ -266,9 +284,13 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function showLocaitonAction(User $user, Request $request) : Response
+    public function showLocaitonAction(User $authenticated, User $user, Request $request) : Response
     {
-        return $this->serializer->respond($user->getLocation(), $request->getRequestFormat(), $this->getRoles($user));
+        return $this->serializer->respond(
+            $user->getLocation(),
+            $request->getRequestFormat(),
+            $this->getRoles($authenticated, $user)
+        );
     }
 
     /**
@@ -280,14 +302,14 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function setLocationAction(User $user, Request $request) : Response
+    public function setLocationAction(User $authenticated, User $user, Request $request) : Response
     {
-        if (!$this->getUser()->isEqualTo($user)) {
+        if (!$authenticated->isEqualTo($user)) {
             throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
         $em = $this->doctrine->getEntityManager();
-        $input = $this->serializer->request($request, Location::class, $this->getRoles($user));
+        $input = $this->serializer->request($request, Location::class, $this->getRoles($authenticated, $user));
 
         $location = $this->placeFinder->find($input);
 
@@ -307,9 +329,9 @@ class UserController extends Controller
      * @param Email $email
      * @param Request $request
      */
-    public function removeEmailAction(User $user, Email $email, Request $request) : Response
+    public function removeEmailAction(User $authenticated, User $user, Email $email, Request $request) : Response
     {
-        if (!$this->getUser()->isEqualTo($user)) {
+        if (!$authenticated->isEqualTo($user)) {
             throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
@@ -321,7 +343,7 @@ class UserController extends Controller
         return $this->serializer->respond(
             '',
             $request->getRequestFormat(),
-            $this->getRoles($user),
+            $this->getRoles($authenticated, $user),
             204
         );
     }
@@ -335,9 +357,9 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function verifyEmailAction(User $user, Request $request) : Response
+    public function verifyEmailAction(User $authenticated, User $user, Request $request) : Response
     {
-        if (!$this->getUser()->isEqualTo($user)) {
+        if (!$authenticated->isEqualTo($user)) {
             throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
@@ -348,10 +370,6 @@ class UserController extends Controller
         $verify = $repository->findOneByToken($input->getToken());
         if (!$verify) {
             throw new BadRequestHttpException("Token does not exist'");
-        }
-
-        if (!$this->getUser()->isEqualTo($verify->getEmail()->getUser())) {
-            throw new AccessDeniedHttpException("You may only modify your own user");
         }
 
         if (!$verify->isEqualTo($input)) {
@@ -370,23 +388,26 @@ class UserController extends Controller
         $em->remove($verify);
         $em->flush();
 
-        $this->tokenStorage->getToken()->setAuthenticated(false);
-
-        return $this->showEmails($user, $request);
+        return $this->showEmails($authenticated, $user, $request);
     }
 
     /**
      * Get Roles.
      */
-    protected function getRoles(User $user) : array
+    protected function getRoles(User $authenticated = null, User $user) : array
     {
         $roles = [];
-        if ($this->getUser()) {
-            if ($this->getUser()->isEqualTo($user)) {
-                $roles[] = 'me';
-            } elseif ($this->getUser()->isNeighbor($user)) {
-                $roles[] = 'neighbor';
-            }
+
+        if (!$authenticated) {
+            return $roles;
+        }
+
+        if ($authenticated->isEqualTo($user)) {
+            $roles[] = 'me';
+        }
+
+        if ($authenticated->isNeighbor($user)) {
+            $roles[] = 'neighbor';
         }
 
         return $roles;

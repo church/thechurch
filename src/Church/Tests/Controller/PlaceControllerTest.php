@@ -35,9 +35,7 @@ class PlaceControllerTest extends ControllerTest
             ->with(Place::class)
             ->willReturn($repository);
 
-        $tokenStorage = $this->getTokenStorage();
-
-        $controller = new PlaceController($serializer, $doctrine, $tokenStorage);
+        $controller = new PlaceController($serializer, $doctrine);
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()

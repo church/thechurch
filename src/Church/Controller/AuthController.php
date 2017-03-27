@@ -3,6 +3,7 @@
 namespace Church\Controller;
 
 use Church\Entity\User\Login;
+use Church\Entity\User\User;
 use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\User\VerificationManagerInterface;
 use Church\Serializer\SerializerInterface;
@@ -14,7 +15,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Current User actions.
@@ -46,11 +46,10 @@ class AuthController extends Controller
     public function __construct(
         SerializerInterface $serializer,
         RegistryInterface $doctrine,
-        TokenStorageInterface $tokenStorage,
         VerificationManagerInterface $verificationManager,
         JWTManagerInterface $jwtManager
     ) {
-        parent::__construct($serializer, $doctrine, $tokenStorage);
+        parent::__construct($serializer, $doctrine);
         $this->verificationManager = $verificationManager;
         $this->jwtManager = $jwtManager;
         // https://thechur.ch/v/e/8586hw/941125
@@ -128,10 +127,10 @@ class AuthController extends Controller
      *
      * @param Request $request
      */
-    public function tokenAction(Request $request) : Response
+    public function tokenAction(User $authenticated, Request $request) : Response
     {
         return $this->serializer->respond([
-            'token' => $this->jwtManager->create($this->getUser()),
+            'token' => $this->jwtManager->create($authenticated),
         ], $request->getRequestFormat());
     }
 }

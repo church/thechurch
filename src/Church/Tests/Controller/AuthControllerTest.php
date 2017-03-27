@@ -13,7 +13,6 @@ use Doctrine\ORM\EntityRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class AuthControllerTest extends ControllerTest
 {
@@ -23,15 +22,12 @@ class AuthControllerTest extends ControllerTest
         $doctrine = $this->getDoctrine();
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
         $jwtManager = $this->createMock(JWTManagerInterface::class);
-        $tokenStorage = $this->createMock(TokenStorageInterface::class);
 
         $controller = new AuthController(
             $serializer,
             $doctrine,
-            $tokenStorage,
             $verificationManager,
-            $jwtManager,
-            $tokenStorage
+            $jwtManager
         );
 
         $request = $this->getMockBuilder(Request::class)
@@ -61,15 +57,12 @@ class AuthControllerTest extends ControllerTest
         $doctrine = $this->getDoctrine();
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
         $jwtManager = $this->createMock(JWTManagerInterface::class);
-        $tokenStorage = $this->createMock(TokenStorageInterface::class);
 
         $controller = new AuthController(
             $serializer,
             $doctrine,
-            $tokenStorage,
             $verificationManager,
-            $jwtManager,
-            $tokenStorage
+            $jwtManager
         );
 
         $request = $this->getMockBuilder(Request::class)

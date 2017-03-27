@@ -33,7 +33,7 @@ class DefaultControllerTest extends ControllerTest
                    ->with($data, self::FORMAT)
                    ->willReturn($response);
 
-        $default = new DefaultController($serializer, $this->getDoctrine(), $this->getTokenStorage());
+        $default = new DefaultController($serializer, $this->getDoctrine());
         $result = $default->indexAction($request);
 
         $this->assertEquals($response, $result);
