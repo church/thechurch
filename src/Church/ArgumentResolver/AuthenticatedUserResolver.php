@@ -28,6 +28,10 @@ class AuthenticatedUserResolver implements ArgumentValueResolverInterface
             return false;
         }
 
+        if ($argument->getName() !== 'authenticated') {
+            return false;
+        }
+
         $token = $this->tokenStorage->getToken();
 
         if (!$token instanceof TokenInterface) {
