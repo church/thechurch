@@ -3,17 +3,24 @@
 #parameters:
 
 services:
-    church.authenticated_user_resolver.user:
+    church.authenticated_user_resolver:
         class: Church\ArgumentResolver\AuthenticatedUserResolver
         arguments:
             - '@security.token_storage'
         tags:
-            - { name: controller.argument_value_resolver, priority: 50 }
+            - { name: controller.argument_value_resolver }
+
+    church.input_resolver:
+        class: Church\ArgumentResolver\InputResolver
+        arguments:
+            - '@serializer'
+        tags:
+            - { name: controller.argument_value_resolver }
 
     church.controller:
         abstract:  true
         arguments:
-            - '@church.serializer'
+            - '@church.denormalizer'
             - '@doctrine'
 
     church.controller_default:
@@ -38,18 +45,20 @@ services:
         parent: church.controller
         class: Church\Controller\PlaceController
 
-    church.serializer:
-        class: Church\Serializer\Serializer
+    church.denormalizer:
+        class: Church\Serializer\Denormalizer
         arguments:
             - '@serializer'
             - '@validator'
             - '@security.token_storage'
 
-    church.exception_listener:
-        class: Church\EventListener\ExceptionListener
+    church.return_listener:
+        class: Church\EventListener\ReturnListener
         arguments:
-            - '@church.serializer'
+            - '@serializer'
+            - '@security.token_storage'
         tags:
+            - { name: kernel.event_listener, event: kernel.view }
             - { name: kernel.event_listener, event: kernel.exception }
 
     church.tree_maker:
@@ -63,7 +72,7 @@ services:
     church.code_authenticator:
         class: Church\Security\CodeAuthenticator
         arguments:
-            - '@church.serializer'
+            - '@church.denormalizer'
             - '@doctrine'
             - '@security.http_utils'
 

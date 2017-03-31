@@ -5,16 +5,16 @@ namespace Church\Controller;
 use Church\Entity\User\Login;
 use Church\Entity\User\User;
 use Church\Entity\User\Verify\EmailVerify;
+use Church\Entity\User\Verify\VerifyInterface;
 use Church\Utils\User\VerificationManagerInterface;
-use Church\Serializer\SerializerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
  * Current User actions.
@@ -44,15 +44,14 @@ class AuthController extends Controller
      * {@inheritdoc}
      */
     public function __construct(
-        SerializerInterface $serializer,
+        DenormalizerInterface $denormalizer,
         RegistryInterface $doctrine,
         VerificationManagerInterface $verificationManager,
         JWTManagerInterface $jwtManager
     ) {
-        parent::__construct($serializer, $doctrine);
+        parent::__construct($denormalizer, $doctrine);
         $this->verificationManager = $verificationManager;
         $this->jwtManager = $jwtManager;
-        // https://thechur.ch/v/e/8586hw/941125
     }
 
     /**
@@ -64,9 +63,9 @@ class AuthController extends Controller
      *
      * @param Request $request
      */
-    public function loginAction(Request $request) : Response
+    public function loginAction(array $input) : VerifyInterface
     {
-        $login = $this->serializer->request($request, Login::class);
+        $login = $this->denormalizer->denormalize($input, Login::class);
 
         $verification = $this->verificationManager->getVerification($login->getType());
 
@@ -74,7 +73,7 @@ class AuthController extends Controller
 
         $verification->send($verify);
 
-        return $this->serializer->respond($verify, $request->getRequestFormat());
+        return $verify;
     }
 
     /**
@@ -86,9 +85,9 @@ class AuthController extends Controller
      *
      * @param Request $request
      */
-    public function loginEmailAction(Request $request) : Response
+    public function loginEmailAction(array $input) : array
     {
-        $input = $this->serializer->request($request, EmailVerify::class);
+        $input = $this->denormalizer->denormalize($input, EmailVerify::class);
         $em = $this->doctrine->getEntityManager();
         $repository = $this->doctrine->getRepository(EmailVerify::class);
 
@@ -113,9 +112,9 @@ class AuthController extends Controller
         $em->remove($verify);
         $em->flush();
 
-        return $this->serializer->respond([
+        return [
             'token' => $this->jwtManager->create($email->getUser()),
-        ], $request->getRequestFormat());
+        ];
     }
 
     /**
@@ -127,10 +126,10 @@ class AuthController extends Controller
      *
      * @param Request $request
      */
-    public function tokenAction(User $authenticated, Request $request) : Response
+    public function tokenAction(User $authenticated) : array
     {
-        return $this->serializer->respond([
+        return [
             'token' => $this->jwtManager->create($authenticated),
-        ], $request->getRequestFormat());
+        ];
     }
 }

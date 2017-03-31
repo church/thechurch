@@ -30,7 +30,7 @@ class PlaceController extends Controller
      *
      * @param Request $request
      */
-    public function indexAction(Request $request) : Response
+    public function indexAction(Request $request) : Place
     {
         if (!$request->query->has('slug')) {
             throw new BadRequestHttpException('Slug is a required paramater');
@@ -44,7 +44,7 @@ class PlaceController extends Controller
             throw new NotFoundHttpException('Place Not Found');
         }
 
-        return $this->serializer->respond($place, $request->getRequestFormat());
+        return $place;
     }
 
     /**
@@ -54,8 +54,8 @@ class PlaceController extends Controller
      * @param Place $place
      * @param Request $request
      */
-    public function showAction(Place $place, Request $request) : Response
+    public function showAction(Place $place) : Place
     {
-        return $this->serializer->respond($place, $request->getRequestFormat());
+        return $place;
     }
 }

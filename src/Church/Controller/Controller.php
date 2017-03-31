@@ -2,10 +2,8 @@
 
 namespace Church\Controller;
 
-use Church\Entity\User\User;
-use Church\Serializer\SerializerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
  * An abstract controller to extend.
@@ -14,9 +12,9 @@ abstract class Controller
 {
 
     /**
-     * @var SerializerInterface
+     * @var DenormalizerInterface
      */
-    protected $serializer;
+    protected $denormalizer;
 
     /**
      * @var RegistryInterface
@@ -26,14 +24,14 @@ abstract class Controller
     /**
      * Creates the Controller.
      *
-     * @param SerializerInterface $serializer
+     * @param DenormalizerInterface $denormalizer
      * @param RegistryInterface $doctrine
      */
     public function __construct(
-        SerializerInterface $serializer,
+        DenormalizerInterface $denormalizer,
         RegistryInterface $doctrine
     ) {
-        $this->serializer = $serializer;
+        $this->denormalizer = $denormalizer;
         $this->doctrine = $doctrine;
     }
 }

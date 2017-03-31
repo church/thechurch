@@ -4,11 +4,11 @@ namespace Church\Entity\User\Verify;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Church\Entity\User\User;
+use Church\Entity\User\UserAwareInterface;
+use Church\Entity\User\Email;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Church\Entity\User\Email;
-
-// @TODO hash token and code on persist.
 
 /**
  * Church\Entity\User\EmailVerify
@@ -17,7 +17,7 @@ use Church\Entity\User\Email;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
-class EmailVerify implements VerifyInterface
+class EmailVerify implements VerifyInterface, UserAwareInterface
 {
 
     /**
@@ -251,5 +251,17 @@ class EmailVerify implements VerifyInterface
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUser() :? User
+    {
+        if ($this->email) {
+            return $this->email->getUser();
+        }
+
+        return null;
     }
 }

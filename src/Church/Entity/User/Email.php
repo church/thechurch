@@ -16,7 +16,7 @@ use Church\Entity\User\Verify\EmailVerify;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */
-class Email
+class Email implements UserAwareInterface
 {
 
     /**
@@ -138,9 +138,7 @@ class Email
     }
 
     /**
-     * Get user
-     *
-     * @return User
+     * {@inheritdoc}
      */
     public function getUser() :? User
     {

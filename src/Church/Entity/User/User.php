@@ -23,8 +23,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity({"primaryEmail", "username"})
  */
-class User extends Entity implements UserInterface, \Serializable, EquatableInterface
+class User extends Entity implements UserInterface, \Serializable, EquatableInterface, UserAwareInterface
 {
+
     /**
      * User Role.
      *
@@ -51,6 +52,16 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
      * @var string.
      */
     const ROLE_STANDARD = 'standard';
+
+    /**
+     * @var string
+     */
+    const OPERATION_READ = 'read';
+
+    /**
+     * @var string
+     */
+    const OPERATION_WRITE = 'write';
 
     /**
      * @var int
@@ -184,6 +195,16 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
     }
 
     /**
+     * @ORM\PostLoad
+     */
+    public function setNameUser() : self
+    {
+        $this->name->setUser($this);
+
+        return $this;
+    }
+
+    /**
      * Get id
      */
     public function getId() :? string
@@ -232,7 +253,7 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
      *
      * @Groups({"me_read"})
      */
-    public function getRoles() : array
+    public function getRoles(User $user = null) : array
     {
         $roles = [
             self::ROLE_ANONYMOUS,
@@ -248,6 +269,15 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
             && $this->getLocation()
         ) {
             $roles[] = self::ROLE_STANDARD;
+        }
+
+        if ($user) {
+            if ($this->isEqualTo($user)) {
+                $roles[] = 'me';
+            }
+            if ($this->isNeighbor($user)) {
+                $roles[] = 'neighbor';
+            }
         }
 
         return $roles;
@@ -500,5 +530,28 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
     public function getColor() :? string
     {
         return $this->username ? '#' . substr(md5($this->username), 0, 6) : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUser() :? User
+    {
+        // return $this;
+        return null;
+    }
+
+    /**
+     * Gets the Groups.
+     */
+    public static function getGroups(string $operation, array $roles = []) : array
+    {
+        if (!$roles) {
+            $roles = [self::ROLE_ANONYMOUS];
+        }
+
+        return array_map(function ($role) use ($operation) {
+            return $role . '_' . $operation;
+        }, $roles);
     }
 }

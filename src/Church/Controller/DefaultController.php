@@ -21,8 +21,8 @@ class DefaultController extends Controller
      *
      * @param Request $request
      */
-    public function indexAction(Request $request) : Response
+    public function indexAction() : array
     {
-        return $this->serializer->respond(['hello' => 'world!'], $request->getRequestFormat());
+        return ['hello' => 'world!'];
     }
 }

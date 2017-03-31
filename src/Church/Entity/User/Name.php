@@ -2,6 +2,7 @@
 
 namespace Church\Entity\User;
 
+use Church\Entity\User\User;
 use Church\Entity\EntityInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -12,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Embeddable()
  */
-class Name implements EntityInterface
+class Name implements EntityInterface, UserAwareInterface
 {
     /**
      * @var string
@@ -37,6 +38,11 @@ class Name implements EntityInterface
     private $last;
 
     /**
+     * @var User
+     */
+    private $user;
+
+    /**
      * Create new User.
      *
      * @param array $data
@@ -48,6 +54,9 @@ class Name implements EntityInterface
 
         $last = $data['last'] ?? null;
         $this->last = is_string($last) ? $last : null;
+
+        $user = $data['user'] ?? null;
+        $this->user = $user instanceof User ? $user : null;
     }
 
     /**
@@ -90,5 +99,23 @@ class Name implements EntityInterface
     public function getLast() :? string
     {
         return $this->last;
+    }
+
+    /**
+     * Set the User.
+     */
+    public function setUser(User $user) : self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUser() :? User
+    {
+        return $this->user;
     }
 }
