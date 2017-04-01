@@ -3,6 +3,8 @@
 namespace Church\Tests\Entity\User;
 
 use DateTimeInterface;
+use Church\Entity\User\Name;
+use Church\Entity\User\Email;
 use Church\Entity\User\User;
 use Church\Tests\Entity\EntityTest;
 
@@ -178,5 +180,30 @@ class UserTest extends EntityTest
         ]);
 
         $this->assertTrue($user->isEqualTo($user));
+    }
+
+    public function testSetName()
+    {
+        $name = $this->getMockBuilder(Name::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $user = new User();
+
+        $user->setName($name);
+
+        $this->assertSame($name, $user->getName());
+    }
+
+    public function testAddEmail()
+    {
+        $email = $this->getMockBuilder(Email::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $user = new User();
+        $user->addEmail($email);
+
+        $this->assertSame($email, $user->getEmails()->first());
     }
 }
