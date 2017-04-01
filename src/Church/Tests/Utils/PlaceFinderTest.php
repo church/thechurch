@@ -86,15 +86,13 @@ class PlaceFinderTest extends \PHPUnit_Framework_TestCase
         $this->resetCount();
 
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects($this->once())
-            ->method('getStatusCode')
+        $response->method('getStatusCode')
             ->willReturn(404);
 
         $exception = $this->getMockBuilder(ClientException::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $exception->expects($this->once())
-            ->method('getResponse')
+        $exception->method('getResponse')
             ->willReturn($response);
 
         $whosonfirst
@@ -108,18 +106,33 @@ class PlaceFinderTest extends \PHPUnit_Framework_TestCase
         $tree = $this->getMockBuilder(Tree::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $tree->expects($this->once())
-            ->method('getAncestor')
+        $tree->method('getAncestor')
             ->willReturn($place);
 
         $ancestor = $this->createMock(Collection::class);
-        $ancestor->expects($this->once())
-            ->method('first')
+        $ancestor->method('first')
             ->willReturn($tree);
 
-        $place->expects($this->once())
-            ->method('getAncestor')
+        $place->method('getAncestor')
             ->willReturn($ancestor);
+
+        $result = $placeFinder->find($location);
+        $this->assertInstanceOf(Location::class, $result);
+
+        $this->resetCount();
+
+        $whosonfirst
+            ->method('get')
+            ->with($place_id)
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException($exception),
+                $this->throwException($exception),
+                $this->returnValue($place)
+            );
+
+        $ancestor->expects($this->once())
+            ->method('next')
+            ->willReturn($tree);
 
         $result = $placeFinder->find($location);
         $this->assertInstanceOf(Location::class, $result);
