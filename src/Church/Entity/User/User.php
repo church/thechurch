@@ -316,7 +316,15 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
      */
     public function isEqualTo(UserInterface $user) : bool
     {
-        if ($this->getId() !== $user->getId()) {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if (!$this->id || !$user->getId()) {
+            return false;
+        }
+
+        if ($this->id !== $user->getId()) {
             return false;
         }
 

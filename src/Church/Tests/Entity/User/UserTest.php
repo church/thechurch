@@ -142,4 +142,41 @@ class UserTest extends EntityTest
 
         $this->assertTrue($user->isNeighbor($other));
     }
+
+    public function testEraseCredentials()
+    {
+        $user = new User();
+
+        $this->assertNull($user->eraseCredentials());
+    }
+
+    public function testSerialize()
+    {
+        $id = '897cc71a-e9c4-4f3f-952f-be20bd2a2018';
+        $user = new User([
+            'id' => $id,
+        ]);
+
+        $this->assertEquals(serialize([$id]), $user->serialize());
+    }
+
+    public function testUnserialize()
+    {
+        $id = '897cc71a-e9c4-4f3f-952f-be20bd2a2018';
+        $user = new User();
+
+        $user->unserialize(serialize([$id]));
+
+        $this->assertEquals($id, $user->getId());
+    }
+
+    public function testIsEqualTo()
+    {
+        $id = '897cc71a-e9c4-4f3f-952f-be20bd2a2018';
+        $user = new User([
+            'id' => $id,
+        ]);
+
+        $this->assertTrue($user->isEqualTo($user));
+    }
 }
