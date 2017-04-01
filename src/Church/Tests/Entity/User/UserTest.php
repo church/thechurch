@@ -2,7 +2,6 @@
 
 namespace Church\Tests\Entity\User;
 
-use DateTimeInterface;
 use Church\Entity\Location;
 use Church\Entity\User\Name;
 use Church\Entity\User\Email;
@@ -18,7 +17,7 @@ class UserTest extends EntityTest
 
         $user->setCreatedValue();
 
-        $this->assertInstanceOf(DateTimeInterface::class, $user->getCreated());
+        $this->assertInstanceOf(\DateTimeInterface::class, $user->getCreated());
     }
 
     public function testSetNameUser()
