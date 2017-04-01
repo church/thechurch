@@ -6,9 +6,13 @@ use Church\Entity\Location;
 use Church\Client\Mapzen\SearchInterface;
 use Church\Client\Mapzen\WhosOnFirstInterface;
 use Church\Entity\Place\Place;
+use Church\Entity\Place\Tree;
 use Church\Utils\PlaceFinder;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Message\ResponseInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -22,33 +26,33 @@ class PlaceFinderTest extends \PHPUnit_Framework_TestCase
     public function testFind()
     {
 
+        $place_id = 321;
         $place = $this->getMockBuilder(Place::class)
             ->disableOriginalConstructor()
             ->getMock();
         $place->method('getId')
-            ->willReturn(321);
+            ->willReturn($place_id);
         $place->method('getName')
             ->willReturn('Orlando');
 
+        $id = '123';
         $location = $this->getMockBuilder(Location::class)
             ->disableOriginalConstructor()
             ->getMock();
         $location->method('getId')
-            ->willReturn('123');
+            ->willReturn($id);
         $location->method('getPlace')
             ->willReturn($place);
 
         $locationRepository = $this->createMock(ObjectRepository::class);
 
         $placeRepository = $this->createMock(ObjectRepository::class);
-        $placeRepository->expects($this->exactly(2))
-            ->method('find')
-            ->with($location->getPlace()->getId())
-            ->willReturn($location->getPlace());
+        $placeRepository->method('find')
+            ->with($place_id)
+            ->willReturn($place);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->exactly(2))
-            ->method('getRepository')
+        $em->method('getRepository')
             ->willReturnMap([
                 [
                     Location::class,
@@ -61,27 +65,63 @@ class PlaceFinderTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $doctrine = $this->createMock(RegistryInterface::class);
-        $doctrine->expects($this->exactly(2))
-            ->method('getEntityManager')
+        $doctrine->method('getEntityManager')
             ->willReturn($em);
 
         $search = $this->createMock(SearchInterface::class);
-        $search->expects($this->once())
-            ->method('get')
-            ->with($location->getId())
+        $search->method('get')
+            ->with($id)
             ->willReturn($location);
 
         $whosonfirst = $this->createMock(WhosOnFirstInterface::class);
-        $whosonfirst->expects($this->once())
-            ->method('get')
-            ->with($location->getPlace()->getId())
-            ->willReturn($location->getPlace());
+        $whosonfirst->method('get')
+            ->with($place_id)
+            ->willReturn($place);
 
         $placeFinder = new PlaceFinder($doctrine, $search, $whosonfirst);
 
         $result = $placeFinder->find($location);
-
         $this->assertInstanceOf(Location::class, $result);
-        $this->assertEquals($location->getId(), $result->getId());
+
+        $this->resetCount();
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn(404);
+
+        $exception = $this->getMockBuilder(ClientException::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $exception->expects($this->once())
+            ->method('getResponse')
+            ->willReturn($response);
+
+        $whosonfirst
+            ->method('get')
+            ->with($place_id)
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException($exception),
+                $this->returnValue($place)
+            );
+
+        $tree = $this->getMockBuilder(Tree::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $tree->expects($this->once())
+            ->method('getAncestor')
+            ->willReturn($place);
+
+        $ancestor = $this->createMock(Collection::class);
+        $ancestor->expects($this->once())
+            ->method('first')
+            ->willReturn($tree);
+
+        $place->expects($this->once())
+            ->method('getAncestor')
+            ->willReturn($ancestor);
+
+        $result = $placeFinder->find($location);
+        $this->assertInstanceOf(Location::class, $result);
     }
 }
