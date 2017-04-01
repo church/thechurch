@@ -168,14 +168,13 @@ abstract class Verify extends Entity implements VerifyInterface
             return false;
         }
 
-        if ($this->token === $verify->getToken()) {
+        if ($this->token !== $verify->getToken()) {
             return false;
         }
 
         if (!$this->hashedCode || !$verify->getCode()) {
             return false;
         }
-
 
         if (!password_verify($verify->getCode(), $this->hashedCode)) {
             return false;

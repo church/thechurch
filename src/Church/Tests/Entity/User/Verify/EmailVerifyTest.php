@@ -3,18 +3,8 @@
 namespace Church\Tests\Entity\User\Verify;
 
 use Church\Entity\User\Verify\EmailVerify;
-use Church\Entity\User\Verify\VerifyInterface;
-use Church\Tests\Entity\EntityTest;
 
-class EmailVerifyTest extends EntityTest
+class EmailVerifyTest extends VerifyTest
 {
-
-    public function testIsEqualTo()
-    {
-        $other = $this->createMock(VerifyInterface::class);
-
-        $email = new EmailVerify();
-
-        $this->assertFalse($email->isEqualTo($other));
-    }
+    protected $class = EmailVerify::class;
 }
