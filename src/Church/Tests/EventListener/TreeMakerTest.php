@@ -75,11 +75,26 @@ class TreeMakerTest extends \PHPUnit_Framework_TestCase
         $place->method('getParent')
             ->willReturn($parent);
 
+        $original_parent_id = 456;
+        $original_parent_id = $this->getMockBuilder(Place::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $original_parent_id->method('getId')
+            ->willReturn($original_parent_id);
+
+        $original = $this->getMockBuilder(Place::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $original->method('getId')
+            ->willReturn($id);
+        $original->method('getParent')
+            ->willReturn($parent);
+
         $treeRepository = $this->createMock(ObjectRepository::class);
         $placeRepository = $this->createMock(ObjectRepository::class);
         $placeRepository->method('find')
             ->with($id)
-            ->willReturn($place);
+            ->willReturn($original);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
