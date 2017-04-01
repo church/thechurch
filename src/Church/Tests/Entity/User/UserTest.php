@@ -2,11 +2,50 @@
 
 namespace Church\Tests\Entity\User;
 
+use DateTimeInterface;
 use Church\Entity\User\User;
 use Church\Tests\Entity\EntityTest;
 
 class UserTest extends EntityTest
 {
+
+    public function testSetCreatedValue()
+    {
+        $user = new User();
+
+        $user->setCreatedValue();
+
+        $this->assertInstanceOf(DateTimeInterface::class, $user->getCreated());
+    }
+
+    public function testSetNameUser()
+    {
+        $user = new User();
+
+        $user->setNameUser();
+
+        $this->assertSame($user, $user->getName()->getUser());
+    }
+
+    public function testGetId()
+    {
+        $id = '897cc71a-e9c4-4f3f-952f-be20bd2a2018';
+        $user = new User([
+            'id' => $id,
+        ]);
+
+        $this->assertEquals($id, $user->getId());
+    }
+
+    public function testSetUsername()
+    {
+        $user = new User();
+
+        $username = 'test';
+        $user->setUsername($username);
+
+        $this->assertEquals($username, $user->getUsername());
+    }
 
     public function testGetRoles()
     {

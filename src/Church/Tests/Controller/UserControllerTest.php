@@ -148,7 +148,7 @@ class UserControllerTest extends ControllerTest
             ->getMock();
         $new->method('getId')
             ->willReturn($data['id']);
-        $new->expects($this->never())
+        $new->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
 
@@ -202,6 +202,9 @@ class UserControllerTest extends ControllerTest
         $user->expects($this->once())
             ->method('getEmails')
             ->willReturn($collection);
+        $user->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $email = $this->getMockBuilder(Email::class)
             ->disableOriginalConstructor()

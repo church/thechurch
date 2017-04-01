@@ -77,7 +77,7 @@ class UserController extends Controller
             throw new NotFoundHttpException("No user found");
         }
 
-        return $user;
+        return $this->showAction($user);
     }
 
   /**
@@ -116,7 +116,7 @@ class UserController extends Controller
 
         $em->flush();
 
-        return $user;
+        return $this->showAction($user);
     }
 
     /**
@@ -130,6 +130,10 @@ class UserController extends Controller
      */
     public function showNameAction(User $user) : Name
     {
+        if (!$user->isEnabled()) {
+            throw new NotFoundHttpException("User account is disabled");
+        }
+
         return $user->getName();
     }
 
@@ -154,7 +158,7 @@ class UserController extends Controller
 
         $em->flush();
 
-        return $user->getName();
+        return $this->showNameAction($user);
     }
 
     /**
@@ -166,8 +170,12 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function showEmails(User $user) : Collection
+    public function showEmailsAction(User $user) : Collection
     {
+        if (!$user->isEnabled()) {
+            throw new NotFoundHttpException("User account is disabled");
+        }
+
         return $user->getEmails();
     }
 
@@ -213,6 +221,10 @@ class UserController extends Controller
      */
     public function showPrimaryEmailAction(User $user) : Email
     {
+        if (!$user->isEnabled()) {
+            throw new NotFoundHttpException("User account is disabled");
+        }
+
         if (!$user->getPrimaryEmail()) {
             throw new NotFoundHttpException("No primary email set");
         }
@@ -253,7 +265,7 @@ class UserController extends Controller
         $user->setPrimaryEmail($accepted);
         $em->flush();
 
-        return $user->getPrimaryEmail();
+        return $this->showPrimaryEmailAction($user);
     }
 
     /**
@@ -267,6 +279,10 @@ class UserController extends Controller
      */
     public function showLocaitonAction(User $user) : Location
     {
+        if (!$user->isEnabled()) {
+            throw new NotFoundHttpException("User account is disabled");
+        }
+
         if (!$user->getLocation()) {
             throw new NotFoundHttpException("No location set.");
         }
@@ -297,7 +313,7 @@ class UserController extends Controller
         $user->setLocation($location);
         $em->flush();
 
-        return $user->getLocation();
+        return $this->showLocaitonAction($user);
     }
 
     /**
@@ -364,6 +380,6 @@ class UserController extends Controller
         $em->remove($verify);
         $em->flush();
 
-        return $user->getEmails();
+        return $this->showEmailsAction($user);
     }
 }
