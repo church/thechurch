@@ -3,6 +3,7 @@
 namespace Church\Tests\Entity\User;
 
 use DateTimeInterface;
+use Church\Entity\Location;
 use Church\Entity\User\Name;
 use Church\Entity\User\Email;
 use Church\Entity\User\User;
@@ -224,5 +225,67 @@ class UserTest extends EntityTest
         $user->removeEmail($email);
 
         $this->assertCount(0, $user->getEmails());
+    }
+
+    public function testSetLocation()
+    {
+        $user = new User();
+
+        $location = $this->getMockBuilder(Location::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $user->setLocation($location);
+
+        $this->assertSame($location, $user->getLocation());
+    }
+
+    public function testSetOrthodox()
+    {
+        $user = new User();
+
+        $user->setOrthodox(true);
+
+        $this->assertTrue($user->isOrthodox());
+    }
+
+    public function testSetEnabled()
+    {
+        $user = new User();
+
+        $user->setEnabled(true);
+
+        $this->assertTrue($user->isEnabled());
+    }
+
+    public function testSetCreated()
+    {
+        $user = new User();
+
+        $datetime = new \DateTime();
+
+        $user->setCreated($datetime);
+
+        $this->assertSame($datetime, $user->getCreated());
+    }
+
+    public function testGetColor()
+    {
+        $user = new User([
+            'username' => 'test',
+        ]);
+
+        $this->assertEquals('#098f6b', $user->getColor());
+
+        $user = new User();
+
+        $this->assertNull($user->getColor());
+    }
+
+    public function testGetUser()
+    {
+        $user = new User();
+
+        $this->assertSame($user, $user->getUser());
     }
 }
