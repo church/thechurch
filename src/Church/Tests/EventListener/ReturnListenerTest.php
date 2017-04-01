@@ -6,11 +6,42 @@ use Church\EventListener\ReturnListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ReturnListenerTest extends \PHPUnit_Framework_TestCase
 {
+
+    public function testOnKernelView()
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $tokenStorage = $this->createMock(TokenStorageInterface::class);
+
+        $listener = new ReturnListener($serializer, $tokenStorage);
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->once())
+            ->method('getRequestFormat')
+            ->willReturn('test');
+
+        $event = $this->createMock(GetResponseForControllerResultEvent::class);
+        $event->expects($this->once())
+            ->method('getRequest')
+            ->willReturn($request);
+        $event->expects($this->once())
+            ->method('getControllerResult')
+            ->willReturn([
+                'hello' => 'world!',
+            ]);
+
+        $response = $listener->onKernelView($event);
+
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
     public function testOnKernelException()
     {
         $serializer = $this->createMock(SerializerInterface::class);

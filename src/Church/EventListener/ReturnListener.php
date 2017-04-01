@@ -59,7 +59,7 @@ class ReturnListener
     /**
      * Generates the Response.
      */
-    public function getResponse(
+    protected function getResponse(
         $data,
         string $format,
         array $roles = [],
