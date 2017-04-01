@@ -206,4 +206,23 @@ class UserTest extends EntityTest
 
         $this->assertSame($email, $user->getEmails()->first());
     }
+
+    public function testRemoveEmail()
+    {
+        $email = $this->getMockBuilder(Email::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $user = new User([
+            'emails' => [
+                $email,
+            ],
+        ]);
+
+        $this->assertCount(1, $user->getEmails());
+
+        $user->removeEmail($email);
+
+        $this->assertCount(0, $user->getEmails());
+    }
 }
