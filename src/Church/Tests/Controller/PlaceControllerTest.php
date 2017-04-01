@@ -14,7 +14,7 @@ class PlaceControllerTest extends ControllerTest
     public function testIndexAction()
     {
 
-        $serializer = $this->getSerializer();
+        $denormalizer = $this->getDenormalizer();
 
         $slug = 'orlando';
         $place = $this->getMockBuilder(Place::class)
@@ -35,14 +35,11 @@ class PlaceControllerTest extends ControllerTest
             ->with(Place::class)
             ->willReturn($repository);
 
-        $controller = new PlaceController($serializer, $doctrine);
+        $controller = new PlaceController($denormalizer, $doctrine);
 
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $request->expects($this->once())
-            ->method('getRequestFormat')
-            ->willReturn('test');
         $request->query = $this->createMock(ParameterBagInterface::class);
         $request->query->expects($this->once())
             ->method('has')
@@ -55,6 +52,6 @@ class PlaceControllerTest extends ControllerTest
 
         $response = $controller->indexAction($request);
 
-        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(Place::class, $response);
     }
 }

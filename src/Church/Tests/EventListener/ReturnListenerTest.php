@@ -2,19 +2,21 @@
 
 namespace Church\Tests\EventListener;
 
-use Church\EventListener\ExceptionListener;
-use Church\Serializer\SerializerInterface;
+use Church\EventListener\ReturnListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
-class ExceptionListenerTest extends \PHPUnit_Framework_TestCase
+class ReturnListenerTest extends \PHPUnit_Framework_TestCase
 {
     public function testOnKernelException()
     {
         $serializer = $this->createMock(SerializerInterface::class);
+        $tokenStorage = $this->createMock(TokenStorageInterface::class);
 
-        $listener = new ExceptionListener($serializer);
+        $listener = new ReturnListener($serializer, $tokenStorage);
 
         $exception = $this->getMockBuilder(\Exception::class)
             ->disableOriginalConstructor()

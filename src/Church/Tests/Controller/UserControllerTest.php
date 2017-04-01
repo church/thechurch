@@ -8,10 +8,10 @@ use Church\Entity\User\Email;
 use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\PlaceFinderInterface;
 use Church\Utils\User\VerificationManagerInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class UserControllerTest extends ControllerTest
 {
@@ -38,33 +38,22 @@ class UserControllerTest extends ControllerTest
         $user->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
-        $user->expects($this->once())
-            ->method('isEqualTo')
-            ->with($user)
-            ->willReturn(true);
 
-        $response = $this->getMockBuilder(Response::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $serializer = $this->getSerializer();
-        $serializer->expects($this->once())
-                   ->method('respond')
-                   ->with($user, self::FORMAT, ['me'])
-                   ->willReturn($response);
+        $denormalizer = $this->getDenormalizer();
 
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
         $controller = new UserController(
-            $serializer,
+            $denormalizer,
             $this->getDoctrine(),
             $verificationManager,
             $placeFinder
         );
+
         $result = $controller->showAction($user, $request, $user);
 
-        $this->assertEquals($response, $result);
+        $this->assertEquals($user, $result);
     }
 
     /**
@@ -72,12 +61,6 @@ class UserControllerTest extends ControllerTest
      */
     public function testshowActionNoUserFailure()
     {
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $request->method('getRequestFormat')
-            ->willReturn(self::FORMAT);
-
         $data = [
             'id' => '427bb4c4-4481-41b2-88f4-ce1980598208'
         ];
@@ -91,14 +74,14 @@ class UserControllerTest extends ControllerTest
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
         $controller = new UserController(
-            $this->getSerializer(),
+            $this->getDenormalizer(),
             $this->getDoctrine(),
             $verificationManager,
             $placeFinder
         );
 
         $this->expectException(\Exception::class);
-        $result = $controller->showAction($user, $request);
+        $result = $controller->showAction($user);
     }
 
     /**
@@ -125,7 +108,7 @@ class UserControllerTest extends ControllerTest
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
         $controller = new UserController(
-            $this->getSerializer(),
+            $this->getDenormalizer(),
             $this->getDoctrine(),
             $verificationManager,
             $placeFinder
@@ -155,7 +138,7 @@ class UserControllerTest extends ControllerTest
             ->getMock();
         $user->method('getId')
             ->willReturn($data['id']);
-        $user->expects($this->exactly(3))
+        $user->expects($this->once())
             ->method('isEqualTo')
             ->with($user)
             ->willReturn(true);
@@ -165,24 +148,16 @@ class UserControllerTest extends ControllerTest
             ->getMock();
         $new->method('getId')
             ->willReturn($data['id']);
-        $new->expects($this->once())
+        $new->expects($this->never())
             ->method('isEnabled')
             ->willReturn(true);
 
-        $response = $this->getMockBuilder(Response::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $serializer = $this->getSerializer();
-        $serializer->expects($this->once())
-            ->method('request')
-            ->with($request, $user, ['me'])
+        $input = [];
+        $denormalizer = $this->getDenormalizer();
+        $denormalizer->expects($this->once())
+            ->method('denormalize')
+            ->with($input, $user)
             ->willReturn($new);
-
-        $serializer->expects($this->once())
-            ->method('respond')
-            ->with($new, self::FORMAT, ['me'])
-            ->willReturn($response);
 
         $repository = $this->getRepository();
         $repository->expects($this->never())
@@ -201,27 +176,32 @@ class UserControllerTest extends ControllerTest
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
         $controller = new UserController(
-            $serializer,
+            $denormalizer,
             $doctrine,
             $verificationManager,
             $placeFinder
         );
-        $result = $controller->updateAction($user, $user, $request);
+        $result = $controller->updateAction($user, $user, $input);
 
-        $this->assertEquals($response, $result);
+        $this->assertEquals($new, $result);
     }
 
     public function testVerifyEmailAction()
     {
-        $serializer = $this->getSerializer();
+        $denormalizer = $this->getDenormalizer();
+
+        $collection = $this->createMock(Collection::class);
 
         $user = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $user->expects($this->exactly(2))
+        $user->expects($this->once())
             ->method('isEqualTo')
             ->with($user)
             ->willReturn(true);
+        $user->expects($this->once())
+            ->method('getEmails')
+            ->willReturn($collection);
 
         $email = $this->getMockBuilder(Email::class)
             ->disableOriginalConstructor()
@@ -270,26 +250,20 @@ class UserControllerTest extends ControllerTest
         $placeFinder = $this->createMock(PlaceFinderInterface::class);
 
         $controller = new UserController(
-            $serializer,
+            $denormalizer,
             $doctrine,
             $verificationManager,
             $placeFinder
         );
 
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $request->expects($this->once())
-            ->method('getRequestFormat')
-            ->willReturn('test');
-
-        $serializer->expects($this->once())
-            ->method('request')
-            ->with($request, EmailVerify::class)
+        $input = [];
+        $denormalizer->expects($this->once())
+            ->method('denormalize')
+            ->with($input, EmailVerify::class)
             ->willReturn($verify);
 
-        $response = $controller->verifyEmailAction($user, $user, $request);
+        $response = $controller->verifyEmailAction($user, $user, $input);
 
-        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(Collection::class, $response);
     }
 }

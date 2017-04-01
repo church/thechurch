@@ -2,10 +2,10 @@
 
 namespace Church\Tests\Controller;
 
-use Church\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 abstract class ControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,9 +18,9 @@ abstract class ControllerTest extends \PHPUnit_Framework_TestCase
     /**
      * Gets the mock serializer.
      */
-    protected function getSerializer()
+    protected function getDenormalizer()
     {
-        return $this->createMock(SerializerInterface::class);
+        return $this->createMock(DenormalizerInterface::class);
     }
 
     /**

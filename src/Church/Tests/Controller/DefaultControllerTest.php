@@ -3,8 +3,6 @@
 namespace Church\Tests\Controller;
 
 use Church\Controller\DefaultController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class DefaultControllerTest extends ControllerTest
 {
@@ -17,25 +15,10 @@ class DefaultControllerTest extends ControllerTest
         $data = [
             'hello' => 'world!',
         ];
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $request->method('getRequestFormat')
-            ->willReturn(self::FORMAT);
 
-        $response = $this->getMockBuilder(Response::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $default = new DefaultController($this->getDenormalizer(), $this->getDoctrine());
+        $result = $default->indexAction();
 
-        $serializer = $this->getSerializer();
-        $serializer->expects($this->once())
-                   ->method('respond')
-                   ->with($data, self::FORMAT)
-                   ->willReturn($response);
-
-        $default = new DefaultController($serializer, $this->getDoctrine());
-        $result = $default->indexAction($request);
-
-        $this->assertEquals($response, $result);
+        $this->assertEquals($data, $result);
     }
 }

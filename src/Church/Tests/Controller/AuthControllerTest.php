@@ -7,70 +7,56 @@ use Church\Entity\User\Email;
 use Church\Entity\User\Login;
 use Church\Entity\User\User;
 use Church\Entity\User\Verify\EmailVerify;
+use Church\Entity\User\Verify\VerifyInterface;
 use Church\Utils\User\VerificationManagerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class AuthControllerTest extends ControllerTest
 {
     public function testLoginAction()
     {
-        $serializer = $this->getSerializer();
+        $denormalizer = $this->getDenormalizer();
         $doctrine = $this->getDoctrine();
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
         $jwtManager = $this->createMock(JWTManagerInterface::class);
 
         $controller = new AuthController(
-            $serializer,
+            $denormalizer,
             $doctrine,
             $verificationManager,
             $jwtManager
         );
-
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $request->expects($this->once())
-            ->method('getRequestFormat')
-            ->willReturn('test');
 
         $login = $this->getMockBuilder(Login::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $serializer->expects($this->once())
-            ->method('request')
-            ->with($request, Login::class)
+        $input = [];
+        $denormalizer->expects($this->once())
+            ->method('denormalize')
+            ->with($input, Login::class)
             ->willReturn($login);
 
-        $response = $controller->loginAction($request);
+        $response = $controller->loginAction($input);
 
-        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(VerifyInterface::class, $response);
     }
 
     public function testLoginEmailAction()
     {
-        $serializer = $this->getSerializer();
+        $denormalizer = $this->getDenormalizer();
         $doctrine = $this->getDoctrine();
         $verificationManager = $this->createMock(VerificationManagerInterface::class);
         $jwtManager = $this->createMock(JWTManagerInterface::class);
 
         $controller = new AuthController(
-            $serializer,
+            $denormalizer,
             $doctrine,
             $verificationManager,
             $jwtManager
         );
-
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $request->expects($this->once())
-            ->method('getRequestFormat')
-            ->willReturn('test');
 
         $token = 'abc';
 
@@ -102,11 +88,6 @@ class AuthControllerTest extends ControllerTest
             ->with($verify)
             ->willReturn(true);
 
-        $serializer->expects($this->once())
-            ->method('request')
-            ->with($request, EmailVerify::class)
-            ->willReturn($verify);
-
         $repository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -127,8 +108,14 @@ class AuthControllerTest extends ControllerTest
             ->method('getEntityManager')
             ->willReturn($em);
 
-        $response = $controller->loginEmailAction($request);
+        $input = [];
+        $denormalizer->expects($this->once())
+            ->method('denormalize')
+            ->with($input, EmailVerify::class)
+            ->willReturn($verify);
 
-        $this->assertInstanceOf(Response::class, $response);
+        $response = $controller->loginEmailAction($input);
+
+        $this->assertArrayHasKey("token", $response);
     }
 }

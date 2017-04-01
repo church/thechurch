@@ -10,7 +10,7 @@ use Church\Entity\User\Verify\EmailVerify;
 use Church\Utils\ArrayUtils;
 use Church\Utils\PlaceFinderInterface;
 use Church\Utils\User\VerificationManagerInterface;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -166,7 +166,7 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function showEmails(User $user) : ArrayCollection
+    public function showEmails(User $user) : Collection
     {
         return $user->getEmails();
     }
@@ -333,7 +333,7 @@ class UserController extends Controller
      *
      * @param Request $request
      */
-    public function verifyEmailAction(User $authenticated, User $user, array $input) : ArrayCollection
+    public function verifyEmailAction(User $authenticated, User $user, array $input) : Collection
     {
         if (!$authenticated->isEqualTo($user)) {
             throw new AccessDeniedHttpException("You may only modify your own user");
@@ -364,6 +364,6 @@ class UserController extends Controller
         $em->remove($verify);
         $em->flush();
 
-        return $user->getEmail();
+        return $user->getEmails();
     }
 }
