@@ -1,6 +1,7 @@
 <?php
 
 namespace Church\Tests\Entity\Message;
+
 use Church\Entity\Message\EmailMessage;
 
 class EmailMessageTest extends MessageTest
