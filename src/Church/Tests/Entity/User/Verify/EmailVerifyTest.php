@@ -1,6 +1,6 @@
 <?php
 
-namespace Church\Tests\Entity\Verify;
+namespace Church\Tests\Entity\User\Verify;
 
 use Church\Entity\User\Verify\EmailVerify;
 use Church\Entity\User\Verify\VerifyInterface;

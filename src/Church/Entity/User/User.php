@@ -243,7 +243,7 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
     /**
      * @inheritDoc
      */
-    public function getPassword() : string
+    public function getPassword() :? string
     {
         return null;
     }

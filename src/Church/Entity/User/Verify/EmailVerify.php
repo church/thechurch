@@ -203,14 +203,6 @@ class EmailVerify implements VerifyInterface, UserAwareInterface
             return false;
         }
 
-        if (!$this->email || !$verify->getEmail()) {
-            return false;
-        }
-
-        if (!$this->email->isEqualTo($verify->getEmail())) {
-            return false;
-        }
-
         if (!$this->token || !$verify->getToken()) {
             return false;
         }
