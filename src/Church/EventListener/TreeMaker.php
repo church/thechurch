@@ -92,8 +92,8 @@ class TreeMaker
         // Then delete the comment tree above the current comment.
         $qb = $em->createQueryBuilder();
         $qb->delete(Tree::class, 't');
-        $qb->addWhere($qb->expr()->in('t.descendant', $descendant_ids));
-        $qb->addWhere($qb->expr()->notIn('t.ancestor', $descendant_ids));
+        $qb->where($qb->expr()->in('t.descendant', $descendant_ids));
+        $qb->where($qb->expr()->notIn('t.ancestor', $descendant_ids));
         $q = $qb->getQuery();
         $q->execute();
 

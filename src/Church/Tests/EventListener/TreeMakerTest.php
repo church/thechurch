@@ -8,6 +8,7 @@ use Church\EventListener\TreeMaker;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Query\Expr;
@@ -76,10 +77,10 @@ class TreeMakerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($parent);
 
         $original_parent_id = 456;
-        $original_parent_id = $this->getMockBuilder(Place::class)
+        $original_parent = $this->getMockBuilder(Place::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $original_parent_id->method('getId')
+        $original_parent->method('getId')
             ->willReturn($original_parent_id);
 
         $original = $this->getMockBuilder(Place::class)
@@ -88,16 +89,37 @@ class TreeMakerTest extends \PHPUnit_Framework_TestCase
         $original->method('getId')
             ->willReturn($id);
         $original->method('getParent')
-            ->willReturn($parent);
+            ->willReturn($original_parent);
 
-        $treeRepository = $this->createMock(ObjectRepository::class);
+        $treeRepository = $this->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $treeRepository->method('__call')
+            ->willreturn([]);
+
         $placeRepository = $this->createMock(ObjectRepository::class);
         $placeRepository->method('find')
             ->with($id)
             ->willReturn($original);
 
+        $expr = $this->getMockBuilder(Expr::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $query = $this->getMockBuilder(AbstractQuery::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $qb = $this->getMockBuilder(QueryBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $qb->method('expr')
+            ->willReturn($expr);
+        $qb->method('getQuery')
+            ->willReturn($query);
+
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects($this->exactly(2))
             ->method('getRepository')
             ->willReturnMap([
                 [
@@ -109,6 +131,10 @@ class TreeMakerTest extends \PHPUnit_Framework_TestCase
                     $placeRepository,
                 ],
             ]);
+
+        $em->expects($this->once())
+            ->method('createQueryBuilder')
+            ->willReturn($qb);
 
         $args = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
