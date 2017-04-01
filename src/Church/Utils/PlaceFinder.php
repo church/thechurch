@@ -156,10 +156,10 @@ class PlaceFinder implements PlaceFinderInterface
                     // Try again.
                 }
             }
-        }
 
-        if (!$repository->find($place->getId())) {
-            throw new \Exception("Place was not created");
+            if (!$repository->find($place->getId())) {
+                throw new \Exception("Place was not created");
+            }
         }
 
         return $place;

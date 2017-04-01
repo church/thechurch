@@ -137,4 +137,70 @@ class PlaceFinderTest extends \PHPUnit_Framework_TestCase
         $result = $placeFinder->find($location);
         $this->assertInstanceOf(Location::class, $result);
     }
+
+    /**
+     * Tests the get method by testing find.
+     */
+    public function testGetPlace()
+    {
+        $place_id = 321;
+        $place = $this->getMockBuilder(Place::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $place->method('getId')
+            ->willReturn($place_id);
+        $place->method('getName')
+            ->willReturn('Orlando');
+
+        $id = '123';
+        $location = $this->getMockBuilder(Location::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $location->method('getId')
+            ->willReturn($id);
+        $location->method('getPlace')
+            ->willReturn($place);
+
+        $locationRepository = $this->createMock(ObjectRepository::class);
+
+        $placeRepository = $this->createMock(ObjectRepository::class);
+        $placeRepository->method('find')
+            ->with($place_id)
+            ->willReturnOnConsecutiveCalls(
+                $this->returnValue(null),
+                $this->returnValue($place)
+            );
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getRepository')
+            ->willReturnMap([
+                [
+                    Location::class,
+                    $locationRepository,
+                ],
+                [
+                    Place::class,
+                    $placeRepository,
+                ],
+            ]);
+
+        $doctrine = $this->createMock(RegistryInterface::class);
+        $doctrine->method('getEntityManager')
+            ->willReturn($em);
+
+        $search = $this->createMock(SearchInterface::class);
+        $search->method('get')
+            ->with($id)
+            ->willReturn($location);
+
+        $whosonfirst = $this->createMock(WhosOnFirstInterface::class);
+        $whosonfirst->method('get')
+            ->with($place_id)
+            ->willReturn($place);
+
+        $placeFinder = new PlaceFinder($doctrine, $search, $whosonfirst);
+
+        $result = $placeFinder->find($location);
+        $this->assertInstanceOf(Location::class, $result);
+    }
 }
