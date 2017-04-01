@@ -44,7 +44,7 @@ class AuthenticatedUserResolver implements ArgumentValueResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    public function resolve(Request $request, ArgumentMetadata $argument) : \Generator
     {
         yield $this->tokenStorage->getToken()->getUser();
     }
