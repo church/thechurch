@@ -545,8 +545,7 @@ class User extends Entity implements UserInterface, \Serializable, EquatableInte
      */
     public function getUser() :? User
     {
-        // return $this;
-        return null;
+        return $this;
     }
 
     /**
