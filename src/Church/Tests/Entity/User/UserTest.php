@@ -47,6 +47,20 @@ class UserTest extends EntityTest
         $this->assertEquals($username, $user->getUsername());
     }
 
+    public function testGetSalt()
+    {
+        $user = new User();
+
+        $this->assertNull($user->getSalt());
+    }
+
+    public function testGetPassword()
+    {
+        $user = new User();
+
+        $this->assertNull($user->getPassword());
+    }
+
     public function testGetRoles()
     {
         $user = new User();
