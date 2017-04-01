@@ -226,14 +226,6 @@ class Email implements UserAwareInterface
             return false;
         }
 
-        if (!$this->user || !$email->getUser()) {
-            return false;
-        }
-
-        if (!$this->user->isEqualTo($email->getUser())) {
-            return false;
-        }
-
         return true;
     }
 }
