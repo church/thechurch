@@ -17,7 +17,7 @@ class WhosOnFirstDenormalizer implements DenormalizerInterface
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $parent = null;
-        if (!empty($data['record']['wof:parent_id']) && $data['record']['wof:parent_id'] != '-1') {
+        if (isset($data['record']['wof:parent_id']) && $data['record']['wof:parent_id'] != '-1') {
             $parent = [
                 'id' => (int) $data['record']['wof:parent_id'],
             ];
@@ -56,6 +56,6 @@ class WhosOnFirstDenormalizer implements DenormalizerInterface
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $type === Place::class && array_key_exists('record', $data);
+        return ($type === Place::class || is_subclass_of($type, Place::class)) && array_key_exists('record', $data);
     }
 }
