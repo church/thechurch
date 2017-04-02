@@ -16,16 +16,6 @@ class SearchDenormalizer implements DenormalizerInterface
      */
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        if (substr($class, -2) === '[]') {
-            $class = substr($class, -2) === '[]' ? substr($type, 0, -2) : $class;
-            $locaitons = [];
-            foreach ($data['features'] as $feature) {
-                $locaitons[] = $this->createLocationFromFeature($feature);
-            }
-
-            return $locations;
-        }
-
         if (empty($data['features'])) {
             return new $class();
         }
@@ -81,10 +71,7 @@ class SearchDenormalizer implements DenormalizerInterface
     public function supportsDenormalization($data, $type, $format = null)
     {
         if (isset($data['type']) && $data['type'] === 'FeatureCollection' && isset($data['features'])) {
-            if ($type === Location::class) {
-                return true;
-            }
-            if (substr($type, -2) === '[]' && substr($type, 0, -2) === Location::class) {
+            if ($type === Location::class || is_subclass_of($type, Location::class)) {
                 return true;
             }
         }
