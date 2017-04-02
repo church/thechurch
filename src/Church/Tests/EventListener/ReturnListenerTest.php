@@ -2,11 +2,13 @@
 
 namespace Church\Tests\EventListener;
 
+use Church\Entity\User\User;
 use Church\EventListener\ReturnListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -16,7 +18,23 @@ class ReturnListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnKernelView()
     {
         $serializer = $this->createMock(SerializerInterface::class);
+
+        $user = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $user->method('getUser')
+            ->willReturnSelf();
+        $user->method('getRoles')
+            ->with($user)
+            ->willReturn([]);
+
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')
+            ->willReturn($user);
+
         $tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $tokenStorage->method('getToken')
+            ->willReturn($token);
 
         $listener = new ReturnListener($serializer, $tokenStorage);
 
@@ -33,9 +51,7 @@ class ReturnListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($request);
         $event->expects($this->once())
             ->method('getControllerResult')
-            ->willReturn([
-                'hello' => 'world!',
-            ]);
+            ->willReturn($user);
 
         $response = $listener->onKernelView($event);
 

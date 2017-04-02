@@ -106,7 +106,7 @@ class ReturnListener
                 break;
         }
 
-        $roles = $this->getUser() ? $this->getUser()->getGroups($user) : [];
+        $roles = $this->getUser() ? $this->getUser()->getRoles($user) : [];
 
         $response = $this->getResponse($result, $request->getRequestFormat('json'), $roles, $status);
         $event->setResponse($response);
