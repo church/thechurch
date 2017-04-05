@@ -15,7 +15,7 @@ class WhosOnFirst extends Client implements WhosOnFirstInterface
     /**
      * {@inheritdoc}
      */
-    public function get(string $id) : Place
+    public function get(int $id) : Place
     {
         $response = null;
         while (!$response) {

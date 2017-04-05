@@ -13,7 +13,7 @@ interface WhosOnFirstInterface
     /**
      * Get a place by id.
      *
-     * @param string $id
+     * @param int $id
      */
-    public function get(string $id) : Place;
+    public function get(int $id) : Place;
 }
