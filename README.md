@@ -1,7 +1,5 @@
 ![the.church](https://thechur.ch/bundles/churchteaser/images/logo2.png)
 
-[![Build Status](https://travis-ci.org/church/thechurch.svg?branch=develop)](https://travis-ci.org/church/thechurch) [![Coverage Status](https://coveralls.io/repos/github/church/thechurch/badge.svg?branch=develop)](https://coveralls.io/github/church/thechurch?branch=develop)
-
 ## Mission
 By the sacrifice and love of Jesus Christ our Lord, according to His eternal
 purpose, [thechur.ch](https://thechur.ch) exists to promote the unity of His
@@ -71,59 +69,5 @@ live closest to you.
 ![thechur.ch City Feed Mockup](https://docs.google.com/uc?id=0By6fCOSDOhkvT3RDWGdjdUpUZjg)
 
 ## Contributing
-
-### Requirements
-After forking and cloning the repository, you will need the following items:
-
-1. [Yahoo! BOSS Geo](https://developer.yahoo.com/boss/geo/) API Credentials.
-2. [Yahoo! GeoPlanet](https://developer.yahoo.com/geo/geoplanet/) API Credientials.
-3. [Mandrill](http://mandrill.com/) API Credentials.
-4. Ensure that your system meets the
-   [Symfony System Requirements](http://symfony.com/doc/current/reference/requirements.html).
-5. An empty MySQL/MariaDB database.
-6. [Composer](https://getcomposer.org/) to install the php dependencies.
-7. [Bundler](http://bundler.io/) to install the ruby dependencies.
-8. [Bower](http://bower.io) to install the front-end dependencies.
-9. Ensure that Apache is pointed to the`web` directory.
-
-### Installation
-Run the following command inside the repository:
-```
-composer install
-```
-
-This will install all the php dependencies. Once the the dependencies are
-installed, you will be asked a series of questions in order to generate an
-`app/config/parameters.yml` file. You can adjust the configuration at any time
-by changing the values in this file. See [app/config/parameters.yml.dist](https://github.com/church/thechurch/blob/develop/app/config/parameters.yml.dist)
-for a sample configuration file.
-
-Install the ruby dependencies by executing the following command in the root of
-the repository:
-```
-bundle install
-```
-
-Install the front-end dependencies by executing the following command in the
-root of the repository:
-```
-bower install
-```
-
-Create the database schema by executing the following command:
-```
- php app/console doctrine:schema:create
-```
-
-Then load the `place type` data by executing the following command:
-```
-php app/console doctrine:fixtures:load
-```
-
-Lastly, you can dump the assets by executing:
-```
-php app/console assetic:dump
-
-```
-
-You may now access the site at [http://localhost/app_dev.php/](http://localhost/app_dev.php/)
+[thechur.ch](https://thechur.ch) is built on the
+[GeoSoc.io](https://github.com/geosocio) platform.
