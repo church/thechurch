@@ -1,0 +1,9 @@
+version: '3'
+services:
+    web:
+        build: ./
+        image: thechurch/church
+        env_file:
+            - .env
+        environment:
+            VIRTUAL_HOST: 'thechur.ch,origin.thechur.ch,www.thechur.ch'
