@@ -66,7 +66,7 @@ instead augment the experience. [thechur.ch](https://thechur.ch) is not made up
 of friends and followers, but rather people in cities; as well as the people who
 live closest to you.
 
-![thechur.ch City Feed Mockup](https://docs.google.com/uc?id=0By6fCOSDOhkvT3RDWGdjdUpUZjg)
+![thechur.ch City Feed Mockup](html/images/mockup.jpg)
 
 ## Contributing
 [thechur.ch](https://thechur.ch) is built on the
