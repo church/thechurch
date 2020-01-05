@@ -1,4 +1,4 @@
-![the.church](https://thechur.ch/bundles/churchteaser/images/logo2.png)
+![the.church](html/images/logo2.png)
 
 ## Mission
 By the sacrifice and love of Jesus Christ our Lord, according to His eternal

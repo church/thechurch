@@ -1,0 +1,10 @@
+name = "thechurch"
+type = "webpack"
+account_id = "2659099e440328a773821e7db5363a84"
+workers_dev = false
+route = "thechur.ch/*"
+zone_id = "fc58630d3b34d5c3c232518893c17f00"
+
+[site]
+bucket = "./html"
+entry-point = ""
