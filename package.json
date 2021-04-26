@@ -1,9 +1,0 @@
-{
-  "name": "@church/thechurch",
-  "license": "AGPL-3.0",
-  "main": "index.js",
-  "private": true,
-  "dependencies": {
-    "@cloudflare/kv-asset-handler": "^0.0.5"
-  }
-}
